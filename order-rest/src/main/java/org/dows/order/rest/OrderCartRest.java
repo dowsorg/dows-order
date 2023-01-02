@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.crud.mybatis.MybatisCrudRest;
-import org.dows.order.entity.OrderCartEntity;
+import org.dows.order.entity.OrderCart;
 import org.dows.order.form.OrderCartForm;
 import org.dows.order.service.OrderCartService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("orderCart")
-public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCartEntity, OrderCartService> {
+public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, OrderCartService> {
 
 
 }

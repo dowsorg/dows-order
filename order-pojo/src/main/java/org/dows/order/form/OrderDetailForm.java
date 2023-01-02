@@ -24,19 +24,19 @@ import java.util.Date;
 @ApiModel(value = "OrderDetail 表单对象", description = "订单详情")
 public class OrderDetailForm implements Serializable{
     @JsonIgnore
-    @Length(19)
+    
     private Long id;
     @ApiModelProperty("分布式ID")
-    @Length(64)
+    
     private String orderId;
     @ApiModelProperty("桌号")
-    @Length(64)
+    
     private String tableId;
     @ApiModelProperty("商品ID")
-    @Length(64)
+    
     private String spuId;
     @ApiModelProperty("商品规格ID")
-    @Length(64)
+    
     private String skuId;
 
 }
