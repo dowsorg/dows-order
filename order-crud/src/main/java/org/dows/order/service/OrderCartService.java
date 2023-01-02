@@ -1,19 +1,16 @@
 package org.dows.order.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.arch.framework.crud.CrudService;
-import org.springframework.stereotype.Service;
+import org.dows.order.entity.OrderCart;
+import org.dows.framework.crud.mybatis.MybatisCrudService;
+
 
 /**
-* @description 项目业务(OrderCartEntity) 表服务层
-*
-* @author 
-* @date 2023年1月2日 下午2:04:57
-*/
-@Slf4j
-@RequiredArgsConstructor
-@Service
-public class OrderCartService extends CrudService<OrderCartEntity>{
+ * 订单-预购单(OrderCart)表服务接口
+ *
+ * @author lait
+ * @since 2023-01-02 14:20:43
+ */
+public interface OrderCartService extends MybatisCrudService<OrderCart> {
 
 }
+

@@ -1,16 +1,17 @@
 package org.dows.order.mapper;
 
-import org.arch.framework.crud.CrudMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.framework.crud.mybatis.MybatisCrudMapper;
+import org.dows.order.entity.OrderPayment;
 
 /**
-* Mapper 层对象 
-*
-* @author 
-* @date 2023年1月2日 下午2:04:57
-* @since  1.0.0
-*/
+ * 订单-支付记录(OrderPayment)表数据库访问层
+ *
+ * @author lait
+ * @since 2023-01-02 14:20:45
+ */
 @Mapper
-public interface OrderPaymentMapper extends CrudMapper<OrderPaymentEntity> {
+public interface OrderPaymentMapper extends MybatisCrudMapper<OrderPayment> {
 
 }
+

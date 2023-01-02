@@ -1,16 +1,17 @@
 package org.dows.order.mapper;
 
-import org.arch.framework.crud.CrudMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.dows.framework.crud.mybatis.MybatisCrudMapper;
+import org.dows.order.entity.OrderItem;
 
 /**
-* Mapper 层对象 
-*
-* @author 
-* @date 2023年1月2日 下午2:04:57
-* @since  1.0.0
-*/
+ * 订单项(OrderItem)表数据库访问层
+ *
+ * @author lait
+ * @since 2023-01-02 14:20:45
+ */
 @Mapper
-public interface OrderItemMapper extends CrudMapper<OrderItemEntity> {
+public interface OrderItemMapper extends MybatisCrudMapper<OrderItem> {
 
 }
+
