@@ -20,6 +20,7 @@
         <module>order-pojo</module>
         <module>order-api</module>
         <module>order-rest</module>
+        <module>order-config</module>
         <module>order-app</module>
         <module>order-boot</module>
     </modules>

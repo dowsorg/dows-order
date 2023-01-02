@@ -20,9 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("orderCart")
+@RequestMapping("/orderCart")
 public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, OrderCartService> {
 
+
+
+    @RequestMapping("/test")
+    public void rest(){
+        System.out.println("sdf");
+
+    }
 
 }
 
