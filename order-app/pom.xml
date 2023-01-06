@@ -14,7 +14,12 @@
 
     <dependencies>
         <dependency>
-            <artifactId>order-pojo</artifactId>
+            <artifactId>order-rest</artifactId>
+            <groupId>org.dows.saas</groupId>
+            <version>20220701-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>order-config</artifactId>
             <groupId>org.dows.saas</groupId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
