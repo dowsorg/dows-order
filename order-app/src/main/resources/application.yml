@@ -6,8 +6,8 @@ server:
     threads:
       io: 4
       worker: 32
-  servlet:
-    context-path: /order
+#  servlet:
+#    context-path: /order
 
 
 spring:
