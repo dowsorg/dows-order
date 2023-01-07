@@ -1,12 +1,6 @@
 package org.dows.order.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -14,6 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.dows.framework.crud.mybatis.CrudEntity;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 订单-预购单(OrderCart)实体类
@@ -32,7 +29,7 @@ import org.dows.framework.crud.mybatis.CrudEntity;
 @ApiModel(value = "OrderCart对象", description = "订单-预购单")
 public class OrderCart implements CrudEntity {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty("主键ID")
     private Long id;
 
@@ -70,7 +67,7 @@ public class OrderCart implements CrudEntity {
     private String remark;
 
     @ApiModelProperty("购买数量")
-    private BigDecimal quantity;
+    private Integer quantity;
 
     @ApiModelProperty("添加到购物车的价格")
     private BigDecimal price;

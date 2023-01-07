@@ -13,8 +13,13 @@
 
     <dependencies>
         <dependency>
-            <artifactId>order-crud</artifactId>
             <groupId>org.dows.saas</groupId>
+            <artifactId>goods-biz</artifactId>
+            <version>20220701-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dows.saas</groupId>
+            <artifactId>order-crud</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
         <dependency>

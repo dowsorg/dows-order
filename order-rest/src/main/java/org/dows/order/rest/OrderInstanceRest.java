@@ -24,5 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderInstanceRest implements MybatisCrudRest<OrderInstanceForm, OrderInstance, OrderInstanceService> {
 
 
+
 }
 

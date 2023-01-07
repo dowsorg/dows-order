@@ -22,7 +22,7 @@ import java.util.Date;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "OrderCart 表单对象", description = "订单-预购单")
+@ApiModel(value = "OrderCart 表单对象", description ="订单-预购单")
 public class OrderCartForm implements Serializable{
     @JsonIgnore
     private Long id;
