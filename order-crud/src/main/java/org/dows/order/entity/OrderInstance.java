@@ -3,9 +3,7 @@ package org.dows.order.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -32,7 +30,7 @@ import org.dows.framework.crud.mybatis.CrudEntity;
 @ApiModel(value = "OrderInstance对象", description = "订单")
 public class OrderInstance implements CrudEntity {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty("自增主键ID")
     private Long id;
 
@@ -64,10 +62,19 @@ public class OrderInstance implements CrudEntity {
     private Integer peoples;
 
     @ApiModelProperty("订单类型(0:堂食|1:外卖|2:打包)")
-    private Integer typ;
+    private Integer type;
 
     @ApiModelProperty("订单状态(0:制作中|1:制作完成|2:待支付|3:已支付|4:进行中|5:已结束)")
     private Integer status;
+
+    @ApiModelProperty("'支付方式'")
+    private Integer payChannel;
+
+    @ApiModelProperty("支付状态")
+    private Integer payState;
+
+    @ApiModelProperty("支付时间")
+    private Date payTime;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("时间戳")

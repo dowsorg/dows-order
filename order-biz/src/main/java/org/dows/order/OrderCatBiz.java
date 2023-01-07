@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class OrderCatBizApi implements OrderCartApiService {
+public class OrderCatBiz implements OrderCartApiService {
 
     private final OrderCartService orderCartService;
 

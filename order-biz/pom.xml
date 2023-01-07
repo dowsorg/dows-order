@@ -13,6 +13,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.dows.framework</groupId>
+            <artifactId>sequence-snowflake</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>22.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.dows.saas</groupId>
             <artifactId>goods-biz</artifactId>
             <version>20220701-SNAPSHOT</version>

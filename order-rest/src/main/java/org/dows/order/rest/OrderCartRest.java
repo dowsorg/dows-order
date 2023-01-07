@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.framework.crud.mybatis.MybatisCrudRest;
-import org.dows.order.OrderCatBizApi;
+import org.dows.order.OrderCatBiz;
 import org.dows.order.bo.OrderCartAddBo;
 import org.dows.order.bo.OrderCartQueryBo;
 import org.dows.order.entity.OrderCart;
@@ -39,7 +39,7 @@ import java.util.List;
 @RequestMapping("/orderCart")
 public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, OrderCartService> {
 
-    private final OrderCatBizApi orderCatBiz;
+    private final OrderCatBiz orderCatBiz;
 
     /**
      * 商品加入购物车

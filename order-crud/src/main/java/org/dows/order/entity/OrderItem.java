@@ -55,10 +55,13 @@ public class OrderItem implements CrudEntity {
     private Integer flag;
 
     @ApiModelProperty("数量")
-    private BigDecimal quantity;
+    private Integer quantity;
 
     @ApiModelProperty("单价")
     private BigDecimal price;
+
+    @ApiModelProperty("更多内容")
+    private String more;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("时间戳")
