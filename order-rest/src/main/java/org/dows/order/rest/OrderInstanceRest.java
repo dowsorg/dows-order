@@ -71,17 +71,7 @@ public class OrderInstanceRest implements MybatisCrudRest<OrderInstanceForm, Ord
     }
 
 
-    /**
-     * 桌台化菜操作更多
-     * @param flagForm
-     * @return
-     */
-    @PostMapping("/updateOrderItem")
-    @ApiOperation("桌台化菜操作更多")
-    public Response updateOrderItem(@Valid @RequestBody OrderItemFlagForm flagForm){
-        OrderItemFlagBo flagBo = BeanUtil.copyProperties(flagForm, OrderItemFlagBo.class);
-        return Response.ok(orderInstanceBiz.updateOrderItem(flagBo));
-    }
+
 
 
 
