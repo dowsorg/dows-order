@@ -50,11 +50,8 @@ public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, 
     @ApiOperation("商品加入购物车")
     public Response addOrderCart(@Valid @RequestBody OrderCartAddForm orderCartAddForm){
         OrderCartAddBo cartAddBo = BeanUtil.copyProperties(orderCartAddForm, OrderCartAddBo.class);
-        if(orderCartAddForm.getCashier().equals(1)){ //不是收银台选购
-            cartAddBo.setAccountId(null);
-        }else{
-            // TODO
-            cartAddBo.setAccountId(null);
+        if(StrUtil.isBlank(orderCartAddForm.getTableId())){ //不是收银台选购
+            cartAddBo.setAccountId(null); //TODO
         }
         orderCatBiz.addOrderCart(cartAddBo);
         return Response.ok();
@@ -69,11 +66,9 @@ public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, 
     @ApiOperation("获取购物车信息")
     public Response<List<OrderCartInfoVo>> getOrderCartInfo(@Valid @RequestBody OrderCartQueryForm cartQueryForm){
         OrderCartQueryBo queryBo = BeanUtil.copyProperties(cartQueryForm, OrderCartQueryBo.class);
-        if(cartQueryForm.getPersonal().equals(1)){
-            // TODO
+        if(StrUtil.isBlank(queryBo.getTableId())){ //个人
+            //TODO
             queryBo.setAccountId(null);
-        }else{
-            AssertUtil.isTrue(StrUtil.isBlank(queryBo.getTableId()),new RuntimeException("大店桌号不能为空!"));
         }
         return Response.ok(orderCatBiz.getOrderCartInfo(queryBo));
     }

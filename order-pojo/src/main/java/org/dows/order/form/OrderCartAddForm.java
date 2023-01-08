@@ -34,10 +34,6 @@ public class OrderCartAddForm implements Serializable {
     @ApiModelProperty(value = "桌号id")
     private String tableId;
 
-    @NotNull(message = "是否是收银台选购不能为空!")
-    @ApiModelProperty(value = "是否是收银台选购 1:是 0:否")
-    private Integer cashier;
-
     @NotNull(message = "是否是加还是减不能为空!")
     @ApiModelProperty(value = "是否是加还是减 加:1 减:0")
     private Integer isAdd;

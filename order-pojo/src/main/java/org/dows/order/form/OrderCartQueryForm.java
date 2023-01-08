@@ -17,9 +17,6 @@ public class OrderCartQueryForm implements Serializable {
     @ApiModelProperty(value = "桌号id")
     private String tableId;
 
-    @NotNull(message = "是否是个人购物车!")
-    @ApiModelProperty(value = "是否是个人购物车 1:是 2:否")
-    private Integer personal;
 
 
 }
