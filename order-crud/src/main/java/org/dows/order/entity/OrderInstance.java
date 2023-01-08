@@ -40,6 +40,9 @@ public class OrderInstance implements CrudEntity {
     @ApiModelProperty("桌号唯一标识")
     private String tableId;
 
+    @ApiModelProperty("桌号")
+    private String tableNo;
+
     @ApiModelProperty("客户账号ID")
     private String accountId;
 

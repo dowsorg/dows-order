@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 public class OrderTableInfoBo implements Serializable {
     private static final long serialVersionUID = 6778207954976631277L;
 
-    @ApiModelProperty(value = "桌号Id")
-    private String tableId;
+    @ApiModelProperty(value = "桌号")
+    private String tableNo;
 
     @ApiModelProperty(value = "人数")
     private Integer peoples;
@@ -27,4 +27,7 @@ public class OrderTableInfoBo implements Serializable {
 
     @ApiModelProperty(value = "总数量")
     private Integer total;
+
+    @ApiModelProperty(value = "桌台状态 1:上菜中 2:菜上齐 3:已超时 4:已结账")
+    private Integer tableStatus;
 }

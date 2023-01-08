@@ -7,16 +7,22 @@ import java.util.stream.Collectors;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormatter;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.expression.operators.relational.Between;
 import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.*;
 import org.dows.order.entity.OrderInstance;
 import org.dows.order.entity.OrderItem;
+import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
+import org.dows.order.enums.OrderTableStatusEnum;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
 import org.dows.order.vo.OrderInstanceInfoVo;
@@ -35,13 +41,20 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     private final OrderItemService orderItemService;
 
     private final IdGenerator idGenerator;
+
+    @Override
+    public String createOrderInstance(OrderInstancePaymentBo paymentBo) {
+
+        return null;
+    }
     @Override
     public void creatOrderInstance(OrderInstanceCreateBo createBo) {
-        //TODO 获取goods 信息
+        //TODO 获取goods 信息 店铺桌号信息
         OrderInstance orderInstance = new OrderInstance();
         String timePrefix = idGenerator.getTimePrefix(IdKey.OMS_ORDER_ID);
         orderInstance.setOrderId(timePrefix);
         orderInstance.setTableId(createBo.getTableId());
+        orderInstance.setTableNo(null);
         orderInstance.setAccountId(createBo.getAccountId());
         orderInstance.setStoreId(createBo.getStoreId());
         orderInstance.setAppId("");
@@ -71,6 +84,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         orderInstanceService.save(orderInstance);
         orderItemService.saveBatch(orderItems);
     }
+
+
 
     @Override
     public List<OrderInstanceInfoVo> queryOrderInfo(OrderInstanceQueryBo queryBo) {
@@ -161,8 +176,40 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public List<OrderTableInfoBo> getOrderTableInfo(String storeId, List<String> tableIds) {
-        //orderInstanceService.
-        return null;
+    public List<OrderTableInfoBo> getOrderTableInfo(String storeId, List<String> tableNos) {
+        List<OrderTableInfoBo> tableInfoBoList = Lists.newArrayList();
+        List<OrderInstance> list = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getStoreId, storeId)
+                .in(OrderInstance::getTableNo, tableNos).list();
+        if(!CollUtil.isEmpty(list)){
+            List<String> orderIds = list.stream().map(OrderInstance::getOrderId).collect(Collectors.toList());
+            Map<String, List<OrderItem>> orderItemMap = orderItemService.lambdaQuery()
+                    .in(OrderItem::getOrderId, orderIds).list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
+            for (OrderInstance order : list) {
+                OrderTableInfoBo infoBo = new OrderTableInfoBo();
+                infoBo.setTableNo(order.getTableNo());
+                infoBo.setPeoples(order.getPeoples());
+                infoBo.setAmount(order.getAmount());
+                infoBo.setMinute(((Long)DateUtil.between(order.getDt(), DateUtil.date(), DateUnit.MINUTE)).intValue());
+                infoBo.setTableStatus(OrderTableStatusEnum.menu_in.getCode());
+                if(orderItemMap.containsKey(order.getOrderId())){
+                    List<OrderItem> orderItems =  orderItemMap.get(order.getOrderId());
+                    Integer count = orderItems.stream().filter(e -> e.getFlag().equals(1)).collect(Collectors.toList()).size();
+                    infoBo.setFinish(Integer.valueOf(count));
+                    infoBo.setTotal(orderItems.size());
+                    if(orderItems.stream().allMatch(e->e.getFlag().equals(OrderItemFlagEnum.stroke_menu.getCode()))){
+                        infoBo.setTableStatus(OrderTableStatusEnum.finish_menu.getCode());
+                    }
+                }
+                if(true){ // TODO 已超时
+                    infoBo.setTableStatus(OrderTableStatusEnum.time_out.getCode());
+                }
+                if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
+                    infoBo.setTableStatus(OrderTableStatusEnum.closed.getCode());
+                }
+                tableInfoBoList.add(infoBo);
+            }
+        }
+        return tableInfoBoList;
     }
 }

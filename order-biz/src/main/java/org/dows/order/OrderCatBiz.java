@@ -35,6 +35,7 @@ public class OrderCatBiz implements OrderCartApiService {
             cart = orderCartService.lambdaQuery()
                     .eq(OrderCart::getStoreId, orderCartAddBo.getStoreId())
                     .eq(OrderCart::getTableId,orderCartAddBo.getTableId())
+                    .eq(OrderCart::getDeleted,0)
                     .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId())
                     .last("limit 1").one();
         }else{
@@ -42,6 +43,7 @@ public class OrderCatBiz implements OrderCartApiService {
             cart = orderCartService.lambdaQuery()
                     .eq(OrderCart::getAccountId, orderCartAddBo.getAccountId())
                     .eq(OrderCart::getStoreId,orderCartAddBo.getStoreId())
+                    .eq(OrderCart::getDeleted,0)
                     .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId()).last("limit 1").one();
         }
         if(cart != null){
@@ -62,7 +64,7 @@ public class OrderCatBiz implements OrderCartApiService {
             orderCart.setGoodsSubTitle("");
             orderCart.setGoodsPic("");
             orderCart.setGoodsSkuId("");
-            orderCart.setGoodsSpuId("");
+            orderCart.setGoodsSpuId(orderCartAddBo.getGoodsSpuId());
             orderCart.setGoodsCategoryId("");
             orderCart.setTableId(orderCartAddBo.getTableId());
             orderCart.setStoreId(orderCartAddBo.getStoreId());
