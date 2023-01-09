@@ -36,7 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/orderCart")
-public class OrderCartRest implements MybatisCrudRest<OrderCartForm, OrderCart, OrderCartService> {
+public class OrderCartRest  {
 
     private final OrderCatBiz orderCatBiz;
 

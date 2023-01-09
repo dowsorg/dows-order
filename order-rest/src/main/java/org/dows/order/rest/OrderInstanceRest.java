@@ -35,7 +35,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("orderInstance")
-public class OrderInstanceRest implements MybatisCrudRest<OrderInstanceForm, OrderInstance, OrderInstanceService> {
+public class OrderInstanceRest {
     private final OrderInstanceBiz orderInstanceBiz;
 
     /**

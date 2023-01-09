@@ -31,7 +31,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("orderItem")
-public class OrderItemRest implements MybatisCrudRest<OrderItemForm, OrderItem, OrderItemService> {
+public class OrderItemRest {
 
     private final OrderItemBiz orderItemBiz;
 
