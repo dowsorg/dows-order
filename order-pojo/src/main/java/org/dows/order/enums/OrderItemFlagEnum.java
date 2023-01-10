@@ -6,11 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum OrderItemFlagEnum {
-    //1:划菜 2:退菜 3:赠送 4:报损
+    //1:划菜 2:退菜 3:赠送 4:报损 5:加菜
     stroke_menu("划菜",1),
     return_menu("退菜",2),
     give("赠送",3),
     reporting("报损",4),
+    add_menu("加菜",5),
     ;
 
     private String name;

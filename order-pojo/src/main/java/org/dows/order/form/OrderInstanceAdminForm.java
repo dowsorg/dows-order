@@ -1,0 +1,35 @@
+package org.dows.order.form;
+
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Data
+public class OrderInstanceAdminForm implements Serializable {
+    private static final long serialVersionUID = 3714280174906041941L;
+
+    @ApiModelProperty(value = "1:订单列表 2:退菜明细 3:赠送明细 4:破损列表")
+    private Integer orderOpType;
+
+    @ApiModelProperty(value = "订单编号")
+    private String orderId;
+    @ApiModelProperty(value = "门店id")
+    private String storeId;
+    @ApiModelProperty(value = "门店区域")
+    private Integer storeRegion;
+    @ApiModelProperty(value = "门店模式")
+    private Integer storeMode;
+    @ApiModelProperty(value = "所属品牌")
+    private Integer brand;
+    @ApiModelProperty(value = "订单类型")
+    private Integer orderType;
+    @ApiModelProperty(value = "订单状态")
+    private Integer orderStatus;
+    @ApiModelProperty(value = "订单开始时间")
+    private Date startDate;
+    @ApiModelProperty(value = "订单结束时间")
+    private Date endDate;
+
+}
