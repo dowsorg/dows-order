@@ -1,26 +1,13 @@
-package org.dows.order.form;
+package org.dows.order.bo;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.Data;
 
 import java.io.Serializable;
 
-/**
-* @description 
-*
-* @author 
-* @date 2023年1月2日 下午2:04:57
-*/
 @Data
-@ToString
-@Builder
-@Accessors(chain = true)
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel(value = "OrderComment 表单对象", description = "订单-评价")
-public class OrderCommentForm implements Serializable{
+public class CreateCommentBo implements Serializable {
+    private static final long serialVersionUID = -5958799987435628263L;
 
     @ApiModelProperty("订单号")
     private String orderId;
