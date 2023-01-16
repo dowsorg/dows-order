@@ -1,6 +1,7 @@
 package org.dows.order.rest;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,9 @@ public class OrderInstanceRest {
     @ApiOperation("查询订单详情")
     public Response queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
         OrderInstanceQueryBo queryBo = BeanUtil.copyProperties(queryForm, OrderInstanceQueryBo.class);
+        if(StrUtil.isBlank(queryBo.getTableNo())){
+            queryBo.setAccountId(null);// TODO
+        }
         return Response.ok(orderInstanceBiz.queryOrderInfo(queryBo));
     }
 

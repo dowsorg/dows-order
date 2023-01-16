@@ -91,7 +91,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     public List<OrderInstanceInfoVo> queryOrderInfo(OrderInstanceQueryBo queryBo) {
         List<OrderInstanceInfoVo> infoVos = Lists.newArrayList();
         List<OrderInstance> orderList = orderInstanceService.lambdaQuery()
-                .eq(OrderInstance::getAccountId, queryBo.getAccountId()).list();
+                .eq(!StrUtil.isBlank(queryBo.getAccountId()),OrderInstance::getAccountId, queryBo.getAccountId())
+                .eq(OrderInstance::getStoreId,queryBo.getStoreId())
+                .eq(!StrUtil.isBlank(queryBo.getTableNo()),OrderInstance::getTableNo,queryBo.getTableNo())
+                .list();
         if(!CollUtil.isEmpty(orderList)){
             List<String> orderIds = orderList.stream().map(OrderInstance::getOrderId).collect(Collectors.toList());
             Map<String, List<OrderInstanceInfoVo.GoodSpuInfo>> orderGoodSpuInfoMap = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds)

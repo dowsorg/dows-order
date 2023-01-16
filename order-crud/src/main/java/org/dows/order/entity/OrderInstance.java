@@ -28,7 +28,7 @@ import org.dows.framework.crud.mybatis.CrudEntity;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(value = "OrderInstance对象", description = "订单")
-public class OrderInstance implements CrudEntity {
+public class OrderInstance  {
 
     @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty("自增主键ID")
@@ -82,11 +82,11 @@ public class OrderInstance implements CrudEntity {
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("时间戳")
     private Date dt;
-    @JsonIgnore
-    @TableLogic
-    @TableField(fill = FieldFill.INSERT)
-    @ApiModelProperty("是否删除")
-    private Boolean deleted;
+//    @JsonIgnore
+//    //@TableLogic
+//    //@TableField(fill = FieldFill.INSERT)
+//    @ApiModelProperty("是否删除")
+//    private Boolean deleted;
 
 }
 
