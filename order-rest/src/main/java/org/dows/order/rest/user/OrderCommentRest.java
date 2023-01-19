@@ -1,4 +1,4 @@
-package org.dows.order.rest;
+package org.dows.order.rest.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;

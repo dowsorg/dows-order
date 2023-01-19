@@ -1,4 +1,4 @@
-package org.dows.order.rest;
+package org.dows.order.rest.user;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;

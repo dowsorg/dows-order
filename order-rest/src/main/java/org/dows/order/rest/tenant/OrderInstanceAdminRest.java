@@ -1,4 +1,4 @@
-package org.dows.order.rest.admin;
+package org.dows.order.rest.tenant;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;

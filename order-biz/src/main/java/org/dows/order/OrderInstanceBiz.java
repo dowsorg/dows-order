@@ -116,7 +116,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 instanceInfoVo.setAccountName("");
                 instanceInfoVo.setTableId(orderInstance.getTableId());
                 instanceInfoVo.setPeoples(orderInstance.getPeoples());
-                instanceInfoVo.setPayChannel(0);
+                instanceInfoVo.setPayChannel(orderInstance.getPayChannel());
                 if(orderGoodSpuInfoMap.containsKey(orderInstance.getOrderId())){
                     List<OrderInstanceInfoVo.GoodSpuInfo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getOrderId());
                     instanceInfoVo.setGoodSpuInfoList(goodSpuInfos);
