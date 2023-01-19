@@ -68,7 +68,19 @@ public interface OrderInstanceBizApiService {
         return orderTableInfoList.isEmpty()?null:orderTableInfoList.get(0);
     }
 
+    /**
+     * 订单分页列表
+     * @param adminForm
+     * @return
+     */
     IPage<OrderInstanceAdminVo> selectOrderInstancePage(OrderInstanceAdminForm adminForm);
+
+    /**
+     * 订单 退菜 赠菜 破损通用
+     * @param adminForm
+     * @return
+     */
+    IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(OrderInstanceAdminForm adminForm);
 
 
 }

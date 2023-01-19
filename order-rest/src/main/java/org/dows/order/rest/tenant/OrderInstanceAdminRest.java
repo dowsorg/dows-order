@@ -49,7 +49,7 @@ public class OrderInstanceAdminRest {
     @PostMapping("/queryGiveOrderInfo")
     @ApiOperation("后台订单赠送退菜列表")
     public Response<IPage<OrderInstanceAdminVo>> queryGiveOrderInfo(@RequestBody OrderInstanceAdminForm adminForm){
-        return Response.ok(null);
+        return Response.ok(bizApiService.selectOrderInstanceRePage(adminForm));
     }
 
 }

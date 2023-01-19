@@ -21,5 +21,7 @@ public interface OrderInstanceMapper extends MybatisCrudMapper<OrderInstance> {
 
     IPage<OrderInstanceAdminVo> selectOrderInstancePage(@Param("page") Page page, @Param("param") OrderInstanceAdminForm adminForm);
 
+    IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(@Param("page") Page page, @Param("param") OrderInstanceAdminForm adminForm);
+
 }
 

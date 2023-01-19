@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 public class OrderInstanceAdminForm extends QueryParam {
 
-    @ApiModelProperty(value = "1:订单列表 2:退菜明细 3:赠送明细 4:破损列表")
+    @ApiModelProperty(value = "2:退菜明细 3:赠送明细 4:破损列表")
     private Integer orderOpType;
 
     @ApiModelProperty(value = "订单编号")

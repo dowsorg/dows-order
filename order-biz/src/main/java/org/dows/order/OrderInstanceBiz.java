@@ -199,4 +199,22 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         }
         return adminVoIPage;
     }
+
+    @Override
+    public IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(OrderInstanceAdminForm adminForm) {
+        Page<OrderInstanceAdminForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
+        IPage<OrderInstanceAdminVo> adminVoIPage = orderInstanceMapper.selectOrderInstanceRePage(paging, adminForm);
+        if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
+            for (OrderInstanceAdminVo record : adminVoIPage.getRecords()) {
+                record.setUserName(null);
+                record.setType(null);
+                record.setBrand(null);
+                record.setStoreRegion(null);
+                record.setStoreType(null);
+                record.setStoreName(null);
+                record.setFoodNum(null);
+            }
+        }
+        return adminVoIPage;
+    }
 }
