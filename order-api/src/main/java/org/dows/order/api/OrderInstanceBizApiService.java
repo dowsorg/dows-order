@@ -1,6 +1,11 @@
 package org.dows.order.api;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
 import org.dows.order.bo.*;
+import org.dows.order.form.OrderInstanceAdminForm;
+import org.dows.order.vo.OrderInstanceAdminVo;
 import org.dows.order.vo.OrderInstanceInfoVo;
 
 import java.util.Arrays;
@@ -62,6 +67,8 @@ public interface OrderInstanceBizApiService {
         List<OrderTableInfoBo> orderTableInfoList = getOrderTableInfo(storeId, Arrays.asList(tableId));
         return orderTableInfoList.isEmpty()?null:orderTableInfoList.get(0);
     }
+
+    IPage<OrderInstanceAdminVo> selectOrderInstancePage(OrderInstanceAdminForm adminForm);
 
 
 }

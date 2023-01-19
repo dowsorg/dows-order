@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.order.mapper.OrderInstanceMapper">
+
+
+    <select id="selectOrderInstancePage" parameterType="org.dows.order.form.OrderInstanceAdminForm" resultType="org.dows.order.vo.OrderInstanceAdminVo">
+        SELECT
+            o.order_id,
+            o.account_id,
+            o.`status`,
+            o.store_id,
+            o.table_no,
+            o.peoples,
+            o.pay_channel,
+            o.amount,
+            o.dt as 'orderDate'
+        FROM
+            order_instance o
+        <where>
+            <if test="param.orderId != null and param.orderId != ''">
+                and o.order_id = #{param.orderId}
+            </if>
+<!--            <if test="param.storeId != null and param.storeId != ''">-->
+<!--                and o.store_id = #{param.storeId}-->
+<!--            </if>-->
+<!--            <if test="param.orderId != null and param.orderId != ''">-->
+<!--                and o.order_id = #{param.orderId}-->
+<!--            </if>-->
+        </where>
+    </select>
+</mapper>

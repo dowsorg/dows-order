@@ -1,21 +1,14 @@
 package org.dows.order;
-import java.util.Date;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.jsqlparser.expression.operators.relational.Between;
 import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.*;
 import org.dows.order.entity.OrderInstance;
@@ -23,12 +16,20 @@ import org.dows.order.entity.OrderItem;
 import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
 import org.dows.order.enums.OrderTableStatusEnum;
+import org.dows.order.form.OrderInstanceAdminForm;
+import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
+import org.dows.order.vo.OrderInstanceAdminVo;
 import org.dows.order.vo.OrderInstanceInfoVo;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -42,9 +43,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final IdGenerator idGenerator;
 
+    private final OrderInstanceMapper orderInstanceMapper;
+
     @Override
     public String createOrderInstance(OrderInstancePaymentBo paymentBo) {
-
         return null;
     }
     @Override
@@ -178,5 +180,23 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             }
         }
         return tableInfoBoList;
+    }
+
+    @Override
+    public IPage<OrderInstanceAdminVo> selectOrderInstancePage(OrderInstanceAdminForm adminForm) {
+        Page<OrderInstanceAdminForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
+        IPage<OrderInstanceAdminVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
+        if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
+            for (OrderInstanceAdminVo record : adminVoIPage.getRecords()) {
+                record.setUserName(null);
+                record.setType(null);
+                record.setBrand(null);
+                record.setStoreRegion(null);
+                record.setStoreType(null);
+                record.setStoreName(null);
+                record.setFoodNum(null);
+            }
+        }
+        return adminVoIPage;
     }
 }

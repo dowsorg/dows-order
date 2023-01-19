@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
+import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.form.OrderInstanceAdminForm;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.vo.OrderInstanceAdminVo;
@@ -25,6 +26,8 @@ public class OrderInstanceAdminRest {
 
     private final OrderInstanceService orderInstanceService;
 
+    private final OrderInstanceBizApiService bizApiService;
+
 
     /**
      * 后台订单分页列表
@@ -34,7 +37,7 @@ public class OrderInstanceAdminRest {
     @PostMapping("/queryOrderInfo")
     @ApiOperation("后台订单分页列表")
     public Response<IPage<OrderInstanceAdminVo>> queryOrderInfo(@RequestBody OrderInstanceAdminForm adminForm){
-        return Response.ok(null);
+        return Response.ok(bizApiService.selectOrderInstancePage(adminForm));
     }
 
 

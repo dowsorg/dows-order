@@ -32,13 +32,13 @@ public class OrderInstanceAdminVo implements Serializable {
     @ApiModelProperty(value = "就餐人数")
     private Integer peoples;
     @ApiModelProperty(value = "下单方式")
-    private Integer orderMode;
+    private Integer payChannel;
     @ApiModelProperty(value = "菜品数量")
     private Integer foodNum;
     @ApiModelProperty(value = "订单状态")
-    private Integer orderType;
+    private Integer status;
     @ApiModelProperty(value = "订单金额")
-    private BigDecimal orderAmount;
+    private BigDecimal amount;
     @ApiModelProperty(value = "下单时间")
     private Date orderDate;
 
@@ -50,7 +50,7 @@ public class OrderInstanceAdminVo implements Serializable {
     @ApiModelProperty(value = "退菜 赠菜 破损 通用原因")
     private String reason;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用金额")
-    private BigDecimal amount;
+    private BigDecimal reAmount;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用时间")
     private Date dateTime;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用操作人")

@@ -3,12 +3,10 @@ package org.dows.order.form;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class OrderInstanceAdminForm implements Serializable {
-    private static final long serialVersionUID = 3714280174906041941L;
+public class OrderInstanceAdminForm extends QueryParam {
 
     @ApiModelProperty(value = "1:订单列表 2:退菜明细 3:赠送明细 4:破损列表")
     private Integer orderOpType;
