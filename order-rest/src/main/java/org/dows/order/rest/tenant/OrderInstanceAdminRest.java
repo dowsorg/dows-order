@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/admin/order")
+@RequestMapping("/order")
 public class OrderInstanceAdminRest {
 
 
