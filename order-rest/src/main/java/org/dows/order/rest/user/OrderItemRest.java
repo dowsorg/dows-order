@@ -30,7 +30,7 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("orderItem")
+@RequestMapping("/orderItem")
 public class OrderItemRest {
 
     private final OrderItemBiz orderItemBiz;

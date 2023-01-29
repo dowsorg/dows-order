@@ -49,16 +49,23 @@ public class OrderItemBiz implements OrderItemApiService {
      * @return
      */
     public boolean addMenuItem(OrderItemFlagBo flagBo,OrderItem orderItem){
-        OrderInstance instance = orderInstanceService.lambdaQuery().eq(OrderInstance::getOrderId, flagBo.getOrderId()).one();
+        OrderItem oldItem = new OrderItem();
+        oldItem.setId(orderItem.getId());
+        oldItem.setFlag(OrderItemFlagEnum.add_menu.getCode());
+        orderItemService.updateById(oldItem);
+        OrderInstance instance = orderInstanceService.lambdaQuery().eq(OrderInstance::getOrderId, orderItem.getOrderId()).one();
         OrderItem item  = new OrderItem();
         item.setOrderId(instance.getOrderId());
         item.setTableId(instance.getTableId());
         item.setAccountId(instance.getAccountId());
-        item.setSpuId(null);
-        item.setSpuName("");
-        item.setQuantity(0);
-        item.setPrice(new BigDecimal("0"));
-        item.setMore("");
+        item.setSpuId(orderItem.getSpuId());
+        item.setSpuName(orderItem.getSpuName());
+        item.setQuantity(1);
+        item.setPrice(orderItem.getPrice());
+        OrderItemMoreBo moreBo = new OrderItemMoreBo();
+        moreBo.setKey(orderItem.getId().toString());
+        moreBo.setVal(flagBo.getRemark());
+        item.setMore(JSONUtil.toJsonStr(moreBo));
         item.setFlag(OrderItemFlagEnum.add_menu.getCode());
         return orderItemService.save(item);
     }

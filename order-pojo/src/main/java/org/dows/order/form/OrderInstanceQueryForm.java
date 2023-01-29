@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -14,6 +16,7 @@ public class OrderInstanceQueryForm implements Serializable {
     @ApiModelProperty(value = "订单类型(全部就不传 0:堂食|1:外卖|2:打包)")
     private Integer type;
 
+    @NotBlank(message = "店铺id不能空!")
     @ApiModelProperty(value = "店铺id")
     private String storeId;
 

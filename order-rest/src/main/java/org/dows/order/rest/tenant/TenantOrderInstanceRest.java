@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/order")
-public class OrderInstanceAdminRest {
+@RequestMapping("tenant/order")
+public class TenantOrderInstanceRest {
 
 
     private final OrderInstanceService orderInstanceService;

@@ -115,7 +115,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     })));
             for (OrderInstance orderInstance : orderList) {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
-                instanceInfoVo.setAccountName("");
+                instanceInfoVo.setAccountName("张三");
                 instanceInfoVo.setTableId(orderInstance.getTableId());
                 instanceInfoVo.setPeoples(orderInstance.getPeoples());
                 instanceInfoVo.setPayChannel(orderInstance.getPayChannel());
@@ -128,6 +128,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 }
                 instanceInfoVo.setRemark(orderInstance.getRemark());
                 instanceInfoVo.setStatus(0);
+                instanceInfoVo.setCreateDate(orderInstance.getDt());
                 infoVos.add(instanceInfoVo);
             }
         }
@@ -188,13 +189,13 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         IPage<OrderInstanceAdminVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
             for (OrderInstanceAdminVo record : adminVoIPage.getRecords()) {
-                record.setUserName(null);
-                record.setType(null);
-                record.setBrand(null);
-                record.setStoreRegion(null);
-                record.setStoreType(null);
-                record.setStoreName(null);
-                record.setFoodNum(null);
+                record.setUserName("张三");
+                record.setType("堂食");
+                record.setBrand("海底捞");
+                record.setStoreRegion("徐家汇");
+                record.setStoreType(1);
+                record.setStoreName("普通面馆");
+                record.setFoodNum(2);
             }
         }
         return adminVoIPage;

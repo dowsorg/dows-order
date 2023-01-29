@@ -18,12 +18,14 @@ import org.dows.order.form.OrderInstanceForm;
 import org.dows.order.form.OrderInstanceQueryForm;
 import org.dows.order.form.OrderItemFlagForm;
 import org.dows.order.service.OrderInstanceService;
+import org.dows.order.vo.OrderInstanceInfoVo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
 * 订单(orderInstance)表控制层
@@ -66,7 +68,7 @@ public class OrderInstanceRest {
      */
     @PostMapping("/queryOrderInfo")
     @ApiOperation("查询订单详情")
-    public Response queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
+    public Response<List<OrderInstanceInfoVo>> queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
         OrderInstanceQueryBo queryBo = BeanUtil.copyProperties(queryForm, OrderInstanceQueryBo.class);
         if(StrUtil.isBlank(queryBo.getTableNo())){
             queryBo.setAccountId(null);// TODO

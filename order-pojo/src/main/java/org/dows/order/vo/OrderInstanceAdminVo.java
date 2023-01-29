@@ -17,10 +17,10 @@ public class OrderInstanceAdminVo implements Serializable {
     private String accountNo;
     @ApiModelProperty(value = "客户姓名")
     private String userName;
-    @ApiModelProperty(value = "订单类型")
-    private Integer type;
+    @ApiModelProperty(value = "订单类型 堂食 外卖 ")
+    private String type;
     @ApiModelProperty(value = "所属品牌")
-    private Integer brand;
+    private String brand;
     @ApiModelProperty(value = "门店区域")
     private String storeRegion;
     @ApiModelProperty(value = "门店模式")
@@ -36,7 +36,7 @@ public class OrderInstanceAdminVo implements Serializable {
     @ApiModelProperty(value = "菜品数量")
     private Integer foodNum;
     @ApiModelProperty(value = "订单状态")
-    private Integer status;
+    private String status;
     @ApiModelProperty(value = "订单金额")
     private BigDecimal amount;
     @ApiModelProperty(value = "下单时间")

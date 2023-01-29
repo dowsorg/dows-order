@@ -54,7 +54,7 @@ public class OrderCommentRest {
      * @return
      */
     @PostMapping("/queryOrderComment")
-    @ApiOperation("创建订单评价")
+    @ApiOperation("查询订单评价")
     public Response<List<OrderCommentResponseVo>> queryOrderComment(@Valid @RequestBody OrderCommentQueryForm commentForm){
         OrderCommentQueryBo commentBo = BeanUtil.copyProperties(commentForm, OrderCommentQueryBo.class);
         return Response.ok(BeanUtil.copyToList(orderCommentBiz.getCommentList(commentBo),OrderCommentResponseVo.class));
