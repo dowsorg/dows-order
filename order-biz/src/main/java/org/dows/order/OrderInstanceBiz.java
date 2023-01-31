@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,22 +17,27 @@ import org.dows.order.entity.OrderItem;
 import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
 import org.dows.order.enums.OrderTableStatusEnum;
-import org.dows.order.form.OrderInstanceAdminForm;
+import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
-import org.dows.order.vo.OrderInstanceAdminVo;
+import org.dows.order.vo.OrderInstanceTenantOpVo;
+import org.dows.order.vo.OrderInstanceTenantVo;
 import org.dows.order.vo.OrderInstanceInfoVo;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author liuhonger
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -184,13 +190,23 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public IPage<OrderInstanceAdminVo> selectOrderInstancePage(OrderInstanceAdminForm adminForm) {
-        Page<OrderInstanceAdminForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
-        IPage<OrderInstanceAdminVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
+    public boolean applyRefund(OrderApplyRefundBo refundBo) {
+        //TODO 调支付系统退款
+
+        return ChainWrappers.lambdaUpdateChain(orderInstanceMapper)
+                .eq(OrderInstance::getOrderId,refundBo.getOrderId())
+                .set(OrderInstance::getRefund,refundBo.getType())
+                .set(OrderInstance::getRefundRemark,refundBo.getApplyRemark()).update();
+    }
+
+    @Override
+    public IPage<OrderInstanceTenantVo> selectOrderInstancePage(OrderInstanceTenantForm adminForm) {
+        Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
+        IPage<OrderInstanceTenantVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
-            for (OrderInstanceAdminVo record : adminVoIPage.getRecords()) {
+            for (OrderInstanceTenantVo record : adminVoIPage.getRecords()) {
                 record.setUserName("张三");
-                record.setType("堂食");
+                record.setTypeStr("堂食");
                 record.setBrand("海底捞");
                 record.setStoreRegion("徐家汇");
                 record.setStoreType(1);
@@ -202,18 +218,24 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(OrderInstanceAdminForm adminForm) {
-        Page<OrderInstanceAdminForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
-        IPage<OrderInstanceAdminVo> adminVoIPage = orderInstanceMapper.selectOrderInstanceRePage(paging, adminForm);
+    public IPage<OrderInstanceTenantOpVo> selectOrderInstanceRePage(OrderInstanceTenantForm adminForm) {
+        Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
+        IPage<OrderInstanceTenantOpVo> adminVoIPage = orderInstanceMapper.selectOrderInstanceRePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
-            for (OrderInstanceAdminVo record : adminVoIPage.getRecords()) {
-                record.setUserName(null);
-                record.setType(null);
-                record.setBrand(null);
-                record.setStoreRegion(null);
-                record.setStoreType(null);
-                record.setStoreName(null);
-                record.setFoodNum(null);
+            for (OrderInstanceTenantOpVo record : adminVoIPage.getRecords()) {
+                record.setFood("小炒肉");
+                record.setNum(1);
+                record.setReason("不好吃");
+                record.setReAmount(new BigDecimal("4.6"));
+                record.setDateTime(new Date());
+                record.setOperator("小猪");
+                record.setUserName("张三");
+                record.setTypeStr("堂食");
+                record.setBrand("海底捞");
+                record.setStoreRegion("徐家汇");
+                record.setStoreType(1);
+                record.setStoreName("普通面馆");
+                record.setFoodNum(2);
             }
         }
         return adminVoIPage;

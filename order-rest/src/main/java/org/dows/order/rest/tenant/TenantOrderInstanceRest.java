@@ -8,9 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.order.api.OrderInstanceBizApiService;
-import org.dows.order.form.OrderInstanceAdminForm;
+import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.service.OrderInstanceService;
-import org.dows.order.vo.OrderInstanceAdminVo;
+import org.dows.order.vo.OrderInstanceTenantOpVo;
+import org.dows.order.vo.OrderInstanceTenantVo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,9 +36,10 @@ public class TenantOrderInstanceRest {
      * @return
      */
     @PostMapping("/queryOrderInfo")
-    @ApiOperation("后台订单分页列表")
-    public Response<IPage<OrderInstanceAdminVo>> queryOrderInfo(@RequestBody OrderInstanceAdminForm adminForm){
-        return Response.ok(bizApiService.selectOrderInstancePage(adminForm));
+    @ApiOperation("后台订单和退款分页列表")
+    public Response<IPage<OrderInstanceTenantVo>> queryOrderInfo(@RequestBody OrderInstanceTenantForm tenantForm){
+        tenantForm.setOrderOpType(null);
+        return Response.ok(bizApiService.selectOrderInstancePage(tenantForm));
     }
 
 
@@ -47,9 +49,10 @@ public class TenantOrderInstanceRest {
      * @return
      */
     @PostMapping("/queryGiveOrderInfo")
-    @ApiOperation("后台订单赠送退菜列表")
-    public Response<IPage<OrderInstanceAdminVo>> queryGiveOrderInfo(@RequestBody OrderInstanceAdminForm adminForm){
-        return Response.ok(bizApiService.selectOrderInstanceRePage(adminForm));
+    @ApiOperation("后台订单赠送退菜报损列表")
+    public Response<IPage<OrderInstanceTenantOpVo>> queryGiveOrderInfo(@RequestBody OrderInstanceTenantForm tenantForm){
+        tenantForm.setOrderRefund(null);
+        return Response.ok(bizApiService.selectOrderInstanceRePage(tenantForm));
     }
 
 }

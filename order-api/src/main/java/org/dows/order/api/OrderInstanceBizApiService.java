@@ -1,11 +1,10 @@
 package org.dows.order.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Param;
 import org.dows.order.bo.*;
-import org.dows.order.form.OrderInstanceAdminForm;
-import org.dows.order.vo.OrderInstanceAdminVo;
+import org.dows.order.form.OrderInstanceTenantForm;
+import org.dows.order.vo.OrderInstanceTenantOpVo;
+import org.dows.order.vo.OrderInstanceTenantVo;
 import org.dows.order.vo.OrderInstanceInfoVo;
 
 import java.util.Arrays;
@@ -69,18 +68,25 @@ public interface OrderInstanceBizApiService {
     }
 
     /**
+     * 申请退款 接口
+     * @param refundBo
+     * @return
+     */
+    boolean applyRefund(OrderApplyRefundBo refundBo);
+
+    /**
      * 订单分页列表
      * @param adminForm
      * @return
      */
-    IPage<OrderInstanceAdminVo> selectOrderInstancePage(OrderInstanceAdminForm adminForm);
+    IPage<OrderInstanceTenantVo> selectOrderInstancePage(OrderInstanceTenantForm adminForm);
 
     /**
      * 订单 退菜 赠菜 破损通用
      * @param adminForm
      * @return
      */
-    IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(OrderInstanceAdminForm adminForm);
+    IPage<OrderInstanceTenantOpVo> selectOrderInstanceRePage(OrderInstanceTenantForm adminForm);
 
 
 }

@@ -4,7 +4,7 @@
 <mapper namespace="org.dows.order.mapper.OrderInstanceMapper">
 
 
-    <select id="selectOrderInstancePage" parameterType="org.dows.order.form.OrderInstanceAdminForm" resultType="org.dows.order.vo.OrderInstanceAdminVo">
+    <select id="selectOrderInstancePage" parameterType="org.dows.order.form.OrderInstanceTenantForm" resultType="org.dows.order.vo.OrderInstanceTenantVo">
         SELECT
             o.order_id,
             o.account_id,
@@ -29,7 +29,7 @@
 <!--            </if>-->
         </where>
     </select>
-    <select id="selectOrderInstanceRePage"  parameterType="org.dows.order.form.OrderInstanceAdminForm" resultType="org.dows.order.vo.OrderInstanceAdminVo">
+    <select id="selectOrderInstanceRePage" parameterType="org.dows.order.form.OrderInstanceTenantForm" resultType="org.dows.order.vo.OrderInstanceTenantOpVo">
         SELECT
         o.order_id,
         o.account_id,
@@ -54,7 +54,7 @@
             <!--                and o.order_id = #{param.orderId}-->
             <!--            </if>-->
             <if test="param.orderOpType != null">
-                and i.order_id = #{param.orderOpType}
+                and i.flag = #{param.orderOpType}
             </if>
         </where>
 

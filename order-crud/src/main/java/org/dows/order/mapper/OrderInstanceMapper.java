@@ -6,8 +6,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.dows.framework.crud.mybatis.MybatisCrudMapper;
 import org.dows.order.entity.OrderInstance;
-import org.dows.order.form.OrderInstanceAdminForm;
-import org.dows.order.vo.OrderInstanceAdminVo;
+import org.dows.order.form.OrderInstanceTenantForm;
+import org.dows.order.vo.OrderInstanceTenantOpVo;
+import org.dows.order.vo.OrderInstanceTenantVo;
 
 /**
  * 订单(OrderInstance)表数据库访问层
@@ -19,9 +20,9 @@ import org.dows.order.vo.OrderInstanceAdminVo;
 public interface OrderInstanceMapper extends MybatisCrudMapper<OrderInstance> {
 
 
-    IPage<OrderInstanceAdminVo> selectOrderInstancePage(@Param("page") Page page, @Param("param") OrderInstanceAdminForm adminForm);
+    IPage<OrderInstanceTenantVo> selectOrderInstancePage(@Param("page") Page page, @Param("param") OrderInstanceTenantForm adminForm);
 
-    IPage<OrderInstanceAdminVo> selectOrderInstanceRePage(@Param("page") Page page, @Param("param") OrderInstanceAdminForm adminForm);
+    IPage<OrderInstanceTenantOpVo> selectOrderInstanceRePage(@Param("page") Page page, @Param("param") OrderInstanceTenantForm adminForm);
 
 }
 

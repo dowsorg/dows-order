@@ -21,8 +21,11 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "人数")
     private Integer peoples;
 
-    @ApiModelProperty(value = "支付渠道 1：支付宝 2：微笑")
+    @ApiModelProperty(value = "支付渠道 1:支付宝|2:微笑")
     private Integer payChannel;
+
+    @ApiModelProperty(value = "订单来源 1:服务员下单|2:扫码下单")
+    private Integer orderSource;
 
     @ApiModelProperty(value = "备注")
     private String remark;

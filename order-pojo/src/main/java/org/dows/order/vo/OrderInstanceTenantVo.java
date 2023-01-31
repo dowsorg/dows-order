@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class OrderInstanceAdminVo implements Serializable {
+public class OrderInstanceTenantVo implements Serializable {
     private static final long serialVersionUID = 9172367651136981993L;
 
     @ApiModelProperty(value = "订单编号")
@@ -17,8 +17,10 @@ public class OrderInstanceAdminVo implements Serializable {
     private String accountNo;
     @ApiModelProperty(value = "客户姓名")
     private String userName;
-    @ApiModelProperty(value = "订单类型 堂食 外卖 ")
-    private String type;
+    @ApiModelProperty(value = "订单类型 0:堂食|1:外卖|2:打包")
+    private Integer type;
+    @ApiModelProperty(value = "订单类型 0:堂食|1:外卖|2:打包")
+    private String typeStr;
     @ApiModelProperty(value = "所属品牌")
     private String brand;
     @ApiModelProperty(value = "门店区域")
@@ -31,30 +33,25 @@ public class OrderInstanceAdminVo implements Serializable {
     private String tableNo;
     @ApiModelProperty(value = "就餐人数")
     private Integer peoples;
-    @ApiModelProperty(value = "下单方式")
+    @ApiModelProperty(value = "支付渠道 1:微信|2:支付宝|3:储蓄卡")
     private Integer payChannel;
+    @ApiModelProperty(value = "支付渠道 1:微信|2:支付宝|3:储蓄卡")
+    private String payChannelStr;
     @ApiModelProperty(value = "菜品数量")
     private Integer foodNum;
     @ApiModelProperty(value = "订单状态")
     private String status;
     @ApiModelProperty(value = "订单金额")
     private BigDecimal amount;
+    @ApiModelProperty(value = "申请退款状态 0:拒绝退款|1:已退款")
+    private Integer refundId;
+    @ApiModelProperty(value = "申请退款状态 0:拒绝退款|1:已退款")
+    private String refundStr;
+    @ApiModelProperty(value = "申请退款备注")
+    private String refundRemark;
     @ApiModelProperty(value = "下单时间")
     private Date orderDate;
 
-    //退菜 赠菜 破损通用
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用名称")
-    private String food;
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用数量")
-    private Integer num;
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用原因")
-    private String reason;
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用金额")
-    private BigDecimal reAmount;
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用时间")
-    private Date dateTime;
-    @ApiModelProperty(value = "退菜 赠菜 破损 通用操作人")
-    private String operator;
 
 
 

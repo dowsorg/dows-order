@@ -76,6 +76,12 @@ public class OrderInstance  {
     @ApiModelProperty("支付状态")
     private Integer payState;
 
+    @ApiModelProperty("申请退款状态 0:拒绝退款 1:退款")
+    private Integer refund;
+
+    @ApiModelProperty("申请退款备注")
+    private String refundRemark;
+
     @ApiModelProperty("支付时间")
     private Date payTime;
 
