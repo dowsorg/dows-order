@@ -51,19 +51,19 @@ public interface OrderInstanceBizApiService {
     /**
      * 返回桌台的订单信息 催万乐用
      * @param storeId
-     * @param tableIds
+     * @param tableNos
      * @return
      */
-    List<OrderTableInfoBo> getOrderTableInfo(String storeId,List<String> tableIds);
+    List<OrderTableInfoBo> getOrderTableInfo(Long storeId,List<String> tableNos);
 
     /**
      * websocket 推送到桌台通知 已超时超时 其他状态
      * @param storeId
-     * @param tableId
+     * @param tableNo
      * @return
      */
-    default OrderTableInfoBo getOrderTableInfoOne(String storeId,String tableId) {
-        List<OrderTableInfoBo> orderTableInfoList = getOrderTableInfo(storeId, Arrays.asList(tableId));
+    default OrderTableInfoBo getOrderTableInfoOne(Long storeId,String tableNo) {
+        List<OrderTableInfoBo> orderTableInfoList = getOrderTableInfo(storeId, Arrays.asList(tableNo));
         return orderTableInfoList.isEmpty()?null:orderTableInfoList.get(0);
     }
 
@@ -73,6 +73,13 @@ public interface OrderInstanceBizApiService {
      * @return
      */
     boolean applyRefund(OrderApplyRefundBo refundBo);
+
+    /**
+     * 确认出餐
+     * @param orderId
+     * @return
+     */
+    boolean diningOrder(Long orderId);
 
     /**
      * 订单分页列表

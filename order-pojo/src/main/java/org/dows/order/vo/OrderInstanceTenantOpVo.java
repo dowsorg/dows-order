@@ -10,12 +10,13 @@ import java.util.Date;
 public class OrderInstanceTenantOpVo extends OrderInstanceTenantVo{
 
     //退菜 赠菜 破损通用
+    private String more;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用名称")
     private String food;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用数量")
     private Integer num;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用原因")
-    private String reason;
+    private String remarks;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用金额")
     private BigDecimal reAmount;
     @ApiModelProperty(value = "退菜 赠菜 破损 通用时间")

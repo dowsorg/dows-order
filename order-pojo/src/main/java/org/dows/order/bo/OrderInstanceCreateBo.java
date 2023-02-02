@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderInstanceCreateBo implements Serializable {
     private static final long serialVersionUID = -7194552277994797454L;
 
-    @ApiModelProperty(value = "0:堂食|1:外卖|2:打包")
+    @ApiModelProperty(value = "0:堂食|1:自营外卖|2:打包")
     private Integer type;
 
     @ApiModelProperty(value = "人数")
@@ -20,18 +20,18 @@ public class OrderInstanceCreateBo implements Serializable {
     private Integer orderStore;
 
     @ApiModelProperty(value = "店铺id")
-    private String storeId;
+    private Long storeId;
 
     @ApiModelProperty(value = "店铺桌号")
-    private String tableId;
+    private String tableNo;
 
     @ApiModelProperty(value = "1:用户 2：店员")
     private Integer operationType;
 
     @ApiModelProperty(value = "账号id")
-    private String accountId;
+    private Long accountId;
 
-    @ApiModelProperty(value = "备注")
+    @ApiModelProperty(value = "订单备注")
     private String remark;
 
     @ApiModelProperty(value = "商品信息")
@@ -43,10 +43,13 @@ public class OrderInstanceCreateBo implements Serializable {
         private static final long serialVersionUID = -8883985643882456615L;
 
         @ApiModelProperty(value = "商品id")
-        private String goodSpuId;
+        private Long goodSpuId;
 
         @ApiModelProperty(value = "商品数量")
         private Integer quantity;
+
+        @ApiModelProperty(value = "商品备注")
+        private String remark;
 
     }
 

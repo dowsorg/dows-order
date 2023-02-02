@@ -11,7 +11,7 @@ public class OrderCartInfoVo implements Serializable {
     private static final long serialVersionUID = -4458334407812318604L;
 
     @ApiModelProperty(value = "spuId")
-    private String goodSpuId;
+    private Long goodSpuId;
 
     @ApiModelProperty(value = "数量")
     private Integer quantity;

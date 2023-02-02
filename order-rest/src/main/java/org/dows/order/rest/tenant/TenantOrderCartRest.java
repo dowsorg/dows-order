@@ -1,4 +1,4 @@
-package org.dows.order.rest.user;
+package org.dows.order.rest.tenant;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
@@ -7,11 +7,16 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
+import org.dows.framework.crud.mybatis.MybatisCrudRest;
 import org.dows.order.OrderCatBiz;
 import org.dows.order.bo.OrderCartAddBo;
 import org.dows.order.bo.OrderCartQueryBo;
+import org.dows.order.entity.OrderCart;
 import org.dows.order.form.OrderCartAddForm;
+import org.dows.order.form.OrderCartForm;
 import org.dows.order.form.OrderCartQueryForm;
+import org.dows.order.service.OrderCartService;
+import org.dows.order.vo.OrderCartInfoVo;
 import org.dows.order.vo.OrderCartTotalVo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
 * 订单-预购单(OrderCart)表控制层
@@ -30,8 +36,8 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/orderCart")
-public class OrderCartRest {
+@RequestMapping("tenant/orderCart")
+public class TenantOrderCartRest {
 
     private final OrderCatBiz orderCatBiz;
 

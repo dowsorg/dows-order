@@ -11,15 +11,15 @@ import java.util.Date;
 public class OrderInstanceTenantVo implements Serializable {
     private static final long serialVersionUID = 9172367651136981993L;
 
-    @ApiModelProperty(value = "订单编号")
-    private String orderId;
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
     @ApiModelProperty(value = "客户编号")
     private String accountNo;
     @ApiModelProperty(value = "客户姓名")
     private String userName;
-    @ApiModelProperty(value = "订单类型 0:堂食|1:外卖|2:打包")
+    @ApiModelProperty(value = "订单类型 0:堂食|1:自营外卖|2:打包")
     private Integer type;
-    @ApiModelProperty(value = "订单类型 0:堂食|1:外卖|2:打包")
+    @ApiModelProperty(value = "订单类型 0:堂食|1:自营外卖|2:打包")
     private String typeStr;
     @ApiModelProperty(value = "所属品牌")
     private String brand;

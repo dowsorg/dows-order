@@ -11,11 +11,11 @@ public class OrderInstanceQueryBo implements Serializable {
 
     private static final long serialVersionUID = 7819126511796012141L;
 
-    @ApiModelProperty(value = "订单类型(全部就不传 0:堂食|1:外卖|2:打包)")
+    @ApiModelProperty(value = "订单类型(全部就不传 0:堂食|1:自营外卖|2:打包)")
     private Integer type;
 
     @ApiModelProperty(value = "用户id")
-    private String accountId;
+    private Long accountId;
 
     @ApiModelProperty(value = "用户名")
     private String accountName;
@@ -30,7 +30,7 @@ public class OrderInstanceQueryBo implements Serializable {
     private String orderId;
 
     @ApiModelProperty(value = "店铺id")
-    private String storeId;
+    private Long storeId;
 
     @ApiModelProperty(value = "桌号")
     private String tableNo;

@@ -12,10 +12,10 @@ public class OrderCartQueryForm implements Serializable {
 
     @NotNull(message = "店铺id不能为空!")
     @ApiModelProperty(value = "店铺id")
-    private String storeId;
+    private Long storeId;
 
     @ApiModelProperty(value = "桌号id")
-    private String tableId;
+    private String tableNo;
 
 
 

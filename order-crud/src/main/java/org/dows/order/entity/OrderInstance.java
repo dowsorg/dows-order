@@ -35,7 +35,7 @@ public class OrderInstance  {
     private Long id;
 
     @ApiModelProperty("分布式ID")
-    private String orderId;
+    private String orderNo;
 
     @ApiModelProperty("桌号唯一标识")
     private String tableId;
@@ -44,10 +44,10 @@ public class OrderInstance  {
     private String tableNo;
 
     @ApiModelProperty("客户账号ID")
-    private String accountId;
+    private Long accountId;
 
     @ApiModelProperty("店铺ID")
-    private String storeId;
+    private Long storeId;
 
     @ApiModelProperty("应用ID")
     private String appId;
@@ -64,16 +64,19 @@ public class OrderInstance  {
     @ApiModelProperty("人数")
     private Integer peoples;
 
-    @ApiModelProperty("订单类型(0:堂食|1:外卖|2:打包)")
+    @ApiModelProperty("订单类型(0:堂食|1:自营外卖|2:打包)")
     private Integer type;
 
-    @ApiModelProperty("订单状态(0:制作中|1:制作完成|2:待支付|3:已支付|4:进行中|5:已结束)")
+    @ApiModelProperty("订单状态(0:制作中|1:制作完成|2:进行中|3:已结束)")
     private Integer status;
 
-    @ApiModelProperty("'支付方式'")
+    @ApiModelProperty("备餐/出餐时间")
+    private Date diningTime;
+
+    @ApiModelProperty("支付渠道 1:微信 2:支付宝 3:储蓄卡")
     private Integer payChannel;
 
-    @ApiModelProperty("支付状态")
+    @ApiModelProperty("支付状态 0:未支付 1:已支付")
     private Integer payState;
 
     @ApiModelProperty("申请退款状态 0:拒绝退款 1:退款")

@@ -1,6 +1,8 @@
 package org.dows.order;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,6 +12,7 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.account.biz.AccountBiz;
 import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.*;
 import org.dows.order.entity.OrderInstance;
@@ -21,15 +24,14 @@ import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
+import org.dows.order.vo.OrderInstanceInfoVo;
 import org.dows.order.vo.OrderInstanceTenantOpVo;
 import org.dows.order.vo.OrderInstanceTenantVo;
-import org.dows.order.vo.OrderInstanceInfoVo;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,6 +53,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceMapper orderInstanceMapper;
 
+    private final AccountBiz accountBiz;
+
     @Override
     public String createOrderInstance(OrderInstancePaymentBo paymentBo) {
         return null;
@@ -60,9 +64,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         //TODO 获取goods 信息 店铺桌号信息
         OrderInstance orderInstance = new OrderInstance();
         String timePrefix = idGenerator.getTimePrefix(IdKey.OMS_ORDER_ID);
-        orderInstance.setOrderId(timePrefix);
-        orderInstance.setTableId(createBo.getTableId());
-        orderInstance.setTableNo(null);
+        orderInstance.setOrderNo(timePrefix);
+        orderInstance.setTableNo(createBo.getTableNo());
         orderInstance.setAccountId(createBo.getAccountId());
         orderInstance.setStoreId(createBo.getStoreId());
         orderInstance.setAppId("");
@@ -75,21 +78,22 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         }
         BigDecimal amoutPrice = new BigDecimal("0");
         List<OrderItem> orderItems = Lists.newArrayList();
+        orderInstanceService.save(orderInstance);
         for (OrderInstanceCreateBo.GoodSpuInfo goodSpuInfo : createBo.getGoodSpuInfoList()) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrderId(timePrefix);
-            orderItem.setTableId(orderInstance.getTableId());
+            orderItem.setOrderId(orderInstance.getId());
+            orderItem.setTableNo(orderInstance.getTableNo());
             orderItem.setAccountId(orderInstance.getAccountId());
             orderItem.setSpuId(goodSpuInfo.getGoodSpuId());
-            orderItem.setSpuName("");
+            orderItem.setSpuName("小炒肉");
             orderItem.setFlag(0);
             orderItem.setQuantity(goodSpuInfo.getQuantity());
-            orderItem.setPrice(new BigDecimal(""));
+            orderItem.setPrice(new BigDecimal("4.5"));
+            orderItem.setRemark(goodSpuInfo.getRemark());
             amoutPrice = amoutPrice.add(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
             orderItems.add(orderItem);
         }
         orderInstance.setAmount(amoutPrice);
-        orderInstanceService.save(orderInstance);
         orderItemService.saveBatch(orderItems);
     }
 
@@ -99,42 +103,64 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     public List<OrderInstanceInfoVo> queryOrderInfo(OrderInstanceQueryBo queryBo) {
         List<OrderInstanceInfoVo> infoVos = Lists.newArrayList();
         List<OrderInstance> orderList = orderInstanceService.lambdaQuery()
-                .eq(!StrUtil.isBlank(queryBo.getAccountId()),OrderInstance::getAccountId, queryBo.getAccountId())
+                .eq(queryBo.getAccountId() == null,OrderInstance::getAccountId, queryBo.getAccountId())
                 .eq(OrderInstance::getStoreId,queryBo.getStoreId())
                 .eq(!StrUtil.isBlank(queryBo.getTableNo()),OrderInstance::getTableNo,queryBo.getTableNo())
                 .list();
         if(!CollUtil.isEmpty(orderList)){
-            List<String> orderIds = orderList.stream().map(OrderInstance::getOrderId).collect(Collectors.toList());
-            Map<String, List<OrderInstanceInfoVo.GoodSpuInfo>> orderGoodSpuInfoMap = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds)
-                    .list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId, Collectors.collectingAndThen(Collectors.toList(), e -> {
+            List<Long> orderIds = orderList.stream().map(OrderInstance::getId).collect(Collectors.toList());
+            Map<Long, List<OrderInstanceInfoVo.GoodSpuInfo>> orderGoodSpuInfoMap = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds)
+                    .list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId, Collectors.collectingAndThen(Collectors.toList(), a -> {
                         List<OrderInstanceInfoVo.GoodSpuInfo> list = Lists.newArrayList();
-                        for (OrderItem orderItem : e) {
+                        for (OrderItem orderItem : a) {
                             OrderInstanceInfoVo.GoodSpuInfo goodSpuInfo = new OrderInstanceInfoVo.GoodSpuInfo();
                             goodSpuInfo.setOrderItemId(orderItem.getId());
                             goodSpuInfo.setFlag(orderItem.getFlag());
                             goodSpuInfo.setGoodName(orderItem.getSpuName());
                             goodSpuInfo.setQuantity(orderItem.getQuantity());
                             goodSpuInfo.setPrice(orderItem.getPrice());
+                            goodSpuInfo.setRemark(orderItem.getRemark());
                             list.add(goodSpuInfo);
                         }
                         return list;
                     })));
             for (OrderInstance orderInstance : orderList) {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
-                instanceInfoVo.setAccountName("张三");
-                instanceInfoVo.setTableId(orderInstance.getTableId());
-                instanceInfoVo.setPeoples(orderInstance.getPeoples());
-                instanceInfoVo.setPayChannel(orderInstance.getPayChannel());
-                if(orderGoodSpuInfoMap.containsKey(orderInstance.getOrderId())){
-                    List<OrderInstanceInfoVo.GoodSpuInfo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getOrderId());
+                if(instanceInfoVo.getType().equals(1)){ //自营外面才有 手机号和姓名
+                    instanceInfoVo.setPhone("13554700856");
+                    instanceInfoVo.setAccountName("张三");
+                }
+                if(instanceInfoVo.getType().equals(0)){ //堂食
+                    instanceInfoVo.setTableNo(orderInstance.getTableNo());
+                    instanceInfoVo.setPeoples(orderInstance.getPeoples());
+                }else{
+                    //Response byAccountId = accountBiz.getInfoByAccountId();
+                    instanceInfoVo.setUserInfo(null);
+                }
+                if(Integer.valueOf(1).equals(orderInstance.getPayState())){
+                    instanceInfoVo.setPayChannel(orderInstance.getPayChannel());
+                }
+
+                if(orderGoodSpuInfoMap.containsKey(orderInstance.getId())){
+                    List<OrderInstanceInfoVo.GoodSpuInfo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getId());
                     instanceInfoVo.setGoodSpuInfoList(goodSpuInfos);
                     BigDecimal decimal = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getPrice).reduce((x, y) -> x.add(y)).orElse(BigDecimal.ZERO);
                     instanceInfoVo.setSubtotal(decimal);
                     instanceInfoVo.setTotalAmount(decimal);
+                    long count = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getQuantity).count();
+                    instanceInfoVo.setSpuCount(Long.valueOf(count));
+                    instanceInfoVo.setSpuCategory(goodSpuInfos.size());
+                }
+                if(instanceInfoVo.getDiningTime() != null){
+                    instanceInfoVo.setDiningTime(DateUtil.format(orderInstance.getDiningTime(), "HH:mm"));
+                }else{
+                    instanceInfoVo.setDiningTime(DateUtil.formatBetween(orderInstance.getDt(),
+                            orderInstance.getDiningTime(), BetweenFormatter.Level.MINUTE));
                 }
                 instanceInfoVo.setRemark(orderInstance.getRemark());
                 instanceInfoVo.setStatus(0);
-                instanceInfoVo.setCreateDate(orderInstance.getDt());
+                instanceInfoVo.setDt(orderInstance.getDt());
+                instanceInfoVo.setType(orderInstance.getType());
                 infoVos.add(instanceInfoVo);
             }
         }
@@ -147,19 +173,19 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .set(OrderInstance::getStatus,statusBo.getStatus())
                 .set(OrderInstance::getPayTime,statusBo.getPayTime())
                 .set(OrderInstance::getPayChannel,statusBo.getPayChannel())
-                .eq(OrderInstance::getOrderId,statusBo.getOrderId()).update();
+                .eq(OrderInstance::getId,statusBo.getOrderId()).update();
     }
 
 
     @Override
-    public List<OrderTableInfoBo> getOrderTableInfo(String storeId, List<String> tableNos) {
+    public List<OrderTableInfoBo> getOrderTableInfo(Long storeId, List<String> tableNos) {
         List<OrderTableInfoBo> tableInfoBoList = Lists.newArrayList();
         List<OrderInstance> list = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getStoreId, storeId)
                 .in(OrderInstance::getTableNo, tableNos).list();
         if(!CollUtil.isEmpty(list)){
-            List<String> orderIds = list.stream().map(OrderInstance::getOrderId).collect(Collectors.toList());
-            Map<String, List<OrderItem>> orderItemMap = orderItemService.lambdaQuery()
+            List<Long> orderIds = list.stream().map(OrderInstance::getId).collect(Collectors.toList());
+            Map<Long, List<OrderItem>> orderItemMap = orderItemService.lambdaQuery()
                     .in(OrderItem::getOrderId, orderIds).list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
             for (OrderInstance order : list) {
                 OrderTableInfoBo infoBo = new OrderTableInfoBo();
@@ -168,8 +194,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 infoBo.setAmount(order.getAmount());
                 infoBo.setMinute(((Long)DateUtil.between(order.getDt(), DateUtil.date(), DateUnit.MINUTE)).intValue());
                 infoBo.setTableStatus(OrderTableStatusEnum.menu_in.getCode());
-                if(orderItemMap.containsKey(order.getOrderId())){
-                    List<OrderItem> orderItems =  orderItemMap.get(order.getOrderId());
+                if(orderItemMap.containsKey(order.getId())){
+                    List<OrderItem> orderItems =  orderItemMap.get(order.getId());
                     Integer count = orderItems.stream().filter(e -> e.getFlag().equals(1)).collect(Collectors.toList()).size();
                     infoBo.setFinish(Integer.valueOf(count));
                     infoBo.setTotal(orderItems.size());
@@ -194,9 +220,18 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         //TODO 调支付系统退款
 
         return ChainWrappers.lambdaUpdateChain(orderInstanceMapper)
-                .eq(OrderInstance::getOrderId,refundBo.getOrderId())
+                .eq(OrderInstance::getId,refundBo.getOrderId())
                 .set(OrderInstance::getRefund,refundBo.getType())
                 .set(OrderInstance::getRefundRemark,refundBo.getApplyRemark()).update();
+    }
+
+    @Override
+    public boolean diningOrder(Long orderId) {
+        return ChainWrappers.lambdaUpdateChain(orderInstanceMapper)
+                .set(OrderInstance::getDiningTime,DateUtil.date())
+                .set(OrderInstance::getStatus,1)
+                .eq(OrderInstance::getId,orderId).update();
+
     }
 
     @Override
@@ -223,13 +258,14 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         IPage<OrderInstanceTenantOpVo> adminVoIPage = orderInstanceMapper.selectOrderInstanceRePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
             for (OrderInstanceTenantOpVo record : adminVoIPage.getRecords()) {
-                record.setFood("小炒肉");
-                record.setNum(1);
-                record.setReason("不好吃");
-                record.setReAmount(new BigDecimal("4.6"));
-                record.setDateTime(new Date());
-                record.setOperator("小猪");
-                record.setUserName("张三");
+                OrderItemMoreBo moreBo = BeanUtil.toBean(record.getMore(),OrderItemMoreBo.class);
+                if(moreBo != null){
+                    record.setNum(moreBo.getFoodNum());
+                    record.setRemarks(moreBo.getRemarks());
+                    record.setReAmount(moreBo.getLossReporting());
+                    record.setDateTime(moreBo.getOpt());
+                    record.setOperator(moreBo.getUserName());
+                }
                 record.setTypeStr("堂食");
                 record.setBrand("海底捞");
                 record.setStoreRegion("徐家汇");

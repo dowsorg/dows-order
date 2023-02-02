@@ -1,4 +1,4 @@
-package org.dows.order.rest.user;
+package org.dows.order.rest.tenant;
 
 import cn.hutool.core.bean.BeanUtil;
 import io.swagger.annotations.Api;
@@ -31,7 +31,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/orderItem")
-public class OrderItemRest {
+public class TenantOrderItemRest {
 
     private final OrderItemBiz orderItemBiz;
 
@@ -42,7 +42,7 @@ public class OrderItemRest {
      */
     @PostMapping("/updateOrderItem")
     @ApiOperation("桌台化菜操作更多")
-    public Response updateOrderItem(@Valid @RequestBody OrderItemFlagForm flagForm){
+    public Response<Boolean> updateOrderItem(@Valid @RequestBody OrderItemFlagForm flagForm){
         OrderItemFlagBo flagBo = BeanUtil.copyProperties(flagForm, OrderItemFlagBo.class);
         return Response.ok(orderItemBiz.updateOrderItem(flagBo));
     }

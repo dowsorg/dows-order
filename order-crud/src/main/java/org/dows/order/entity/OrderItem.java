@@ -36,17 +36,17 @@ public class OrderItem{
     @ApiModelProperty("自增主键ID")
     private Long id;
 
-    @ApiModelProperty("分布式ID")
-    private String orderId;
+    @ApiModelProperty("订单id")
+    private Long orderId;
 
     @ApiModelProperty("桌号")
-    private String tableId;
+    private String tableNo;
 
     @ApiModelProperty("客户账号ID")
-    private String accountId;
+    private Long accountId;
 
     @ApiModelProperty("商品ID")
-    private String spuId;
+    private Long spuId;
 
     @ApiModelProperty("商品名称")
     private String spuName;
@@ -62,6 +62,9 @@ public class OrderItem{
 
     @ApiModelProperty("更多内容")
     private String more;
+
+    @ApiModelProperty("备注")
+    private String remark;
 
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("时间戳")

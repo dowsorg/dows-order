@@ -10,7 +10,7 @@ import java.util.List;
 public class OrderInstanceCreateForm implements Serializable {
     private static final long serialVersionUID = -7194552277994797454L;
 
-    @ApiModelProperty(value = "0:堂食|1:外卖|2:打包")
+    @ApiModelProperty(value = "0:堂食|1:自营外卖|2:打包")
     private Integer type;
 
     @ApiModelProperty(value = "人数")
@@ -20,10 +20,10 @@ public class OrderInstanceCreateForm implements Serializable {
     private Integer orderStore;
 
     @ApiModelProperty(value = "店铺id")
-    private String storeId;
+    private Long storeId;
 
     @ApiModelProperty(value = "店铺桌号")
-    private String tableId;
+    private String tableNo;
 
     @ApiModelProperty(value = "1:用户 2：店员")
     private Integer operationType;

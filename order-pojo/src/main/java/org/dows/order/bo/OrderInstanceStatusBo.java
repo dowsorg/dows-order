@@ -11,7 +11,7 @@ public class OrderInstanceStatusBo implements Serializable {
     private static final long serialVersionUID = 822108569496162138L;
 
     @ApiModelProperty(value = "订单id")
-    private String orderId;
+    private Long orderId;
 
     @ApiModelProperty(value = "支付时间")
     private Date payTime;

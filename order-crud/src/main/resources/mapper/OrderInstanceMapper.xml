@@ -6,7 +6,7 @@
 
     <select id="selectOrderInstancePage" parameterType="org.dows.order.form.OrderInstanceTenantForm" resultType="org.dows.order.vo.OrderInstanceTenantVo">
         SELECT
-            o.order_id,
+            o.order_no,
             o.account_id,
             o.`status`,
             o.store_id,
@@ -31,7 +31,8 @@
     </select>
     <select id="selectOrderInstanceRePage" parameterType="org.dows.order.form.OrderInstanceTenantForm" resultType="org.dows.order.vo.OrderInstanceTenantOpVo">
         SELECT
-        o.order_id,
+        i.spu_name as 'food',
+        o.order_no,
         o.account_id,
         o.`status`,
         o.store_id,

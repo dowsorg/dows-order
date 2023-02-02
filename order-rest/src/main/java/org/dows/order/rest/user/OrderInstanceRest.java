@@ -8,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.order.OrderInstanceBiz;
-import org.dows.order.bo.OrderApplyRefundBo;
 import org.dows.order.bo.OrderInstanceCreateBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
-import org.dows.order.form.OrderApplyRefundForm;
 import org.dows.order.form.OrderInstanceCreateForm;
 import org.dows.order.form.OrderInstanceQueryForm;
 import org.dows.order.vo.OrderInstanceInfoVo;
@@ -72,16 +70,7 @@ public class OrderInstanceRest {
         return Response.ok(orderInstanceBiz.queryOrderInfo(queryBo));
     }
 
-    /**
-     * 申请退款操作
-     * @param refundForm
-     * @return
-     */
-    @PostMapping("/applyRefund")
-    @ApiOperation("申请退款操作")
-    public Response<Boolean> applyRefundOrder(@Valid @RequestBody OrderApplyRefundForm refundForm){
-        return Response.ok(orderInstanceBiz.applyRefund(BeanUtil.toBean(refundForm, OrderApplyRefundBo.class)));
-    }
+
 
 
 

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
 * @description 
@@ -25,7 +26,7 @@ public class OrderCommentForm implements Serializable{
     @ApiModelProperty("订单号")
     private String orderId;
     @ApiModelProperty("图片列表")
-    private String pics;
+    private List<String> pics;
     @ApiModelProperty("内容")
     private String content;
     @ApiModelProperty("店铺ID")

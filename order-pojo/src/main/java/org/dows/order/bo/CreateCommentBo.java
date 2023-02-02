@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class CreateCommentBo implements Serializable {
@@ -12,13 +13,13 @@ public class CreateCommentBo implements Serializable {
     @ApiModelProperty("订单号")
     private String orderId;
     @ApiModelProperty("图片列表")
-    private String pics;
+    private List<String> pics;
     @ApiModelProperty("内容")
     private String content;
     @ApiModelProperty("店铺ID")
     private String storeId;
     @ApiModelProperty("评论分数 1:2:3:4:5")
-    private Long score;
+    private Integer score;
     @ApiModelProperty("是否是商家回评 0:不是 1:是")
     private Integer fromMerchant;
 

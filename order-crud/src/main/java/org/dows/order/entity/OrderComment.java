@@ -78,7 +78,7 @@ public class OrderComment implements CrudEntity {
     @ApiModelProperty("时间戳")
     private Date dt;
     @JsonIgnore
-    @TableLogic
+    //@TableLogic
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("是否删除")
     private Boolean deleted;

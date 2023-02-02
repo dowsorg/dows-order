@@ -2,6 +2,7 @@ package org.dows.order;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
@@ -52,10 +53,9 @@ public class OrderItemBiz implements OrderItemApiService {
         OrderItem oldItem = new OrderItem();
         oldItem.setId(orderItem.getId());
         oldItem.setFlag(OrderItemFlagEnum.add_menu.getCode());
-        OrderInstance instance = orderInstanceService.lambdaQuery().eq(OrderInstance::getOrderId, orderItem.getOrderId()).one();
+        OrderInstance instance = orderInstanceService.lambdaQuery().eq(OrderInstance::getId, orderItem.getOrderId()).one();
         OrderItem item  = new OrderItem();
-        item.setOrderId(instance.getOrderId());
-        item.setTableId(instance.getTableId());
+        item.setTableNo(instance.getTableNo());
         item.setAccountId(instance.getAccountId());
         item.setSpuId(orderItem.getSpuId());
         item.setSpuName(orderItem.getSpuName());
@@ -88,11 +88,13 @@ public class OrderItemBiz implements OrderItemApiService {
     public boolean give(OrderItemFlagBo flagBo,OrderItem orderItem){
         //TODO 修改订单总金额
         OrderItemMoreBo moreBo = new OrderItemMoreBo();
+        moreBo.setFoodNum(flagBo.getNum());
+        moreBo.setRemarks(flagBo.getRemark());
+        moreBo.setOpt(DateUtil.date());
+        moreBo.setUserName(null);
         OrderItem item = new OrderItem();
         item.setId(orderItem.getId());
         item.setFlag(OrderItemFlagEnum.give.getCode());
-        moreBo.setKey(StrUtil.toString(orderItem.getPrice()));
-        moreBo.setVal(flagBo.getRemark());
         item.setMore(JSONUtil.toJsonStr(moreBo));
         item.setQuantity(orderItem.getQuantity()+1);
         return orderItemService.updateById(item);
@@ -107,12 +109,14 @@ public class OrderItemBiz implements OrderItemApiService {
     public boolean returnMenu(OrderItemFlagBo flagBo,OrderItem orderItem){
         //TODO 修改订单总金额
         OrderItemMoreBo moreBo = new OrderItemMoreBo();
+        moreBo.setFoodNum(flagBo.getNum());
+        moreBo.setRemarks(flagBo.getRemark());
+        moreBo.setOpt(DateUtil.date());
+        moreBo.setUserName(null);
         OrderItem item  = new OrderItem();
         item.setId(orderItem.getId());
         item.setFlag(OrderItemFlagEnum.return_menu.getCode());
-        item.setQuantity(orderItem.getQuantity() - flagBo.getReturning());
-        moreBo.setKey(StrUtil.toString(flagBo.getReturning()));
-        moreBo.setVal(flagBo.getRemark());
+        item.setQuantity(orderItem.getQuantity() - flagBo.getNum());
         item.setMore(JSONUtil.toJsonStr(moreBo));
         return orderItemService.updateById(item);
     }
@@ -126,11 +130,13 @@ public class OrderItemBiz implements OrderItemApiService {
     public boolean reporting(OrderItemFlagBo flagBo,OrderItem orderItem){
         //TODO 修改订单总金额
         OrderItemMoreBo moreBo = new OrderItemMoreBo();
+        moreBo.setLossReporting(flagBo.getReporting());
+        moreBo.setRemarks(flagBo.getRemark());
+        moreBo.setOpt(DateUtil.date());
+        moreBo.setUserName(null);
         OrderItem item  = new OrderItem();
         item.setId(orderItem.getId());
         item.setFlag(OrderItemFlagEnum.reporting.getCode());
-        moreBo.setKey(StrUtil.toString(flagBo.getReporting()));
-        moreBo.setVal(flagBo.getRemark());
         item.setMore(JSONUtil.toJsonStr(moreBo));
         item.setQuantity(orderItem.getQuantity()-1);
         return orderItemService.updateById(item);

@@ -23,8 +23,8 @@ public class OrderItemFlagBo implements Serializable {
     @ApiModelProperty(value = "报损金额")
     private BigDecimal reporting;
 
-    @ApiModelProperty(value = "退菜份数")
-    private Integer returning;
+    @ApiModelProperty(value = "份数")
+    private Integer num;
 
     @ApiModelProperty(value = "原因")
     private String remark;

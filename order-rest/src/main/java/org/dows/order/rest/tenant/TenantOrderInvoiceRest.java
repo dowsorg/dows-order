@@ -1,4 +1,4 @@
-package org.dows.order.rest.user;
+package org.dows.order.rest.tenant;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("orderInvoice")
-public class OrderInvoiceRest implements MybatisCrudRest<OrderInvoiceForm, OrderInvoice, OrderInvoiceService> {
+public class TenantOrderInvoiceRest implements MybatisCrudRest<OrderInvoiceForm, OrderInvoice, OrderInvoiceService> {
 
 
 }

@@ -13,16 +13,16 @@ public class OrderCartAddBo implements Serializable {
     private static final long serialVersionUID = -5325470651808508305L;
 
     @ApiModelProperty(value = "商品id")
-    private String goodsSpuId;
+    private Long goodsSpuId;
 
     @ApiModelProperty(value = "店铺id")
-    private String storeId;
+    private Long storeId;
 
-    @ApiModelProperty(value = "桌号id")
-    private String tableId;
+    @ApiModelProperty(value = "桌号")
+    private String tableNo;
 
     @ApiModelProperty(value = "客户账号Id")
-    private String accountId;
+    private Long accountId;
 
     @ApiModelProperty(value = "是否是加还是减 加:1 减:0")
     private Integer isAdd;
