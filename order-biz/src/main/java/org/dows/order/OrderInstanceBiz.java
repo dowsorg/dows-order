@@ -6,6 +6,7 @@ import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
@@ -117,6 +118,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                             OrderInstanceInfoVo.GoodSpuInfo goodSpuInfo = new OrderInstanceInfoVo.GoodSpuInfo();
                             goodSpuInfo.setOrderItemId(orderItem.getId());
                             goodSpuInfo.setFlag(orderItem.getFlag());
+                            if(Integer.valueOf(2).equals(orderItem.getFlag())){
+                                OrderItemMoreBo moreBo = JSONUtil.toBean(orderItem.getMore(),OrderItemMoreBo.class);
+                                goodSpuInfo.setRefundNum(Optional.ofNullable(moreBo).map(OrderItemMoreBo::getFoodNum).orElse(0));
+                            }
                             goodSpuInfo.setGoodName(orderItem.getSpuName());
                             goodSpuInfo.setQuantity(orderItem.getQuantity());
                             goodSpuInfo.setPrice(orderItem.getPrice());
@@ -132,6 +137,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 if(Integer.valueOf(1).equals(orderInstance.getType())){ //自营外面才有 手机号和姓名
                     instanceInfoVo.setPhone("13554700856");
                     instanceInfoVo.setAccountName("张三");
+                    instanceInfoVo.setAddress("上海市");
+                    instanceInfoVo.setAccountOrderNum(92);
                 }
                 if(Integer.valueOf(0).equals(orderInstance.getType())){ //堂食
                     instanceInfoVo.setTableNo(orderInstance.getTableNo());

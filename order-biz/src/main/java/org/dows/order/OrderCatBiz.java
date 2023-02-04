@@ -2,11 +2,14 @@ package org.dows.order;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.framework.api.exceptions.BaseException;
 import org.dows.goods.api.GoodsApi;
+import org.dows.goods.form.GoodsForm;
+import org.dows.goods.form.GoodsSpuForm;
 import org.dows.order.api.OrderCartApiService;
 import org.dows.order.bo.OrderCartAddBo;
 import org.dows.order.bo.OrderCartQueryBo;
@@ -33,24 +36,26 @@ public class OrderCatBiz implements OrderCartApiService {
 
     private final OrderCartService orderCartService;
 
-    //private final GoodsApi goodsApi;
+    private GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
-        //Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds();
+        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
+        GoodsForm goodsForm = infoByIds.getData().get(0);
+        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
         //如果是加+减-
         OrderCart cart = queryOrderCart(orderCartAddBo);
         if(cart != null){
             handleQuantity(orderCartAddBo, cart);
         }else{
             OrderCart orderCart = new OrderCart();
-            orderCart.setGoodsName("小炒肉");
-            orderCart.setGoodsPic("http://图片");
+            orderCart.setGoodsName(goodsSpu.getSpuName());
+            orderCart.setGoodsPic(goodsSpu.getPic());
             orderCart.setGoodsSpuId(orderCartAddBo.getGoodsSpuId());
             orderCart.setTableNo(orderCartAddBo.getTableNo());
             orderCart.setStoreId(orderCartAddBo.getStoreId());
             orderCart.setAccountId(orderCartAddBo.getAccountId());
             orderCart.setQuantity(1);
-            orderCart.setPrice(new BigDecimal("4.6"));
+            orderCart.setPrice(goodsSpu.getNormalPrice());
             orderCart.setState(0);
             try {
                 orderCartService.save(orderCart);

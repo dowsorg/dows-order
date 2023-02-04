@@ -65,7 +65,7 @@ public class OrderInstanceRest {
     public Response<List<OrderInstanceInfoVo>> queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
         OrderInstanceQueryBo queryBo = BeanUtil.copyProperties(queryForm, OrderInstanceQueryBo.class);
         if(StrUtil.isBlank(queryBo.getTableNo())){
-            queryBo.setAccountId(null);// TODO
+            queryBo.setAccountId("");// TODO
         }
         return Response.ok(orderInstanceBiz.queryOrderInfo(queryBo));
     }

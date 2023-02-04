@@ -1,5 +1,6 @@
 package org.dows.order.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +24,9 @@ public class OrderInstanceInfoVo implements Serializable {
 
     @ApiModelProperty(value = "用户姓名")
     private String accountName;
+
+    @ApiModelProperty(value = "用户地址")
+    private String address;
 
     @ApiModelProperty(value = "桌号/编号")
     private String tableNo;
@@ -63,14 +67,20 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "共几件")
     private Long spuCount;
 
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "下单日期")
     private Date dt;
+
+    @ApiModelProperty(value = "第几单")
+    private Integer accountOrderNum;
 
     @ApiModelProperty(value = "用户信息")
     private UserInfo userInfo;
 
     @Data
     public static class UserInfo implements Serializable{
+        @ApiModelProperty(value = "头像")
+        private String headUrl;
         @ApiModelProperty(value = "姓名")
         private String name;
         @ApiModelProperty(value = "性别")
@@ -108,6 +118,9 @@ public class OrderInstanceInfoVo implements Serializable {
 
         @ApiModelProperty(value = "是否化菜(0:未上菜 1:已上菜 2:退菜 3:赠送 4:报损)")
         private Integer flag;
+
+        @ApiModelProperty(value = "退菜数量")
+        private Integer refundNum;
 
         @ApiModelProperty(value = "备注")
         private String remark;
