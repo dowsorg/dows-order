@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>org.dows.saas</groupId>
-            <artifactId>goods-boot</artifactId>
+            <artifactId>goods-biz</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
         <dependency>
