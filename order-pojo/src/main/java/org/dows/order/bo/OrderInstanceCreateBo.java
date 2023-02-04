@@ -20,7 +20,7 @@ public class OrderInstanceCreateBo implements Serializable {
     private Integer orderStore;
 
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "店铺桌号")
     private String tableNo;
@@ -29,7 +29,7 @@ public class OrderInstanceCreateBo implements Serializable {
     private Integer operationType;
 
     @ApiModelProperty(value = "账号id")
-    private Long accountId;
+    private String accountId;
 
     @ApiModelProperty(value = "订单备注")
     private String remark;

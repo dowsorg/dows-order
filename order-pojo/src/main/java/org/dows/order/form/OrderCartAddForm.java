@@ -25,11 +25,11 @@ public class OrderCartAddForm implements Serializable {
 
     @NotBlank(message = "商品id不能为空!")
     @ApiModelProperty(value = "商品id")
-    private Long goodsSpuId;
+    private String goodsSpuId;
 
     @NotBlank(message = "店铺id不能为空!")
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "桌号id")
     private String tableNo;

@@ -18,8 +18,8 @@
         FROM
             order_instance o
         <where>
-            <if test="param.orderId != null and param.orderId != ''">
-                and o.order_id = #{param.orderId}
+            <if test="param.orderNo != null and param.orderNo != ''">
+                and o.order_no = #{param.orderNo}
             </if>
 <!--            <if test="param.storeId != null and param.storeId != ''">-->
 <!--                and o.store_id = #{param.storeId}-->
@@ -43,10 +43,10 @@
         o.dt as 'orderDate'
         FROM
         order_item i
-        left join order_instance o on o.order_id = i.order_id
+        left join order_instance o on o.id = i.order_id
         <where>
-            <if test="param.orderId != null and param.orderId != ''">
-                and o.order_id = #{param.orderId}
+            <if test="param.orderNo != null and param.orderNo != ''">
+                and o.orderNo = #{param.orderNo}
             </if>
             <!--            <if test="param.storeId != null and param.storeId != ''">-->
             <!--                and o.store_id = #{param.storeId}-->

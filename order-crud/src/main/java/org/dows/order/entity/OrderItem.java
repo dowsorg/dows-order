@@ -43,7 +43,7 @@ public class OrderItem{
     private String tableNo;
 
     @ApiModelProperty("客户账号ID")
-    private Long accountId;
+    private String accountId;
 
     @ApiModelProperty("商品ID")
     private Long spuId;

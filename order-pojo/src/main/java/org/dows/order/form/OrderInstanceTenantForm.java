@@ -12,8 +12,8 @@ public class OrderInstanceTenantForm extends QueryParam {
     private Integer orderRefund;
     @ApiModelProperty(value = "2:退菜明细 3:赠送明细 4:破损列表")
     private Integer orderOpType;
-    @ApiModelProperty(value = "订单编号")
-    private String orderId;
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
     @ApiModelProperty(value = "门店id")
     private String storeId;
     @ApiModelProperty(value = "门店区域")

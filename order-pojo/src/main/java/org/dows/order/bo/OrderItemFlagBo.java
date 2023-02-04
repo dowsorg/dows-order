@@ -11,8 +11,6 @@ import java.math.BigDecimal;
 public class OrderItemFlagBo implements Serializable {
     private static final long serialVersionUID = -7460094284626843606L;
 
-    @ApiModelProperty(value = "订单id")
-    private String orderId;
 
     @ApiModelProperty(value = "订单项id")
     private Long orderItemId;

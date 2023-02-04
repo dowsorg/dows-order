@@ -15,7 +15,7 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "订单id")
     private Long orderId;
 
-    @ApiModelProperty(value = "订单编号")
+    @ApiModelProperty(value = "订单号")
     private String orderNo;
 
     @ApiModelProperty(value = "用户手机号")

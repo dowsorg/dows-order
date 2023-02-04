@@ -18,7 +18,7 @@ public class OrderInstanceQueryForm implements Serializable {
 
     @NotBlank(message = "店铺id不能空!")
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "桌号")
     private String tableNo;

@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -103,8 +104,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     public List<OrderInstanceInfoVo> queryOrderInfo(OrderInstanceQueryBo queryBo) {
         List<OrderInstanceInfoVo> infoVos = Lists.newArrayList();
         List<OrderInstance> orderList = orderInstanceService.lambdaQuery()
-                .eq(queryBo.getAccountId() == null,OrderInstance::getAccountId, queryBo.getAccountId())
-                .eq(OrderInstance::getStoreId,queryBo.getStoreId())
+                .eq(!StrUtil.isBlank(queryBo.getAccountId()),OrderInstance::getAccountId, queryBo.getAccountId())
+                .eq(!StrUtil.isBlank(queryBo.getStoreId()),OrderInstance::getStoreId,queryBo.getStoreId())
                 .eq(!StrUtil.isBlank(queryBo.getTableNo()),OrderInstance::getTableNo,queryBo.getTableNo())
                 .list();
         if(!CollUtil.isEmpty(orderList)){
@@ -126,11 +127,13 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     })));
             for (OrderInstance orderInstance : orderList) {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
-                if(instanceInfoVo.getType().equals(1)){ //自营外面才有 手机号和姓名
+                instanceInfoVo.setOrderId(orderInstance.getId());
+                instanceInfoVo.setOrderNo(orderInstance.getOrderNo());
+                if(Integer.valueOf(1).equals(orderInstance.getType())){ //自营外面才有 手机号和姓名
                     instanceInfoVo.setPhone("13554700856");
                     instanceInfoVo.setAccountName("张三");
                 }
-                if(instanceInfoVo.getType().equals(0)){ //堂食
+                if(Integer.valueOf(0).equals(orderInstance.getType())){ //堂食
                     instanceInfoVo.setTableNo(orderInstance.getTableNo());
                     instanceInfoVo.setPeoples(orderInstance.getPeoples());
                 }else{
@@ -151,16 +154,17 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     instanceInfoVo.setSpuCount(Long.valueOf(count));
                     instanceInfoVo.setSpuCategory(goodSpuInfos.size());
                 }
-                if(instanceInfoVo.getDiningTime() != null){
+                if(orderInstance.getDiningTime() != null){
                     instanceInfoVo.setDiningTime(DateUtil.format(orderInstance.getDiningTime(), "HH:mm"));
                 }else{
                     instanceInfoVo.setDiningTime(DateUtil.formatBetween(orderInstance.getDt(),
-                            orderInstance.getDiningTime(), BetweenFormatter.Level.MINUTE));
+                            Optional.ofNullable(orderInstance.getDiningTime()).orElse(DateUtil.date()), BetweenFormatter.Level.MINUTE));
                 }
                 instanceInfoVo.setRemark(orderInstance.getRemark());
                 instanceInfoVo.setStatus(0);
                 instanceInfoVo.setDt(orderInstance.getDt());
                 instanceInfoVo.setType(orderInstance.getType());
+                instanceInfoVo.setOrderSource(orderInstance.getOrderSource());
                 infoVos.add(instanceInfoVo);
             }
         }

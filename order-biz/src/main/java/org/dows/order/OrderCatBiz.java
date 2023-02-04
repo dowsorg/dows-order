@@ -1,8 +1,4 @@
 package org.dows.order;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -15,13 +11,17 @@ import org.dows.order.api.OrderCartApiService;
 import org.dows.order.bo.OrderCartAddBo;
 import org.dows.order.bo.OrderCartQueryBo;
 import org.dows.order.entity.OrderCart;
-import org.dows.order.form.OrderCartQueryForm;
 import org.dows.order.service.OrderCartService;
 import org.dows.order.vo.OrderCartInfoVo;
 import org.dows.order.vo.OrderCartTotalVo;
 import org.dows.utils.AssertUtil;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author liuhonger
@@ -33,10 +33,10 @@ public class OrderCatBiz implements OrderCartApiService {
 
     private final OrderCartService orderCartService;
 
-
-    //private final Goods
+    //private final GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
+        //Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds();
         //如果是加+减-
         OrderCart cart = queryOrderCart(orderCartAddBo);
         if(cart != null){

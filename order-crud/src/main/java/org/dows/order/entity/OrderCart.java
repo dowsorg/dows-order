@@ -46,7 +46,7 @@ public class OrderCart implements CrudEntity {
     private String goodsSkuId;
 
     @ApiModelProperty("产品id")
-    private Long goodsSpuId;
+    private String goodsSpuId;
 
     @ApiModelProperty("商品分类")
     private String goodsCategoryId;
@@ -55,10 +55,10 @@ public class OrderCart implements CrudEntity {
     private String tableNo;
 
     @ApiModelProperty("店铺ID")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty("客户账号ID")
-    private Long accountId;
+    private String accountId;
 
     @ApiModelProperty("应用ID")
     private String appId;

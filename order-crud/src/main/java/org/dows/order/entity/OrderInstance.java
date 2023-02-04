@@ -34,7 +34,7 @@ public class OrderInstance  {
     @ApiModelProperty("自增主键ID")
     private Long id;
 
-    @ApiModelProperty("分布式ID")
+    @ApiModelProperty("订单号")
     private String orderNo;
 
     @ApiModelProperty("桌号唯一标识")
@@ -44,16 +44,19 @@ public class OrderInstance  {
     private String tableNo;
 
     @ApiModelProperty("客户账号ID")
-    private Long accountId;
+    private String accountId;
 
     @ApiModelProperty("店铺ID")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty("应用ID")
     private String appId;
 
     @ApiModelProperty("租户号")
     private String tenantId;
+
+    @ApiModelProperty(value = "订单来源 1:服务员下单|2:扫码下单")
+    private Integer orderSource;
 
     @ApiModelProperty("备注")
     private String remark;

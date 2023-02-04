@@ -15,7 +15,7 @@ public class OrderInstanceQueryBo implements Serializable {
     private Integer type;
 
     @ApiModelProperty(value = "用户id")
-    private Long accountId;
+    private String accountId;
 
     @ApiModelProperty(value = "用户名")
     private String accountName;
@@ -26,11 +26,11 @@ public class OrderInstanceQueryBo implements Serializable {
     @ApiModelProperty(value = "日期")
     private Date date;
 
-    @ApiModelProperty(value = "订单id")
-    private String orderId;
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
 
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "桌号")
     private String tableNo;

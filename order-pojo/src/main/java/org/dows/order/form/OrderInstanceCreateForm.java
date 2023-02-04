@@ -20,7 +20,7 @@ public class OrderInstanceCreateForm implements Serializable {
     private Integer orderStore;
 
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "店铺桌号")
     private String tableNo;

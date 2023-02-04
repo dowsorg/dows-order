@@ -3,6 +3,7 @@ package org.dows.order.form;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -10,9 +11,9 @@ import java.io.Serializable;
 public class OrderCartQueryForm implements Serializable {
     private static final long serialVersionUID = 5154317941108702185L;
 
-    @NotNull(message = "店铺id不能为空!")
+    @NotBlank(message = "店铺id不能为空!")
     @ApiModelProperty(value = "店铺id")
-    private Long storeId;
+    private String storeId;
 
     @ApiModelProperty(value = "桌号id")
     private String tableNo;
