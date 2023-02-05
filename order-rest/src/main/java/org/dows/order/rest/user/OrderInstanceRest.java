@@ -31,7 +31,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("orderInstance")
+@RequestMapping("user/orderInstance")
 public class OrderInstanceRest {
     private final OrderInstanceBiz orderInstanceBiz;
 

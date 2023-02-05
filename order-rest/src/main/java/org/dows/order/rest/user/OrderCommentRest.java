@@ -30,7 +30,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/orderComment")
+@RequestMapping("user/orderComment")
 public class OrderCommentRest {
 
     private final OrderCommentBiz orderCommentBiz;

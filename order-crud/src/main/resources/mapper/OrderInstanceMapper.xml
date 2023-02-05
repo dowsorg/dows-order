@@ -48,12 +48,12 @@
             <if test="param.orderNo != null and param.orderNo != ''">
                 and o.orderNo = #{param.orderNo}
             </if>
-            <!--            <if test="param.storeId != null and param.storeId != ''">-->
-            <!--                and o.store_id = #{param.storeId}-->
-            <!--            </if>-->
-            <!--            <if test="param.orderId != null and param.orderId != ''">-->
-            <!--                and o.order_id = #{param.orderId}-->
-            <!--            </if>-->
+            <if test="param.storeId != null and param.storeId != ''">
+                and o.store_id = #{param.storeId}
+            </if>
+<!--            <if test="param.orderId != null and param.orderId != ''">-->
+<!--                and o.order_id = #{param.orderId}-->
+<!--            </if>-->
             <if test="param.orderOpType != null">
                 and i.flag = #{param.orderOpType}
             </if>

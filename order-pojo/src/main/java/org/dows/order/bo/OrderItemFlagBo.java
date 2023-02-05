@@ -27,4 +27,7 @@ public class OrderItemFlagBo implements Serializable {
     @ApiModelProperty(value = "原因")
     private String remark;
 
+    @ApiModelProperty(value = "操作人")
+    private Long userId;
+
 }

@@ -39,23 +39,23 @@ public class OrderCatBiz implements OrderCartApiService {
     private GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
-        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
-        GoodsForm goodsForm = infoByIds.getData().get(0);
-        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
+//        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
+//        GoodsForm goodsForm = infoByIds.getData().get(0);
+//        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
         //如果是加+减-
         OrderCart cart = queryOrderCart(orderCartAddBo);
         if(cart != null){
             handleQuantity(orderCartAddBo, cart);
         }else{
             OrderCart orderCart = new OrderCart();
-            orderCart.setGoodsName(goodsSpu.getSpuName());
-            orderCart.setGoodsPic(goodsSpu.getPic());
+            orderCart.setGoodsName("小炒肉");
+            orderCart.setGoodsPic("https://image.baidu.com/search/detail?");
             orderCart.setGoodsSpuId(orderCartAddBo.getGoodsSpuId());
             orderCart.setTableNo(orderCartAddBo.getTableNo());
             orderCart.setStoreId(orderCartAddBo.getStoreId());
             orderCart.setAccountId(orderCartAddBo.getAccountId());
             orderCart.setQuantity(1);
-            orderCart.setPrice(goodsSpu.getNormalPrice());
+            orderCart.setPrice(new BigDecimal("3.6"));
             orderCart.setState(0);
             try {
                 orderCartService.save(orderCart);
@@ -125,7 +125,7 @@ public class OrderCatBiz implements OrderCartApiService {
         OrderCartTotalVo totalVo = new OrderCartTotalVo();
         List<OrderCartInfoVo> cartInfo = new ArrayList<>();
         List<OrderCart> orderCarts;
-        if(queryBo.getAccountId() == null){ //公共购物车
+        if(StrUtil.isBlank(queryBo.getAccountId())){ //公共购物车
              orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getTableNo, queryBo.getTableNo())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();

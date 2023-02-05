@@ -145,7 +145,17 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     instanceInfoVo.setPeoples(orderInstance.getPeoples());
                 }else{
                     //Response byAccountId = accountBiz.getInfoByAccountId();
-                    instanceInfoVo.setUserInfo(null);
+                    OrderInstanceInfoVo.UserInfo userInfo = new OrderInstanceInfoVo.UserInfo();
+                    userInfo.setHeadUrl("https://c-ssl.duitang.com/uploads/blog/202103/31/20210331160001_9a852.jpg");
+                    userInfo.setName("李四");
+                    userInfo.setSex("男");
+                    userInfo.setBirthday("1992.09.09");
+                    userInfo.setPhone("12345786789696");
+                    userInfo.setCreateDate(DateUtil.date());
+                    userInfo.setOrderNum(23423);
+                    userInfo.setAmount(new BigDecimal("343.567"));
+                    userInfo.setDateOf("今天");
+                    instanceInfoVo.setUserInfo(userInfo);
                 }
                 if(Integer.valueOf(1).equals(orderInstance.getPayState())){
                     instanceInfoVo.setPayChannel(orderInstance.getPayChannel());

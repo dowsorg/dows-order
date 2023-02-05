@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class OrderInstanceQueryForm implements Serializable {
     private static final long serialVersionUID = -6048742616492949816L;
 
-    @ApiModelProperty(value = "订单类型(全部就不传 0:堂食|1:自营外卖|2:打包)")
+    @ApiModelProperty(value = "订单类型(全部就不传 0:堂食|1:自营外卖|2:打包|3:申请退款)")
     private Integer type;
 
     @NotBlank(message = "店铺id不能空!")

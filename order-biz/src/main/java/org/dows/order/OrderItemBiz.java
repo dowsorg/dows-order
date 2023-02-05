@@ -112,7 +112,7 @@ public class OrderItemBiz implements OrderItemApiService {
         moreBo.setFoodNum(flagBo.getNum());
         moreBo.setRemarks(flagBo.getRemark());
         moreBo.setOpt(DateUtil.date());
-        moreBo.setUserName(null);
+        moreBo.setUserName(String.valueOf(flagBo.getUserId()));
         OrderItem item  = new OrderItem();
         item.setId(orderItem.getId());
         item.setFlag(OrderItemFlagEnum.return_menu.getCode());
