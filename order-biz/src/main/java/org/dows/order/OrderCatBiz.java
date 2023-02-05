@@ -36,26 +36,26 @@ public class OrderCatBiz implements OrderCartApiService {
 
     private final OrderCartService orderCartService;
 
-    private GoodsApi goodsApi;
+    private final GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
-//        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
-//        GoodsForm goodsForm = infoByIds.getData().get(0);
-//        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
+        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
+        GoodsForm goodsForm = infoByIds.getData().get(0);
+        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
         //如果是加+减-
         OrderCart cart = queryOrderCart(orderCartAddBo);
         if(cart != null){
             handleQuantity(orderCartAddBo, cart);
         }else{
             OrderCart orderCart = new OrderCart();
-            orderCart.setGoodsName("小炒肉");
-            orderCart.setGoodsPic("https://image.baidu.com/search/detail?");
+            orderCart.setGoodsName(goodsSpu.getSpuName());
+            orderCart.setGoodsPic(goodsSpu.getPic());
             orderCart.setGoodsSpuId(orderCartAddBo.getGoodsSpuId());
             orderCart.setTableNo(orderCartAddBo.getTableNo());
             orderCart.setStoreId(orderCartAddBo.getStoreId());
             orderCart.setAccountId(orderCartAddBo.getAccountId());
             orderCart.setQuantity(1);
-            orderCart.setPrice(new BigDecimal("3.6"));
+            orderCart.setPrice(goodsSpu.getNormalPrice());
             orderCart.setState(0);
             try {
                 orderCartService.save(orderCart);
@@ -72,7 +72,7 @@ public class OrderCatBiz implements OrderCartApiService {
     @Override
     public boolean cleanUpOrderCart(OrderCartQueryBo queryBo) {
         List<OrderCart> orderCarts;
-        if(queryBo.getAccountId() == null){ //公共购物车
+        if(StrUtil.isBlank(queryBo.getAccountId())){ //公共购物车
             orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getTableNo, queryBo.getTableNo())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();
@@ -138,6 +138,14 @@ public class OrderCatBiz implements OrderCartApiService {
         if(!CollUtil.isEmpty(orderCarts)){
             for (OrderCart orderCart : orderCarts) {
                 OrderCartInfoVo cartInfoVo = new OrderCartInfoVo();
+                cartInfoVo.setOrderCount(10);
+                cartInfoVo.setStatus(1);
+                cartInfoVo.setNormalDiscount(new BigDecimal("8.8"));
+                cartInfoVo.setMemberDiscount(new BigDecimal("9.5"));
+                cartInfoVo.setSpecialPrice(new BigDecimal("67.3"));
+                cartInfoVo.setMembershipPrice(new BigDecimal("24.6"));
+                cartInfoVo.setNormalPrice(new BigDecimal("46.7"));
+
                 cartInfoVo.setGoodSpuId(orderCart.getGoodsSpuId());
                 cartInfoVo.setQuantity(orderCart.getQuantity());
                 cartInfoVo.setPrice(orderCart.getPrice());

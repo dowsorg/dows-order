@@ -68,7 +68,7 @@ public class TenantOrderInstanceRest {
 
 
     /**
-     * 创建订单
+     * 创建订单 连锁店下单 不支付
      * @param createForm
      * @return
      */
@@ -76,7 +76,7 @@ public class TenantOrderInstanceRest {
     @ApiOperation("创建订单")
     public Response createOrderInstance(@Valid @RequestBody OrderInstanceCreateForm createForm){
         OrderInstanceCreateBo cartAddBo = BeanUtil.copyProperties(createForm, OrderInstanceCreateBo.class);
-        if(createForm.getOperationType().equals(2)){ //店员下单
+        if(Integer.valueOf(1).equals(createForm.getOrderSource())){ //店员下单
             cartAddBo.setAccountId(null);
         }else{
             // TODO

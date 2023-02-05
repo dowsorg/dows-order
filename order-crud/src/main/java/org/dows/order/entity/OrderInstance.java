@@ -55,6 +55,9 @@ public class OrderInstance  {
     @ApiModelProperty("租户号")
     private String tenantId;
 
+    @ApiModelProperty("1:连锁 2:直营店")
+    private Integer orderStore;
+
     @ApiModelProperty(value = "订单来源 1:服务员下单|2:扫码下单")
     private Integer orderSource;
 

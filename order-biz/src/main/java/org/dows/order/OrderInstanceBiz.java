@@ -1,6 +1,7 @@
 package org.dows.order;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollStreamUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
@@ -14,6 +15,10 @@ import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.account.biz.AccountBiz;
+import org.dows.framework.api.Response;
+import org.dows.goods.api.GoodsApi;
+import org.dows.goods.form.GoodsForm;
+import org.dows.goods.form.GoodsSpuForm;
 import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.*;
 import org.dows.order.entity.OrderInstance;
@@ -31,11 +36,13 @@ import org.dows.order.vo.OrderInstanceTenantVo;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -57,45 +64,58 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final AccountBiz accountBiz;
 
+    private final GoodsApi goodsApi;
+
     @Override
     public String createOrderInstance(OrderInstancePaymentBo paymentBo) {
         return null;
     }
+
     @Override
+    @Transactional
     public void creatOrderInstance(OrderInstanceCreateBo createBo) {
-        //TODO 获取goods 信息 店铺桌号信息
         OrderInstance orderInstance = new OrderInstance();
         String timePrefix = idGenerator.getTimePrefix(IdKey.OMS_ORDER_ID);
         orderInstance.setOrderNo(timePrefix);
         orderInstance.setTableNo(createBo.getTableNo());
         orderInstance.setAccountId(createBo.getAccountId());
+        orderInstance.setOrderSource(createBo.getOrderSource());
+        orderInstance.setOrderStore(1);
         orderInstance.setStoreId(createBo.getStoreId());
         orderInstance.setAppId("");
         orderInstance.setTenantId("");
         orderInstance.setRemark(createBo.getRemark());
         orderInstance.setPeoples(createBo.getPeoples());
-        orderInstance.setType(createBo.getType());
-        if(createBo.getOrderStore().equals(1) && createBo.getType().equals(0)){
-            orderInstance.setStatus(0);
-        }
+        orderInstance.setType(0);
+        orderInstance.setStatus(0);
         BigDecimal amoutPrice = new BigDecimal("0");
-        List<OrderItem> orderItems = Lists.newArrayList();
+        List<Long> spuIds = createBo.getGoodSpuInfoList().stream().map(OrderInstanceCreateBo.GoodSpuInfo::getGoodSpuId).collect(Collectors.toList());
+        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsForm> data = goodsList.getData();
+        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
+        for (OrderInstanceCreateBo.GoodSpuInfo goodSpuInfo : createBo.getGoodSpuInfoList()) {
+            amoutPrice = amoutPrice.add(spuFormMap.get(goodSpuInfo.getGoodSpuId()).getNormalPrice().multiply(BigDecimal.valueOf(goodSpuInfo.getQuantity())));
+        }
+        orderInstance.setAmount(amoutPrice);
         orderInstanceService.save(orderInstance);
+        List<OrderItem> orderItems = Lists.newArrayList();
         for (OrderInstanceCreateBo.GoodSpuInfo goodSpuInfo : createBo.getGoodSpuInfoList()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(orderInstance.getId());
             orderItem.setTableNo(orderInstance.getTableNo());
             orderItem.setAccountId(orderInstance.getAccountId());
             orderItem.setSpuId(goodSpuInfo.getGoodSpuId());
-            orderItem.setSpuName("小炒肉");
-            orderItem.setFlag(0);
+            if(spuFormMap.containsKey(goodSpuInfo.getGoodSpuId())){
+                GoodsSpuForm goodsSpuForm = spuFormMap.get(goodSpuInfo.getGoodSpuId());
+                orderItem.setSpuName(goodsSpuForm.getSpuName());
+                orderItem.setPrice(goodsSpuForm.getNormalPrice());
+            }
             orderItem.setQuantity(goodSpuInfo.getQuantity());
-            orderItem.setPrice(new BigDecimal("4.5"));
+            orderItem.setFlag(0);
             orderItem.setRemark(goodSpuInfo.getRemark());
-            amoutPrice = amoutPrice.add(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
             orderItems.add(orderItem);
         }
-        orderInstance.setAmount(amoutPrice);
         orderItemService.saveBatch(orderItems);
     }
 
@@ -143,6 +163,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 if(Integer.valueOf(0).equals(orderInstance.getType())){ //堂食
                     instanceInfoVo.setTableNo(orderInstance.getTableNo());
                     instanceInfoVo.setPeoples(orderInstance.getPeoples());
+                    instanceInfoVo.setTodayNum(3);
+                    instanceInfoVo.setMenuMin(DateUtil.formatBetween(orderInstance.getDt(),
+                            DateUtil.date(), BetweenFormatter.Level.MINUTE));
                 }else{
                     //Response byAccountId = accountBiz.getInfoByAccountId();
                     OrderInstanceInfoVo.UserInfo userInfo = new OrderInstanceInfoVo.UserInfo();

@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dows.saas</groupId>
-            <artifactId>goods-biz</artifactId>
+            <artifactId>order-biz</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
         <dependency>

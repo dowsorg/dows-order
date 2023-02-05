@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.order.OrderInstanceBiz;
 import org.dows.order.bo.OrderInstanceCreateBo;
+import org.dows.order.bo.OrderInstancePaymentBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
 import org.dows.order.form.OrderInstanceCreateForm;
 import org.dows.order.form.OrderInstanceQueryForm;
@@ -36,21 +37,21 @@ public class OrderInstanceRest {
     private final OrderInstanceBiz orderInstanceBiz;
 
     /**
-     * 创建订单
+     * 创建订单 支付的
      * @param createForm
      * @return
      */
     @PostMapping("/createOrderInstance")
     @ApiOperation("创建订单")
     public Response createOrderInstance(@Valid @RequestBody OrderInstanceCreateForm createForm){
-        OrderInstanceCreateBo cartAddBo = BeanUtil.copyProperties(createForm, OrderInstanceCreateBo.class);
-        if(createForm.getOperationType().equals(2)){ //店员下单
+        OrderInstancePaymentBo cartAddBo = BeanUtil.copyProperties(createForm, OrderInstancePaymentBo.class);
+        if(Integer.valueOf(1).equals(createForm.getOrderSource())){ //店员下单
             cartAddBo.setAccountId(null);
         }else{
             // TODO
             cartAddBo.setAccountId(null);
         }
-        orderInstanceBiz.creatOrderInstance(cartAddBo);
+        orderInstanceBiz.createOrderInstance(cartAddBo);
         return Response.ok();
     }
 

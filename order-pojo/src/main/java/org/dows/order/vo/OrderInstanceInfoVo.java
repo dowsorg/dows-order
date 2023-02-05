@@ -37,6 +37,12 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "桌号/编号")
     private String tableNo;
 
+    @ApiModelProperty(value = "今日翻台次数")
+    private Integer todayNum;
+
+    @ApiModelProperty(value = "上菜分钟")
+    private String menuMin;
+
     @ApiModelProperty(value = "人数")
     private Integer peoples;
 

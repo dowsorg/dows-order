@@ -12,4 +12,7 @@ public class OrderInstancePaymentBo implements Serializable {
     @ApiModelProperty(value = "订单id")
     private String orderId;
 
+    @ApiModelProperty(value = "账号id")
+    private String accountId;
+
 }
