@@ -66,12 +66,12 @@ public class TenantOrderInstanceRest {
 
 
     /**
-     * 创建订单 连锁店下单 不支付
+     * 创建订单 连锁店店员和客户扫码下单 不支付
      * @param createForm
      * @return
      */
     @PostMapping("/createOrderInstance")
-    @ApiOperation("创建订单")
+    @ApiOperation("创建订单（连锁店店员和客户扫码下单）")
     public Response createOrderInstance(@Valid @RequestBody OrderInstanceCreateForm createForm){
         OrderInstanceCreateBo cartAddBo = BeanUtil.copyProperties(createForm, OrderInstanceCreateBo.class);
         if(Integer.valueOf(1).equals(createForm.getOrderSource())){ //店员下单

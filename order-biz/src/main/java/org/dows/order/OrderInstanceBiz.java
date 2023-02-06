@@ -413,7 +413,12 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         infoVo.setStatus(1);
         infoVo.setOrderNo(instance.getOrderNo());
         infoVo.setTableNo(instance.getTableNo());
-        infoVo.setTodayNum(3);
+        List<OrderInstance> todayNumOrder = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getTableNo, tableNo)
+                .eq(OrderInstance::getStoreId, storeId)
+                .apply("date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(DateUtil.date()))
+                .list();
+        infoVo.setTodayNum(todayNumOrder.size());
         infoVo.setMenuMin("36分钟");
         infoVo.setPeoples(2);
         List<OrderTableInfoVo.GoodSpuInfo> list = Lists.newArrayList();

@@ -55,21 +55,7 @@ public class OrderInstanceRest {
         return Response.ok();
     }
 
-
-    /**
-     * 查询订单详情
-     * @param queryForm
-     * @return
-     */
-    @PostMapping("/queryOrderInfo")
-    @ApiOperation("查询订单详情")
-    public Response<List<OrderInstanceInfoVo>> queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
-        OrderInstanceQueryBo queryBo = BeanUtil.copyProperties(queryForm, OrderInstanceQueryBo.class);
-        if(StrUtil.isBlank(queryBo.getTableNo())){
-            queryBo.setAccountId("");// TODO
-        }
-        return Response.ok(orderInstanceBiz.queryOrderInfo(queryBo));
-    }
+    
 
 
     /**
