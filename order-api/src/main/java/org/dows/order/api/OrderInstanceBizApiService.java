@@ -3,9 +3,9 @@ package org.dows.order.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dows.order.bo.*;
 import org.dows.order.form.OrderInstanceTenantForm;
-import org.dows.order.vo.OrderInstanceTenantOpVo;
-import org.dows.order.vo.OrderInstanceTenantVo;
-import org.dows.order.vo.OrderInstanceInfoVo;
+import org.dows.order.form.OrderMyForm;
+import org.dows.order.form.OrderRefundForm;
+import org.dows.order.vo.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +31,9 @@ public interface OrderInstanceBizApiService {
      * @return
      */
     List<OrderInstanceInfoVo> queryOrderInfo(OrderInstanceQueryBo queryBo);
+
+
+
 
     /**
      * 查询单个订单信息
@@ -82,6 +85,13 @@ public interface OrderInstanceBizApiService {
     boolean diningOrder(Long orderId);
 
     /**
+     * 申请退款
+     * @param refundForm
+     * @return
+     */
+    boolean customerApplyRefund(OrderRefundForm refundForm);
+
+    /**
      * 订单分页列表
      * @param adminForm
      * @return
@@ -94,6 +104,30 @@ public interface OrderInstanceBizApiService {
      * @return
      */
     IPage<OrderInstanceTenantOpVo> selectOrderInstanceRePage(OrderInstanceTenantForm adminForm);
+
+    /**
+     * c端用户的订单详情
+     * @param orderId
+     * @return
+     */
+    OrderInstanceDetailVo getOrderDetailInfo(Long orderId);
+
+
+    /**
+     * 桌台订单信息
+     * @param storeId
+     * @param tableNo
+     * @return
+     */
+    OrderTableInfoVo getOrderInstanceTableInfo(String storeId,String tableNo);
+
+
+    /**
+     * c端我的订单
+     * @param myForm
+     * @return
+     */
+    List<OrderMyInstanceInfoVo> getMyOrderInstance(OrderMyForm myForm);
 
 
 }

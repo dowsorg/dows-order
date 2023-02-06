@@ -51,7 +51,7 @@ public class OrderItem{
     @ApiModelProperty("商品名称")
     private String spuName;
 
-    @ApiModelProperty("订单项标记(0:有效，1：失效)")
+    @ApiModelProperty("更多(0:未上菜 1:划菜 2:退菜 3:赠送 4:报损 5:加菜)")
     private Integer flag;
 
     @ApiModelProperty("数量")

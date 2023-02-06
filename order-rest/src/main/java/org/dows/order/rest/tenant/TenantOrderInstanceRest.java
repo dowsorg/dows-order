@@ -13,14 +13,12 @@ import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.OrderApplyRefundBo;
 import org.dows.order.bo.OrderInstanceCreateBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
-import org.dows.order.form.OrderApplyRefundForm;
-import org.dows.order.form.OrderInstanceCreateForm;
-import org.dows.order.form.OrderInstanceQueryForm;
-import org.dows.order.form.OrderInstanceTenantForm;
+import org.dows.order.form.*;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.vo.OrderInstanceInfoVo;
 import org.dows.order.vo.OrderInstanceTenantOpVo;
 import org.dows.order.vo.OrderInstanceTenantVo;
+import org.dows.order.vo.OrderTableInfoVo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +28,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/tenant/order")
+@RequestMapping("/tenant/orderInstance")
 public class TenantOrderInstanceRest {
 
 
@@ -89,12 +87,12 @@ public class TenantOrderInstanceRest {
 
 
     /**
-     * 查询订单详情
+     * 收银台和B端查询订单详情
      * @param queryForm
      * @return
      */
     @PostMapping("/queryOrderInfo")
-    @ApiOperation("查询订单详情")
+    @ApiOperation("查询订单详情(收银台和B端)")
     public Response<List<OrderInstanceInfoVo>> queryOrderInfo(@Valid @RequestBody OrderInstanceQueryForm queryForm){
         OrderInstanceQueryBo queryBo = BeanUtil.copyProperties(queryForm, OrderInstanceQueryBo.class);
         if(StrUtil.isBlank(queryBo.getTableNo())){
@@ -124,5 +122,20 @@ public class TenantOrderInstanceRest {
     public Response<Boolean> diningOrder(@PathVariable Long orderId){
         return Response.ok(orderInstanceBiz.diningOrder(orderId));
     }
+
+
+    /**
+     * 桌台订单信息
+     * @param storeId
+     * @param tableNo
+     * @return
+     */
+    @GetMapping("/getOrderInstanceTableInfo/{storeId}/{tableNo}")
+    @ApiOperation("桌台订单信息")
+    public Response<OrderTableInfoVo> getOrderInstanceTableInfo(@PathVariable(value = "storeId") String storeId, @PathVariable(value = "tableNo") String tableNo){
+        return Response.ok(orderInstanceBiz.getOrderInstanceTableInfo(storeId,tableNo));
+    }
+
+
 
 }

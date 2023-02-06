@@ -27,12 +27,12 @@ import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
 import org.dows.order.enums.OrderTableStatusEnum;
 import org.dows.order.form.OrderInstanceTenantForm;
+import org.dows.order.form.OrderMyForm;
+import org.dows.order.form.OrderRefundForm;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
-import org.dows.order.vo.OrderInstanceInfoVo;
-import org.dows.order.vo.OrderInstanceTenantOpVo;
-import org.dows.order.vo.OrderInstanceTenantVo;
+import org.dows.order.vo.*;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
 import org.springframework.stereotype.Service;
@@ -154,6 +154,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
                 instanceInfoVo.setOrderId(orderInstance.getId());
                 instanceInfoVo.setOrderNo(orderInstance.getOrderNo());
+                instanceInfoVo.setRefund(orderInstance.getRefund());
+                instanceInfoVo.setApplyImageUrl(StrUtil.split(orderInstance.getApplyImageUrl(),","));
+                instanceInfoVo.setApplyRefundRemark(orderInstance.getApplyRefundRemark());
                 if(Integer.valueOf(1).equals(orderInstance.getType())){ //自营外面才有 手机号和姓名
                     instanceInfoVo.setPhone("13554700856");
                     instanceInfoVo.setAccountName("张三");
@@ -279,6 +282,16 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
+    public boolean customerApplyRefund(OrderRefundForm refundForm) {
+        List<String> imageUrls = refundForm.getImages();
+        return orderInstanceService.lambdaUpdate()
+                .set(OrderInstance::getRefund,2)
+                .set(!CollUtil.isEmpty(imageUrls),OrderInstance::getApplyImageUrl,imageUrls.stream().collect(Collectors.joining(",")))
+                .set(!StrUtil.isBlank(refundForm.getRemark()),OrderInstance::getApplyRefundRemark,refundForm.getRemark())
+                .eq(OrderInstance::getId,refundForm.getOrderId()).update();
+    }
+
+    @Override
     public IPage<OrderInstanceTenantVo> selectOrderInstancePage(OrderInstanceTenantForm adminForm) {
         Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
         IPage<OrderInstanceTenantVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
@@ -319,5 +332,162 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             }
         }
         return adminVoIPage;
+    }
+
+    @Override
+    public OrderInstanceDetailVo getOrderDetailInfo(Long orderId) {
+        OrderInstanceDetailVo detailVo = new OrderInstanceDetailVo();
+        OrderInstance instance = orderInstanceService.getById(orderId);
+        List<OrderItem> orderItems = orderItemService.lambdaQuery()
+                .in(OrderItem::getOrderId,instance.getId()).list();
+        detailVo.setOrderId(instance.getId());
+        detailVo.setPayStatus(instance.getStatus());
+        detailVo.setOrderStatus(1);
+        detailVo.setTableNo(instance.getTableNo());
+        if(Integer.valueOf(2).equals(instance.getRefund())){
+            detailVo.setRefundStatus(1);
+        }else if(Integer.valueOf(1).equals(instance.getRefund())){
+            detailVo.setRefundStatus(3);
+            detailVo.setRefundAmount(instance.getRefundAmout());
+            detailVo.setRefundReason(instance.getRefundRemark());
+        }else if(Integer.valueOf(0).equals(instance.getRefund())){
+            detailVo.setRefundStatus(2);
+            detailVo.setRefundReason(instance.getRefundRemark());
+        }
+        detailVo.setAccountName("张三");
+        detailVo.setAccountPhone("1355479909");
+        detailVo.setAccountAddress("上海");
+        detailVo.setStoreName("海底捞");
+        detailVo.setStoreAddress("徐家汇");
+        detailVo.setStorePhone("7277745");
+        List<OrderInstanceDetailVo.GoodInfo> list = Lists.newArrayList();
+        List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
+        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsForm> data = goodsList.getData();
+        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
+        for (OrderItem item : orderItems) {
+            if(spuFormMap.containsKey(item.getSpuId())){
+                OrderInstanceDetailVo.GoodInfo goodInfo = new OrderInstanceDetailVo.GoodInfo();
+                GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
+                goodInfo.setImage(spuForm.getPic());
+                goodInfo.setSpuName(spuForm.getSpuName());
+                goodInfo.setSubSpuName(spuForm.getDescr());
+                goodInfo.setNum(item.getQuantity());
+                BigDecimal multiply = new BigDecimal(item.getQuantity()).multiply(spuForm.getNormalPrice());
+                goodInfo.setPrice(multiply);
+                list.add(goodInfo);
+            }
+        }
+        detailVo.setGoodInfoList(list);
+        BigDecimal decimal = orderItems.stream()
+                .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        detailVo.setTotalAmount(decimal);
+        detailVo.setPackingPrice(new BigDecimal("3.5"));
+        detailVo.setGivePrice(new BigDecimal("10.5"));
+        detailVo.setDeductionPrice(new BigDecimal("10.5"));
+        detailVo.setIntegralPrice(200);
+        detailVo.setTotalPrice(new BigDecimal("134.5"));
+        detailVo.setRemark(instance.getRemark());
+        detailVo.setTableWare(1);
+        OrderInstanceDetailVo.OrderInfo orderInfo = new OrderInstanceDetailVo.OrderInfo();
+        orderInfo.setOrderNo(instance.getOrderNo());
+        orderInfo.setDiningMode(instance.getType());
+        orderInfo.setDt(instance.getDt());
+        orderInfo.setIntegral(200);
+        orderInfo.setAcceptIntegral("本人");
+        detailVo.setOrderInfo(orderInfo);
+        return detailVo;
+    }
+
+    @Override
+    public OrderTableInfoVo getOrderInstanceTableInfo(String storeId, String tableNo) {
+        OrderTableInfoVo infoVo = new OrderTableInfoVo();
+        OrderInstance instance = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getTableNo, tableNo)
+                .eq(OrderInstance::getStoreId, storeId).last("limit 1").one();
+        List<OrderItem> orderItems = orderItemService.lambdaQuery()
+                .in(OrderItem::getOrderId,instance.getId()).list();
+        infoVo.setOrderId(instance.getId());
+        infoVo.setStatus(1);
+        infoVo.setOrderNo(instance.getOrderNo());
+        infoVo.setTableNo(instance.getTableNo());
+        infoVo.setTodayNum(3);
+        infoVo.setMenuMin("36分钟");
+        infoVo.setPeoples(2);
+        List<OrderTableInfoVo.GoodSpuInfo> list = Lists.newArrayList();
+        List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
+        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsForm> data = goodsList.getData();
+        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
+
+        for (OrderItem item : orderItems) {
+            OrderTableInfoVo.GoodSpuInfo goodInfo = new OrderTableInfoVo.GoodSpuInfo();
+            goodInfo.setOrderItemId(item.getId());
+            goodInfo.setQuantity(item.getQuantity());
+            if(spuFormMap.containsKey(item.getSpuId())) {
+                GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
+                goodInfo.setGoodName(spuForm.getSpuName());
+                goodInfo.setPrice(item.getPrice());
+                if(Integer.valueOf(2).equals(item.getFlag())){
+                    OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(),OrderItemMoreBo.class);
+                    goodInfo.setRefundNum(moreBo == null?moreBo.getFoodNum():0);
+                }
+            }
+            goodInfo.setFlag(item.getFlag());
+            goodInfo.setRemark(item.getRemark());
+            list.add(goodInfo);
+        }
+        Integer nums = orderItems.stream().map(OrderItem::getQuantity).reduce((a, b) -> a + b).orElse(0);
+        infoVo.setSpuCount(nums);
+        infoVo.setSpuCategory(orderItems.size());
+        infoVo.setGoodSpuInfoList(list);
+        infoVo.setRemark(instance.getRemark());
+        infoVo.setDt(instance.getDt());
+        BigDecimal decimal = orderItems.stream()
+                .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        infoVo.setSubtotal(decimal);
+        return infoVo;
+    }
+
+    @Override
+    public List<OrderMyInstanceInfoVo> getMyOrderInstance(OrderMyForm myForm) {
+        List<OrderMyInstanceInfoVo> infoVoList = Lists.newArrayList();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getAccountId, myForm.getAccountId())
+                .eq(myForm.getType() != null,OrderInstance::getType,myForm.getType())
+                .list();
+        if(!CollUtil.isEmpty(instanceList)){
+            List<Long> orderIds = instanceList.stream().map(OrderInstance::getId).collect(Collectors.toList());
+            List<OrderItem> orderItems = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds).list();
+            Map<Long, List<OrderItem>> orderedItemMap = CollStreamUtil.groupByKey(orderItems, OrderItem::getOrderId, false);
+            for (OrderInstance orderInst : instanceList) {
+                OrderMyInstanceInfoVo instanceInfoVo = new OrderMyInstanceInfoVo();
+                instanceInfoVo.setOrderId(orderInst.getId());
+                instanceInfoVo.setStoreName("海底捞");
+                instanceInfoVo.setTableNo(orderInst.getTableNo());
+                instanceInfoVo.setOrderStatus(1);
+                if(orderedItemMap.containsKey(orderInst.getId())){
+                    List<OrderItem> itemList  = orderedItemMap.get(orderInst.getId());
+                    List<Long> spuIds = itemList.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
+                    Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
+                    List<GoodsForm> data = goodsList.getData();
+                    List<String> images = data.stream().map(GoodsForm::getGoodsSpu).map(GoodsSpuForm::getPic).collect(Collectors.toList());
+                    instanceInfoVo.setGoodsUrl(images);
+                    Integer nums = itemList.stream().map(OrderItem::getQuantity).reduce(Integer::sum).orElse(0);
+                    instanceInfoVo.setGoodsNum(nums);
+                    BigDecimal decimal = itemList.stream()
+                            .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
+                            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                    instanceInfoVo.setTotal(decimal);
+                }
+                instanceInfoVo.setDt(orderInst.getDt());
+                infoVoList.add(instanceInfoVo);
+            }
+        }
+        return infoVoList;
     }
 }

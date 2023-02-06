@@ -7,17 +7,17 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
-import org.dows.order.OrderInstanceBiz;
-import org.dows.order.bo.OrderInstanceCreateBo;
+import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.OrderInstancePaymentBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
 import org.dows.order.form.OrderInstanceCreateForm;
 import org.dows.order.form.OrderInstanceQueryForm;
+import org.dows.order.form.OrderMyForm;
+import org.dows.order.form.OrderRefundForm;
+import org.dows.order.vo.OrderInstanceDetailVo;
 import org.dows.order.vo.OrderInstanceInfoVo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.dows.order.vo.OrderMyInstanceInfoVo;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("user/orderInstance")
 public class OrderInstanceRest {
-    private final OrderInstanceBiz orderInstanceBiz;
+    private final OrderInstanceBizApiService orderInstanceBiz;
 
     /**
      * 创建订单 支付的
@@ -72,7 +72,40 @@ public class OrderInstanceRest {
     }
 
 
+    /**
+     * 用户申请退款
+     * @param refundForm
+     * @return
+     */
+    @PostMapping("/customerApplyRefund")
+    @ApiOperation("用户申请退款")
+    public Response<Boolean> customerApplyRefund(@Valid @RequestBody OrderRefundForm refundForm){
+        return Response.ok(orderInstanceBiz.customerApplyRefund(refundForm));
+    }
 
+
+    /**
+     * c 端用户的 订单详情
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/getOrderDetailInfo/{orderId}")
+    @ApiOperation("订单详情(用户C端)")
+    public Response<OrderInstanceDetailVo> getOrderDetailInfo(@PathVariable Long orderId){
+        return Response.ok(orderInstanceBiz.getOrderDetailInfo(orderId));
+    }
+
+
+    /**
+     * c 端 我的订单
+     * @param myForm
+     * @return
+     */
+    @PostMapping("/getMyOrderInstance")
+    @ApiOperation("我的订单(用户C端)")
+    public Response<List<OrderMyInstanceInfoVo>> getMyOrderInstance(@Valid @RequestBody OrderMyForm myForm){
+        return Response.ok(orderInstanceBiz.getMyOrderInstance(myForm));
+    }
 
 
 

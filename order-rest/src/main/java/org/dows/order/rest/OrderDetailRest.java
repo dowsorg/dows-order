@@ -10,6 +10,9 @@ import org.dows.order.service.OrderDetailService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 /**
 * 订单详情(orderDetail)表控制层
 *
@@ -24,5 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderDetailRest implements MybatisCrudRest<OrderDetailForm, OrderDetail, OrderDetailService> {
 
 
+    public static void main(String[] args) {
+        System.out.println(Instant.now());
+    }
 }
 

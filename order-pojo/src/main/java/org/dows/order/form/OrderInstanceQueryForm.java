@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @ApiModel(value = "OrderInstanceQueryForm 表单对象", description = "订单查询接口")
@@ -28,4 +29,7 @@ public class OrderInstanceQueryForm implements Serializable {
 
     @ApiModelProperty(value = "手机号")
     private String phone;
+
+    @ApiModelProperty(value = "时间 示例 10:15号")
+    private Date date;
 }

@@ -18,7 +18,6 @@ public class OrderInstanceInfoVo implements Serializable {
 
 
     @JsonSerialize(using= ToStringSerializer.class)
-    @JsonDeserialize
     @ApiModelProperty(value = "订单id")
     private Long orderId;
 
@@ -49,9 +48,6 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "订单类型(0:堂食|1:自营外卖|2:打包)")
     private Integer type;
 
-    @ApiModelProperty(value = "订单类型数量")
-    private Integer typeNum;
-
     @ApiModelProperty(value = "支付渠道 1:支付宝|2:微信")
     private Integer payChannel;
 
@@ -81,6 +77,15 @@ public class OrderInstanceInfoVo implements Serializable {
 
     @ApiModelProperty(value = "共几件")
     private Long spuCount;
+
+    @ApiModelProperty(value = "商家申请退款状态 0:拒绝退款 1:退款 2:用户申请退款(弹窗有申请退款订单 查看详情)")
+    private Integer refund;
+
+    @ApiModelProperty(value = "用户退款原因")
+    private String applyRefundRemark;
+
+    @ApiModelProperty(value = "用户上传的图片")
+    private List<String> applyImageUrl;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "下单日期")

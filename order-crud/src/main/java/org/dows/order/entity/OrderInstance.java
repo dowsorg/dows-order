@@ -85,11 +85,20 @@ public class OrderInstance  {
     @ApiModelProperty("支付状态 0:未支付 1:已支付")
     private Integer payState;
 
-    @ApiModelProperty("申请退款状态 0:拒绝退款 1:退款")
+    @ApiModelProperty("申请退款状态 0:拒绝退款 1:退款 2:退款中")
     private Integer refund;
 
     @ApiModelProperty("申请退款备注")
     private String refundRemark;
+
+    @ApiModelProperty("商家同意退款的金额")
+    private BigDecimal refundAmout;
+
+    @ApiModelProperty("用户退款备注")
+    private String applyRefundRemark;
+
+    @ApiModelProperty("用户退款备注")
+    private String applyImageUrl;
 
     @ApiModelProperty("支付时间")
     private Date payTime;
