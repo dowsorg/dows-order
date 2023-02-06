@@ -206,6 +206,7 @@ public class ExceptionHandler /*implements ResponseBodyAdvice<Object>*/ {
         } else {
             ModelAndView mav = new ModelAndView();
             mav.addObject("exception", e);
+            e.printStackTrace();
             mav.addObject("url", request.getRequestURL());
             mav.setViewName("error");
             return mav;

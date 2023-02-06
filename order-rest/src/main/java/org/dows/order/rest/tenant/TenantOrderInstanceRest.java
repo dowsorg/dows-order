@@ -107,7 +107,7 @@ public class TenantOrderInstanceRest {
      * @return
      */
     @PostMapping("/applyRefund")
-    @ApiOperation("申请退款操作")
+    @ApiOperation("申请退款操作(B端操作拒绝退款和同意退款)")
     public Response<Boolean> applyRefundOrder(@Valid @RequestBody OrderApplyRefundForm refundForm){
         return Response.ok(orderInstanceBiz.applyRefund(BeanUtil.toBean(refundForm, OrderApplyRefundBo.class)));
     }

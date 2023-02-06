@@ -78,7 +78,7 @@ public class OrderInstanceRest {
      * @return
      */
     @PostMapping("/customerApplyRefund")
-    @ApiOperation("用户申请退款")
+    @ApiOperation("用户申请退款(用户C端)")
     public Response<Boolean> customerApplyRefund(@Valid @RequestBody OrderRefundForm refundForm){
         return Response.ok(orderInstanceBiz.customerApplyRefund(refundForm));
     }
