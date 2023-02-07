@@ -190,11 +190,11 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 if(orderGoodSpuInfoMap.containsKey(orderInstance.getId())){
                     List<OrderInstanceInfoVo.GoodSpuInfo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getId());
                     instanceInfoVo.setGoodSpuInfoList(goodSpuInfos);
-                    BigDecimal decimal = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getPrice).reduce((x, y) -> x.add(y)).orElse(BigDecimal.ZERO);
+                    BigDecimal decimal = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getPrice).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                     instanceInfoVo.setSubtotal(decimal);
-                    instanceInfoVo.setTotalAmount(decimal);
-                    long count = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getQuantity).count();
-                    instanceInfoVo.setSpuCount(Long.valueOf(count));
+                    instanceInfoVo.setTotalAmount(orderInstance.getAmount());
+                    Integer count = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getQuantity).reduce(Integer::sum).orElse(0);
+                    instanceInfoVo.setSpuCount(count);
                     instanceInfoVo.setSpuCategory(goodSpuInfos.size());
                 }
                 if(orderInstance.getDiningTime() != null){
@@ -374,8 +374,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 goodInfo.setSpuName(spuForm.getSpuName());
                 goodInfo.setSubSpuName(spuForm.getDescr());
                 goodInfo.setNum(item.getQuantity());
-                BigDecimal multiply = new BigDecimal(item.getQuantity()).multiply(spuForm.getNormalPrice());
-                goodInfo.setPrice(multiply);
+                goodInfo.setPrice(item.getPrice());
                 list.add(goodInfo);
             }
         }
@@ -451,10 +450,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         infoVo.setGoodSpuInfoList(list);
         infoVo.setRemark(instance.getRemark());
         infoVo.setDt(instance.getDt());
-        BigDecimal decimal = orderItems.stream()
-                .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
-                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-        infoVo.setSubtotal(decimal);
+//        BigDecimal decimal = orderItems.stream()
+//                .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
+//                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        infoVo.setSubtotal(instance.getAmount());
         return infoVo;
     }
 
@@ -484,10 +483,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     instanceInfoVo.setGoodsUrl(images);
                     Integer nums = itemList.stream().map(OrderItem::getQuantity).reduce(Integer::sum).orElse(0);
                     instanceInfoVo.setGoodsNum(nums);
-                    BigDecimal decimal = itemList.stream()
-                            .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
-                            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-                    instanceInfoVo.setTotal(decimal);
+//                    BigDecimal decimal = itemList.stream()
+//                            .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
+//                            .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                    instanceInfoVo.setTotal(orderInst.getAmount());
                 }
                 instanceInfoVo.setDt(orderInst.getDt());
                 infoVoList.add(instanceInfoVo);

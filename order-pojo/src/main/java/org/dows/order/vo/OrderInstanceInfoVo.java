@@ -76,7 +76,7 @@ public class OrderInstanceInfoVo implements Serializable {
     private Integer spuCategory;
 
     @ApiModelProperty(value = "共几件")
-    private Long spuCount;
+    private Integer spuCount;
 
     @ApiModelProperty(value = "商家申请退款状态 0:拒绝退款 1:退款 2:用户申请退款(弹窗有申请退款订单 查看详情)")
     private Integer refund;
