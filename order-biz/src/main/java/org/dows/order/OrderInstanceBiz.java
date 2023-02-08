@@ -406,6 +406,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         OrderInstance instance = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getTableNo, tableNo)
                 .eq(OrderInstance::getStoreId, storeId).last("limit 1").one();
+        if(instance == null){
+            return null;
+        }
         List<OrderItem> orderItems = orderItemService.lambdaQuery()
                 .in(OrderItem::getOrderId,instance.getId()).list();
         infoVo.setOrderId(instance.getId());
