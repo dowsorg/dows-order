@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -90,9 +91,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         orderInstance.setStatus(0);
         BigDecimal amoutPrice = new BigDecimal("0");
         List<Long> spuIds = createBo.getGoodSpuInfoList().stream().map(OrderInstanceCreateBo.GoodSpuInfo::getGoodSpuId).collect(Collectors.toList());
-        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
-        List<GoodsForm> data = goodsList.getData();
-        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
         Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
         for (OrderInstanceCreateBo.GoodSpuInfo goodSpuInfo : createBo.getGoodSpuInfoList()) {
             amoutPrice = amoutPrice.add(spuFormMap.get(goodSpuInfo.getGoodSpuId()).getNormalPrice().multiply(BigDecimal.valueOf(goodSpuInfo.getQuantity())));
@@ -362,9 +362,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         detailVo.setStorePhone("7277745");
         List<OrderInstanceDetailVo.GoodInfo> list = Lists.newArrayList();
         List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
-        List<GoodsForm> data = goodsList.getData();
-        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
         Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
         for (OrderItem item : orderItems) {
             if(spuFormMap.containsKey(item.getSpuId())){
@@ -425,9 +424,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         infoVo.setPeoples(2);
         List<OrderTableInfoVo.GoodSpuInfo> list = Lists.newArrayList();
         List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-        Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
-        List<GoodsForm> data = goodsList.getData();
-        List<GoodsSpuForm> spuInfoList = data.stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
+        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
         Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
 
         for (OrderItem item : orderItems) {
@@ -480,9 +478,8 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 if(orderedItemMap.containsKey(orderInst.getId())){
                     List<OrderItem> itemList  = orderedItemMap.get(orderInst.getId());
                     List<Long> spuIds = itemList.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-                    Response<List<GoodsForm>> goodsList = goodsApi.getGoodsInfoByIds(spuIds);
-                    List<GoodsForm> data = goodsList.getData();
-                    List<String> images = data.stream().map(GoodsForm::getGoodsSpu).map(GoodsSpuForm::getPic).collect(Collectors.toList());
+                    List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
+                    List<String> images = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).map(GoodsSpuForm::getPic).collect(Collectors.toList());
                     instanceInfoVo.setGoodsUrl(images);
                     Integer nums = itemList.stream().map(OrderItem::getQuantity).reduce(Integer::sum).orElse(0);
                     instanceInfoVo.setGoodsNum(nums);

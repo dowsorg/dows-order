@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -39,9 +40,9 @@ public class OrderCatBiz implements OrderCartApiService {
     private final GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
-        Response<List<GoodsForm>> infoByIds = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
-        GoodsForm goodsForm = infoByIds.getData().get(0);
-        GoodsSpuForm goodsSpu = goodsForm.getGoodsSpu();
+        List<GoodsForm> goodsFormList = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));
+        GoodsForm goodsForm = CollUtil.getFirst(goodsFormList);
+        GoodsSpuForm goodsSpu = Optional.ofNullable(goodsForm).map(GoodsForm::getGoodsSpu).orElseGet(GoodsSpuForm::new);
         //如果是加+减-
         OrderCart cart = queryOrderCart(orderCartAddBo);
         if(cart != null){
