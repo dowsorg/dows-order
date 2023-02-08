@@ -26,7 +26,7 @@ import javax.validation.Valid;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/orderItem")
+@RequestMapping("tenant/orderItem")
 public class TenantOrderItemRest {
 
     private final OrderItemBiz orderItemBiz;
