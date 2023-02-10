@@ -15,10 +15,7 @@ import org.dows.order.bo.OrderInstanceCreateBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
 import org.dows.order.form.*;
 import org.dows.order.service.OrderInstanceService;
-import org.dows.order.vo.OrderInstanceInfoVo;
-import org.dows.order.vo.OrderInstanceTenantOpVo;
-import org.dows.order.vo.OrderInstanceTenantVo;
-import org.dows.order.vo.OrderTableInfoVo;
+import org.dows.order.vo.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -132,7 +129,7 @@ public class TenantOrderInstanceRest {
      */
     @GetMapping("/getOrderInstanceTableInfo/{storeId}/{tableNo}")
     @ApiOperation("桌台订单信息")
-    public Response<OrderTableInfoVo> getOrderInstanceTableInfo(@PathVariable(value = "storeId") String storeId, @PathVariable(value = "tableNo") String tableNo){
+    public Response<OrderTableTotalVo> getOrderInstanceTableInfo(@PathVariable(value = "storeId") String storeId, @PathVariable(value = "tableNo") String tableNo){
         return Response.ok(orderInstanceBiz.getOrderInstanceTableInfo(storeId,tableNo));
     }
 

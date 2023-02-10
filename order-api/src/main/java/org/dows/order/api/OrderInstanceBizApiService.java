@@ -119,7 +119,7 @@ public interface OrderInstanceBizApiService {
      * @param tableNo
      * @return
      */
-    OrderTableInfoVo getOrderInstanceTableInfo(String storeId,String tableNo);
+    OrderTableTotalVo getOrderInstanceTableInfo(String storeId,String tableNo);
 
 
     /**

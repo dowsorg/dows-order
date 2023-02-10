@@ -19,23 +19,8 @@ public class OrderTableInfoVo implements Serializable {
     @ApiModelProperty(value = "订单id")
     private Long orderId;
 
-    @ApiModelProperty(value = "状态 1:上菜中 2:菜上齐 3:已超时 4:已结账")
-    private Integer status;
-
     @ApiModelProperty(value = "订单号")
     private String orderNo;
-
-    @ApiModelProperty(value = "桌号/编号")
-    private String tableNo;
-
-    @ApiModelProperty(value = "今日翻台次数")
-    private Integer todayNum;
-
-    @ApiModelProperty(value = "上菜分钟")
-    private String menuMin;
-
-    @ApiModelProperty(value = "人数")
-    private Integer peoples;
 
     @ApiModelProperty(value = "几种商品")
     private Integer spuCategory;

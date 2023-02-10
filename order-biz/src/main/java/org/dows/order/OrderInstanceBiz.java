@@ -14,7 +14,6 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.account.api.AccountInstanceApi;
 import org.dows.goods.api.GoodsApi;
 import org.dows.goods.form.GoodsForm;
 import org.dows.goods.form.GoodsSpuForm;
@@ -38,10 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,7 +58,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceMapper orderInstanceMapper;
 
-    private final AccountInstanceApi accountBiz;
+    //private final AccountInstanceApi accountBiz;
 
     private final GoodsApi goodsApi;
 
@@ -399,62 +395,66 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public OrderTableInfoVo getOrderInstanceTableInfo(String storeId, String tableNo) {
-        OrderTableInfoVo infoVo = new OrderTableInfoVo();
-        OrderInstance instance = orderInstanceService.lambdaQuery()
-                .eq(OrderInstance::getTableNo, tableNo)
-                .eq(OrderInstance::getStoreId, storeId).last("limit 1").one();
-        if(instance == null){
-            return null;
-        }
-        List<OrderItem> orderItems = orderItemService.lambdaQuery()
-                .in(OrderItem::getOrderId,instance.getId()).list();
-        infoVo.setOrderId(instance.getId());
-        infoVo.setStatus(1);
-        infoVo.setOrderNo(instance.getOrderNo());
-        infoVo.setTableNo(instance.getTableNo());
-        List<OrderInstance> todayNumOrder = orderInstanceService.lambdaQuery()
+    public OrderTableTotalVo getOrderInstanceTableInfo(String storeId, String tableNo) {
+        List<OrderInstance> orderInstanceList = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getTableNo, tableNo)
                 .eq(OrderInstance::getStoreId, storeId)
                 .apply("date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(DateUtil.date()))
+                .orderByDesc(OrderInstance::getDt)
                 .list();
-        infoVo.setTodayNum(todayNumOrder.size());
-        infoVo.setMenuMin("36分钟");
-        infoVo.setPeoples(2);
-        List<OrderTableInfoVo.GoodSpuInfo> list = Lists.newArrayList();
-        List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
-        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
-        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
-
-        for (OrderItem item : orderItems) {
-            OrderTableInfoVo.GoodSpuInfo goodInfo = new OrderTableInfoVo.GoodSpuInfo();
-            goodInfo.setOrderItemId(item.getId());
-            goodInfo.setQuantity(item.getQuantity());
-            if(spuFormMap.containsKey(item.getSpuId())) {
-                GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
-                goodInfo.setGoodName(spuForm.getSpuName());
-                goodInfo.setPrice(item.getPrice());
-                if(Integer.valueOf(2).equals(item.getFlag())){
-                    OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(),OrderItemMoreBo.class);
-                    goodInfo.setRefundNum(moreBo == null?moreBo.getFoodNum():0);
-                }
-            }
-            goodInfo.setFlag(item.getFlag());
-            goodInfo.setRemark(item.getRemark());
-            list.add(goodInfo);
+        if(CollUtil.isEmpty(orderInstanceList)){
+            return null;
         }
-        Integer nums = orderItems.stream().map(OrderItem::getQuantity).reduce((a, b) -> a + b).orElse(0);
-        infoVo.setSpuCount(nums);
-        infoVo.setSpuCategory(orderItems.size());
-        infoVo.setGoodSpuInfoList(list);
-        infoVo.setRemark(instance.getRemark());
-        infoVo.setDt(instance.getDt());
-//        BigDecimal decimal = orderItems.stream()
-//                .map(e -> new BigDecimal(e.getQuantity()).multiply(e.getPrice()))
-//                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-        infoVo.setSubtotal(instance.getAmount());
-        return infoVo;
+        OrderTableTotalVo tableTotalVo = new OrderTableTotalVo();
+        OrderInstance instanceFirstOrder = CollUtil.getFirst(orderInstanceList);
+        tableTotalVo.setStatus(1);
+        tableTotalVo.setTableNo(instanceFirstOrder.getTableNo());
+        tableTotalVo.setTodayNum(orderInstanceList.size());
+        tableTotalVo.setMenuMin("36分钟");
+        tableTotalVo.setPeoples(2);
+        List<OrderTableInfoVo> tableInfoVos = Lists.newArrayList();
+        Set<Long> orderIds = orderInstanceList.stream().map(OrderInstance::getId).collect(Collectors.toSet());
+        List<OrderItem> orderItemList = orderItemService.lambdaQuery()
+                .in(OrderItem::getOrderId,orderIds).list();
+        Map<Long, List<OrderItem>> orderItemMap = CollStreamUtil.groupKeyValue(orderItemList, OrderItem::getOrderId, Function.identity());
+        for (OrderInstance instance : orderInstanceList) {
+            List<OrderItem> orderItems = Optional.ofNullable(orderItemMap.get(instance.getId())).filter(CollUtil::isNotEmpty).orElseGet(ArrayList::new);
+            OrderTableInfoVo infoVo = new OrderTableInfoVo();
+            infoVo.setOrderId(instance.getId());
+            infoVo.setOrderNo(instance.getOrderNo());
+            List<OrderTableInfoVo.GoodSpuInfo> list = Lists.newArrayList();
+            List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
+            List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
+            List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
+            Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
+            for (OrderItem item : orderItems) {
+                OrderTableInfoVo.GoodSpuInfo goodInfo = new OrderTableInfoVo.GoodSpuInfo();
+                goodInfo.setOrderItemId(item.getId());
+                goodInfo.setQuantity(item.getQuantity());
+                if (spuFormMap.containsKey(item.getSpuId())) {
+                    GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
+                    goodInfo.setGoodName(spuForm.getSpuName());
+                    goodInfo.setPrice(item.getPrice());
+                    if (Integer.valueOf(2).equals(item.getFlag())) {
+                        OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(), OrderItemMoreBo.class);
+                        goodInfo.setRefundNum(moreBo == null ? moreBo.getFoodNum() : 0);
+                    }
+                }
+                goodInfo.setFlag(item.getFlag());
+                goodInfo.setRemark(item.getRemark());
+                list.add(goodInfo);
+            }
+            Integer nums = orderItems.stream().map(OrderItem::getQuantity).reduce((a, b) -> a + b).orElse(0);
+            infoVo.setSpuCount(nums);
+            infoVo.setSpuCategory(orderItems.size());
+            infoVo.setGoodSpuInfoList(list);
+            infoVo.setRemark(instance.getRemark());
+            infoVo.setDt(instance.getDt());
+            infoVo.setSubtotal(instance.getAmount());
+            tableInfoVos.add(infoVo);
+        }
+        tableTotalVo.setTableInfoList(tableInfoVos);
+        return tableTotalVo;
     }
 
     @Override

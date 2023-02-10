@@ -27,11 +27,11 @@
             <artifactId>goods-boot</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>account-biz</artifactId>
-            <version>20220701-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.dows.cloud</groupId>-->
+<!--            <artifactId>account-biz</artifactId>-->
+<!--            <version>20220701-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.dows.saas</groupId>
             <artifactId>order-crud</artifactId>
