@@ -14,8 +14,7 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.account.biz.AccountBiz;
-import org.dows.framework.api.Response;
+import org.dows.account.api.AccountInstanceApi;
 import org.dows.goods.api.GoodsApi;
 import org.dows.goods.form.GoodsForm;
 import org.dows.goods.form.GoodsSpuForm;
@@ -63,7 +62,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceMapper orderInstanceMapper;
 
-    private final AccountBiz accountBiz;
+    private final AccountInstanceApi accountBiz;
 
     private final GoodsApi goodsApi;
 
