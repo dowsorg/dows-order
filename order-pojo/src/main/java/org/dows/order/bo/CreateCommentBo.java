@@ -11,7 +11,7 @@ public class CreateCommentBo implements Serializable {
     private static final long serialVersionUID = -5958799987435628263L;
 
     @ApiModelProperty("订单号")
-    private String orderId;
+    private String orderNo;
     @ApiModelProperty("图片列表")
     private List<String> pics;
     @ApiModelProperty("内容")
@@ -22,5 +22,7 @@ public class CreateCommentBo implements Serializable {
     private Integer score;
     @ApiModelProperty("是否是商家回评 0:不是 1:是")
     private Integer fromMerchant;
+    @ApiModelProperty("账号id")
+    private String accountId;
 
 }

@@ -45,6 +45,8 @@ public class OrderCommentRest {
     @ApiOperation("创建订单评价")
     public Response<Boolean> createOrderComment(@Valid @RequestBody OrderCommentForm commentForm){
         CreateCommentBo commentBo = BeanUtil.copyProperties(commentForm, CreateCommentBo.class);
+        //TODO 登录时调
+        commentBo.setAccountId(null);
         return Response.ok(orderCommentBiz.createComment(commentBo));
     }
 
