@@ -106,6 +106,12 @@ public interface OrderInstanceBizApiService {
     IPage<OrderInstanceTenantOpVo> selectOrderInstanceRePage(OrderInstanceTenantForm adminForm);
 
     /**
+     * pc 订单详情
+     * @return
+     */
+    OrderDetailPcVo getOrderDetailPcVo(Long orderId);
+
+    /**
      * c端用户的订单详情
      * @param orderId
      * @return

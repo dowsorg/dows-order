@@ -61,6 +61,22 @@ public class TenantOrderInstanceRest {
         return Response.ok(orderInstanceBiz.selectOrderInstanceRePage(tenantForm));
     }
 
+    /**
+     * 后台订单详情全部 根据type 区分订单详情
+     * @param
+     * @return
+     */
+    @GetMapping("/getOrderDetailPcVo/{orderId}")
+    @ApiOperation("后台订单详情全部 根据type 区分订单详情")
+    public Response<OrderDetailPcVo> getOrderDetailPcVo(@PathVariable Long orderId){
+        return Response.ok(orderInstanceBiz.getOrderDetailPcVo(orderId));
+    }
+
+
+
+
+
+
 
     /**
      * 创建订单 连锁店店员和客户扫码下单 不支付

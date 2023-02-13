@@ -114,6 +114,34 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         orderItemService.saveBatch(orderItems);
     }
 
+    /**
+     * 根据订单ids 获取订单详情
+     * @param orderIds
+     * @return
+     */
+    private Map<Long, List<GoodSpuInfoVo>> getGoodSpuInfoVo(List<Long> orderIds){
+        Map<Long, List<GoodSpuInfoVo>> orderGoodSpuInfoMap = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds)
+                .list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId, Collectors.collectingAndThen(Collectors.toList(), a -> {
+                    List<GoodSpuInfoVo> list = Lists.newArrayList();
+                    for (OrderItem orderItem : a) {
+                        GoodSpuInfoVo goodSpuInfo = new GoodSpuInfoVo();
+                        goodSpuInfo.setOrderItemId(orderItem.getId());
+                        goodSpuInfo.setFlag(orderItem.getFlag());
+                        if(Integer.valueOf(2).equals(orderItem.getFlag())){
+                            OrderItemMoreBo moreBo = JSONUtil.toBean(orderItem.getMore(),OrderItemMoreBo.class);
+                            goodSpuInfo.setRefundNum(Optional.ofNullable(moreBo).map(OrderItemMoreBo::getFoodNum).orElse(0));
+                        }
+                        goodSpuInfo.setGoodName(orderItem.getSpuName());
+                        goodSpuInfo.setQuantity(orderItem.getQuantity());
+                        goodSpuInfo.setPrice(orderItem.getPrice());
+                        goodSpuInfo.setRemark(orderItem.getRemark());
+                        list.add(goodSpuInfo);
+                    }
+                    return list;
+                })));
+        return orderGoodSpuInfoMap;
+    }
+
 
 
     @Override
@@ -126,25 +154,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .list();
         if(!CollUtil.isEmpty(orderList)){
             List<Long> orderIds = orderList.stream().map(OrderInstance::getId).collect(Collectors.toList());
-            Map<Long, List<OrderInstanceInfoVo.GoodSpuInfo>> orderGoodSpuInfoMap = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds)
-                    .list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId, Collectors.collectingAndThen(Collectors.toList(), a -> {
-                        List<OrderInstanceInfoVo.GoodSpuInfo> list = Lists.newArrayList();
-                        for (OrderItem orderItem : a) {
-                            OrderInstanceInfoVo.GoodSpuInfo goodSpuInfo = new OrderInstanceInfoVo.GoodSpuInfo();
-                            goodSpuInfo.setOrderItemId(orderItem.getId());
-                            goodSpuInfo.setFlag(orderItem.getFlag());
-                            if(Integer.valueOf(2).equals(orderItem.getFlag())){
-                                OrderItemMoreBo moreBo = JSONUtil.toBean(orderItem.getMore(),OrderItemMoreBo.class);
-                                goodSpuInfo.setRefundNum(Optional.ofNullable(moreBo).map(OrderItemMoreBo::getFoodNum).orElse(0));
-                            }
-                            goodSpuInfo.setGoodName(orderItem.getSpuName());
-                            goodSpuInfo.setQuantity(orderItem.getQuantity());
-                            goodSpuInfo.setPrice(orderItem.getPrice());
-                            goodSpuInfo.setRemark(orderItem.getRemark());
-                            list.add(goodSpuInfo);
-                        }
-                        return list;
-                    })));
+            Map<Long, List<GoodSpuInfoVo>> orderGoodSpuInfoMap = getGoodSpuInfoVo(orderIds);
             for (OrderInstance orderInstance : orderList) {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
                 instanceInfoVo.setOrderId(orderInstance.getId());
@@ -166,29 +176,19 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                             DateUtil.date(), BetweenFormatter.Level.MINUTE));
                 }else{
                     //Response byAccountId = accountBiz.getInfoByAccountId();
-                    OrderInstanceInfoVo.UserInfo userInfo = new OrderInstanceInfoVo.UserInfo();
-                    userInfo.setHeadUrl("https://c-ssl.duitang.com/uploads/blog/202103/31/20210331160001_9a852.jpg");
-                    userInfo.setName("李四");
-                    userInfo.setSex("男");
-                    userInfo.setBirthday("1992.09.09");
-                    userInfo.setPhone("12345786789696");
-                    userInfo.setCreateDate(DateUtil.date());
-                    userInfo.setOrderNum(23423);
-                    userInfo.setAmount(new BigDecimal("343.567"));
-                    userInfo.setDateOf("今天");
-                    instanceInfoVo.setUserInfo(userInfo);
+                    instanceInfoVo.setUserInfo(getUserInfo(orderInstance.getAccountId()));
                 }
                 if(Integer.valueOf(1).equals(orderInstance.getPayState())){
                     instanceInfoVo.setPayChannel(orderInstance.getPayChannel());
                 }
 
                 if(orderGoodSpuInfoMap.containsKey(orderInstance.getId())){
-                    List<OrderInstanceInfoVo.GoodSpuInfo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getId());
+                    List<GoodSpuInfoVo> goodSpuInfos = orderGoodSpuInfoMap.get(orderInstance.getId());
                     instanceInfoVo.setGoodSpuInfoList(goodSpuInfos);
-                    BigDecimal decimal = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getPrice).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+                    BigDecimal decimal = goodSpuInfos.stream().map(GoodSpuInfoVo::getPrice).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
                     instanceInfoVo.setSubtotal(decimal);
                     instanceInfoVo.setTotalAmount(orderInstance.getAmount());
-                    Integer count = goodSpuInfos.stream().map(OrderInstanceInfoVo.GoodSpuInfo::getQuantity).reduce(Integer::sum).orElse(0);
+                    Integer count = goodSpuInfos.stream().map(GoodSpuInfoVo::getQuantity).reduce(Integer::sum).orElse(0);
                     instanceInfoVo.setSpuCount(count);
                     instanceInfoVo.setSpuCategory(goodSpuInfos.size());
                 }
@@ -207,6 +207,25 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             }
         }
         return infoVos;
+    }
+
+    /**
+     * 获取用户信息
+     * @param accountId
+     * @return
+     */
+    private UserInfoVo getUserInfo(String accountId){
+        UserInfoVo userInfo = new UserInfoVo();
+        userInfo.setHeadUrl("https://c-ssl.duitang.com/uploads/blog/202103/31/20210331160001_9a852.jpg");
+        userInfo.setName("李四");
+        userInfo.setSex("男");
+        userInfo.setBirthday("1992.09.09");
+        userInfo.setPhone("12345786789696");
+        userInfo.setCreateDate(DateUtil.date());
+        userInfo.setOrderNum(23423);
+        userInfo.setAmount(new BigDecimal("343.567"));
+        userInfo.setDateOf("今天");
+        return userInfo;
     }
 
     @Override
@@ -327,6 +346,44 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             }
         }
         return adminVoIPage;
+    }
+
+    @Override
+    public OrderDetailPcVo getOrderDetailPcVo(Long orderId) {
+        OrderInstance orderInstance = orderInstanceMapper.selectById(orderId);
+        Map<Long, List<GoodSpuInfoVo>> orderGoodSpuInfoMap = getGoodSpuInfoVo(Lists.newArrayList(orderInstance.getId()));
+        OrderDetailPcVo detailPcVo = new OrderDetailPcVo();
+        detailPcVo.setOrderId(orderInstance.getId());
+        detailPcVo.setOrderNo(orderInstance.getOrderNo());
+        detailPcVo.setType(orderInstance.getType());
+        detailPcVo.setPeoples(orderInstance.getPeoples());
+        detailPcVo.setTableNo(orderInstance.getTableNo());
+        detailPcVo.setPhone("13554700856");
+        detailPcVo.setAccountName("张三");
+        detailPcVo.setAddress("上海徐家汇");
+        detailPcVo.setOrderSource(orderInstance.getOrderSource());
+        detailPcVo.setRemark(orderInstance.getRemark());
+        if(orderGoodSpuInfoMap.containsKey(orderInstance.getId())){
+            List<GoodSpuInfoVo> spuInfoVoList = orderGoodSpuInfoMap.get(orderInstance.getId());
+            BigDecimal decimal = spuInfoVoList.stream().map(GoodSpuInfoVo::getPrice).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            detailPcVo.setSubtotal(decimal);
+            detailPcVo.setGoodSpuInfoList(spuInfoVoList);
+        }
+        detailPcVo.setTotalAmount(orderInstance.getAmount());
+        detailPcVo.setUserInfo(getUserInfo(orderInstance.getAccountId()));
+        detailPcVo.setStatus(1);
+        if(orderInstance.getDiningTime() != null){
+            detailPcVo.setDiningTime(DateUtil.format(orderInstance.getDiningTime(), "HH:mm"));
+        }else{
+            detailPcVo.setDiningTime(DateUtil.formatBetween(orderInstance.getDt(),
+                    Optional.ofNullable(orderInstance.getDiningTime()).orElse(DateUtil.date()), BetweenFormatter.Level.MINUTE));
+        }
+        OperationLogVo logVo = new OperationLogVo().setDt(DateUtil.date()).setRemark("A01开台点单").setOperator("王五");
+        detailPcVo.setOperationLogList(Lists.newArrayList(logVo));
+        detailPcVo.setRiderName("李四");
+        detailPcVo.setRiderPhone("156786734543");
+        detailPcVo.setDt(orderInstance.getDt());
+        return detailPcVo;
     }
 
     @Override

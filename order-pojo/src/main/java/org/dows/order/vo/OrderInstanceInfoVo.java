@@ -70,7 +70,7 @@ public class OrderInstanceInfoVo implements Serializable {
     private String diningTime;
 
     @ApiModelProperty(value = "商品信息")
-    private List<GoodSpuInfo> goodSpuInfoList;
+    private List<GoodSpuInfoVo> goodSpuInfoList;
 
     @ApiModelProperty(value = "几种商品")
     private Integer spuCategory;
@@ -87,7 +87,6 @@ public class OrderInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "用户上传的图片")
     private List<String> applyImageUrl;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "下单日期")
     private Date dt;
 
@@ -95,54 +94,6 @@ public class OrderInstanceInfoVo implements Serializable {
     private Integer accountOrderNum;
 
     @ApiModelProperty(value = "用户信息")
-    private UserInfo userInfo;
+    private UserInfoVo userInfo;
 
-    @Data
-    public static class UserInfo implements Serializable{
-        @ApiModelProperty(value = "头像")
-        private String headUrl;
-        @ApiModelProperty(value = "姓名")
-        private String name;
-        @ApiModelProperty(value = "性别")
-        private String sex;
-        @ApiModelProperty(value = "生日")
-        private String birthday;
-        @ApiModelProperty(value = "手机号")
-        private String phone;
-        @ApiModelProperty(value = "注册时间")
-        private Date createDate;
-        @ApiModelProperty(value = "总订单量")
-        private Integer orderNum;
-        @ApiModelProperty(value = "消费总额")
-        private BigDecimal amount;
-        @ApiModelProperty(value = "最近下单")
-        private String dateOf;
-    }
-
-    @Data
-    public static class GoodSpuInfo implements Serializable{
-
-        private static final long serialVersionUID = 1247901568842557748L;
-
-        @ApiModelProperty(value = "订单项id")
-        private Long orderItemId;
-
-        @ApiModelProperty(value = "商品信息")
-        private String goodName;
-
-        @ApiModelProperty(value = "数量")
-        private Integer quantity;
-
-        @ApiModelProperty(value = "价格")
-        private BigDecimal price;
-
-        @ApiModelProperty(value = "是否化菜(0:正常 1:划菜 2:退菜 3:赠送 4:报损)")
-        private Integer flag;
-
-        @ApiModelProperty(value = "退菜数量")
-        private Integer refundNum;
-
-        @ApiModelProperty(value = "备注")
-        private String remark;
-    }
 }
