@@ -11,9 +11,11 @@ public class OrderCommentResponseVo implements Serializable {
     private static final long serialVersionUID = 2596334767711746105L;
 
     @ApiModelProperty(value = "订单号")
-    private String orderId;
+    private String orderNo;
     @ApiModelProperty(value = "图片")
     private List<String> pic;
+    @ApiModelProperty(value = "头像")
+    private String headUrl;
     @ApiModelProperty(value = "用户名")
     private String userName;
     @ApiModelProperty(value = "分钟前")
@@ -22,7 +24,6 @@ public class OrderCommentResponseVo implements Serializable {
     private Integer score;
     @ApiModelProperty(value = "内容")
     private String content;
-    @ApiModelProperty(value = "点赞数")
-    private Integer point;
+
 
 }

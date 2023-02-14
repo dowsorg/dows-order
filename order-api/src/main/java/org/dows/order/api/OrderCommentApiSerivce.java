@@ -2,7 +2,7 @@ package org.dows.order.api;
 
 import org.dows.order.bo.CreateCommentBo;
 import org.dows.order.bo.OrderCommentQueryBo;
-import org.dows.order.bo.OrderCommentResponseBo;
+import org.dows.order.vo.OrderCommentResponseVo;
 
 import java.util.List;
 
@@ -19,5 +19,5 @@ public interface OrderCommentApiSerivce {
      * @param commentQueryBo
      * @return
      */
-    List<OrderCommentResponseBo> getCommentList(OrderCommentQueryBo commentQueryBo);
+    List<OrderCommentResponseVo> getCommentList(OrderCommentQueryBo commentQueryBo);
 }
