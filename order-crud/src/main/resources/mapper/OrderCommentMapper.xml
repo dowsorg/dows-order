@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dows.order.mapper.OrderCommentMapper">
+    <select id="getCommentCount" resultType="org.dows.order.vo.OrderCommentCountVo">
+        select a.count1 allCount,
+               b.count2 niceCount,
+               c.count3 diffCount,
+               d.count4 picCount,
+               e.count5 againCount
+        from (select count(1) count1 from order_comment where store_id = #{storeId}) a
+                 join (select count(1) count2 from order_comment where store_id = #{storeId} and score > 2) b
+                 join (select count(1) count3 from order_comment where store_id = #{storeId} and score &lt;= 2) c
+                 join (select count(1) count4 from order_comment where store_id = #{storeId} and pics is not null) d
+                 join (SELECT count(1) count5 from (select from_account_id from order_comment where store_id = #{storeId} GROUP BY from_account_id) a ) e
+    </select>
+</mapper>

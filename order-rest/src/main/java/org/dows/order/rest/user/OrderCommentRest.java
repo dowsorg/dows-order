@@ -11,11 +11,9 @@ import org.dows.order.bo.CreateCommentBo;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.form.OrderCommentForm;
 import org.dows.order.form.OrderCommentQueryForm;
+import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentResponseVo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -60,6 +58,18 @@ public class OrderCommentRest {
     public Response<List<OrderCommentResponseVo>> queryOrderComment(@Valid @RequestBody OrderCommentQueryForm commentForm){
         OrderCommentQueryBo commentBo = BeanUtil.copyProperties(commentForm, OrderCommentQueryBo.class);
         return Response.ok(BeanUtil.copyToList(orderCommentBiz.getCommentList(commentBo),OrderCommentResponseVo.class));
+    }
+
+
+    /**
+     * 订单评价统计
+     * @param storeId
+     * @return
+     */
+    @GetMapping("/getCount/{storeId}")
+    @ApiOperation("订单评价统计")
+    public Response<OrderCommentCountVo> getCount(@PathVariable String storeId){
+        return Response.ok(orderCommentBiz.getCommentCount(storeId));
     }
 
 

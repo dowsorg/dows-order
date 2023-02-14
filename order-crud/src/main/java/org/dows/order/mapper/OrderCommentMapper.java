@@ -3,6 +3,9 @@ package org.dows.order.mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.dows.framework.crud.mybatis.MybatisCrudMapper;
 import org.dows.order.entity.OrderComment;
+import org.dows.order.vo.OrderCommentCountVo;
+
+import java.util.List;
 
 /**
  * 订单-评价(OrderComment)表数据库访问层
@@ -12,6 +15,9 @@ import org.dows.order.entity.OrderComment;
  */
 @Mapper
 public interface OrderCommentMapper extends MybatisCrudMapper<OrderComment> {
+
+
+    OrderCommentCountVo getCommentCount(String storeId);
 
 }
 
