@@ -104,8 +104,8 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
                 }
                 if(outCommentMap.containsKey(comment.getFromAccountId())){
                     OrderComment outComment = outCommentMap.get(comment.getFromAccountId());
-//                    responseVo.setOutContent(outComment.getContent());
-//                    responseVo.setOutTime(outComment.getCommentTime());
+                    responseVo.setOutContent(outComment.getContent());
+                    responseVo.setOutTime(outComment.getCommentTime());
                 }
                 responseVo.setMin(DateUtil.between(comment.getDt(),DateUtil.date(), DateUnit.MINUTE)+"分钟前");
                 responseVo.setScore(comment.getScore());
