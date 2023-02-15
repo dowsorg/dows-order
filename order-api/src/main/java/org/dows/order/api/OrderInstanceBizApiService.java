@@ -5,6 +5,7 @@ import org.dows.order.bo.*;
 import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.form.OrderMyForm;
 import org.dows.order.form.OrderRefundForm;
+import org.dows.order.form.OrderTaTypeForm;
 import org.dows.order.vo.*;
 
 import java.util.Arrays;
@@ -134,6 +135,13 @@ public interface OrderInstanceBizApiService {
      * @return
      */
     List<OrderMyInstanceInfoVo> getMyOrderInstance(OrderMyForm myForm);
+
+    /**
+     * 获取Ta的订单 信息
+     * @param typeForm
+     * @return
+     */
+    OrderTaOrderInfoVo getTaOrderInfoDetail(OrderTaTypeForm typeForm);
 
 
 }

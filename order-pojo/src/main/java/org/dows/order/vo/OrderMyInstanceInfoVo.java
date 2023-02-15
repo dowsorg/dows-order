@@ -15,7 +15,6 @@ import java.util.List;
 public class OrderMyInstanceInfoVo implements Serializable {
     private static final long serialVersionUID = 4417623363378638870L;
 
-    @JsonSerialize(using= ToStringSerializer.class)
     @ApiModelProperty(value = "订单id")
     private Long orderId;
 

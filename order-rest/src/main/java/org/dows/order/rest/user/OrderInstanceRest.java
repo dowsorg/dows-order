@@ -11,8 +11,8 @@ import org.dows.order.bo.OrderInstancePaymentBo;
 import org.dows.order.form.OrderInstanceCreateForm;
 import org.dows.order.form.OrderMyForm;
 import org.dows.order.form.OrderRefundForm;
-import org.dows.order.vo.OrderInstanceDetailVo;
-import org.dows.order.vo.OrderMyInstanceInfoVo;
+import org.dows.order.form.OrderTaTypeForm;
+import org.dows.order.vo.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -88,6 +88,21 @@ public class OrderInstanceRest {
     public Response<List<OrderMyInstanceInfoVo>> getMyOrderInstance(@Valid @RequestBody OrderMyForm myForm){
         return Response.ok(orderInstanceBiz.getMyOrderInstance(myForm));
     }
+
+
+    /**
+     * TA订单
+     * @param typeForm
+     * @return
+     */
+    @PostMapping("/getTaOrderInfoDetail")
+    @ApiOperation("TA订单(B端)")
+    public Response<OrderTaOrderInfoVo> getTaOrderInfoDetail(@Valid @RequestBody OrderTaTypeForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrderInfoDetail(typeForm));
+    }
+
+
+
 
 
 

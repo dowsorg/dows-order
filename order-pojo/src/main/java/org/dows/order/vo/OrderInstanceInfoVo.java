@@ -17,7 +17,6 @@ public class OrderInstanceInfoVo implements Serializable {
     private static final long serialVersionUID = 858219061367286747L;
 
 
-    @JsonSerialize(using= ToStringSerializer.class)
     @ApiModelProperty(value = "订单id")
     private Long orderId;
 

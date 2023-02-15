@@ -27,6 +27,7 @@ import org.dows.order.enums.OrderTableStatusEnum;
 import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.form.OrderMyForm;
 import org.dows.order.form.OrderRefundForm;
+import org.dows.order.form.OrderTaTypeForm;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -549,5 +551,79 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             }
         }
         return infoVoList;
+    }
+
+    @Override
+    public OrderTaOrderInfoVo getTaOrderInfoDetail(OrderTaTypeForm typeForm) {
+        OrderTaOrderInfoVo taOrderInfoVo = new OrderTaOrderInfoVo();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getStoreId, typeForm.getStoreId())
+                .eq(OrderInstance::getAccountId, typeForm.getAccountId()).list();
+        if(CollUtil.isEmpty(instanceList)){
+            return taOrderInfoVo;
+        }
+        Map<Integer, List<OrderInstance>> orderTypeMap = instanceList.stream().collect(Collectors.groupingBy(OrderInstance::getType));
+        if(orderTypeMap.containsKey(0)){ //堂食
+            List<OrderInstance> tableList = orderTypeMap.get(0);
+            OrderTaTableVo taTableVo = new OrderTaTableVo();
+            taTableVo.setOrderCount(tableList.size());
+            BigDecimal totalAmount = tableList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            taTableVo.setOrderAmount(totalAmount);
+            taTableVo.setOrderConsumeNum(tableList.size());
+            List<OrderTaTableVo.OrderTaTableInfo> orderTableList = CollUtil.newArrayList();
+            for (OrderInstance orderInstance : tableList) {
+                OrderTaTableVo.OrderTaTableInfo taTableInfo = new OrderTaTableVo.OrderTaTableInfo();
+                taTableInfo.setTableNo(orderInstance.getTableNo());
+                taTableInfo.setDt(orderInstance.getDt());
+                taTableInfo.setMenuNum(3);//TODO
+                taTableInfo.setPeople(orderInstance.getPeoples());
+                taTableInfo.setPayChannel(orderInstance.getPayChannel());
+                taTableInfo.setPeopleAug(orderInstance.getAmount().divide(new BigDecimal(orderInstance.getPeoples()),3, RoundingMode.HALF_UP));
+                taTableInfo.setAmountTotal(orderInstance.getAmount());
+                orderTableList.add(taTableInfo);
+            }
+            taTableVo.setOrderTableList(orderTableList);
+            taOrderInfoVo.setTaTableVo(taTableVo);
+        }
+        if(orderTypeMap.containsKey(1)){ //外卖
+            List<OrderInstance> takeList = orderTypeMap.get(1);
+            OrderTaTakeOutVo takeOutVo = new OrderTaTakeOutVo();
+            takeOutVo.setOrderCount(takeList.size());
+            BigDecimal totalAmount = takeList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            takeOutVo.setOrderAmount(totalAmount);
+            takeOutVo.setOrderConsumeNum(takeList.size());
+            List<OrderTaTakeOutVo.OrderTaTakeInfo> orderTakeList = CollUtil.newArrayList();
+            for (OrderInstance instance : takeList) {
+                OrderTaTakeOutVo.OrderTaTakeInfo taTakeInfo = new OrderTaTakeOutVo.OrderTaTakeInfo();
+                taTakeInfo.setDt(instance.getDt());
+                taTakeInfo.setMenuNum(3); //TODO
+                taTakeInfo.setTakeOut(instance.getType());
+                taTakeInfo.setPayChannel(instance.getPayChannel());
+                taTakeInfo.setAmountTotal(instance.getAmount());
+                orderTakeList.add(taTakeInfo);
+            }
+            takeOutVo.setOrderTakeList(orderTakeList);
+            taOrderInfoVo.setTaTakeOutVo(takeOutVo);
+        }
+        if(orderTypeMap.containsKey(2)){ //打包
+            List<OrderInstance> packList = orderTypeMap.get(2);
+            OrderTaPackVo packVo = new OrderTaPackVo();
+            packVo.setOrderCount(packList.size());
+            BigDecimal totalAmount = packList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            packVo.setOrderAmount(totalAmount);
+            packVo.setOrderConsumeNum(packList.size());
+            List<OrderTaPackVo.OrderTaPackInfo> orderPackList = CollUtil.newArrayList();
+            for (OrderInstance instance : packList) {
+                OrderTaPackVo.OrderTaPackInfo packInfo = new OrderTaPackVo.OrderTaPackInfo();
+                packInfo.setDt(instance.getDt());
+                packInfo.setMenuNum(3);
+                packInfo.setPayChannel(instance.getPayChannel());
+                packInfo.setAmountTotal(instance.getAmount());
+                orderPackList.add(packInfo);
+            }
+            packVo.setOrderPackList(orderPackList);
+            taOrderInfoVo.setTaPackVo(packVo);
+        }
+        return taOrderInfoVo;
     }
 }
