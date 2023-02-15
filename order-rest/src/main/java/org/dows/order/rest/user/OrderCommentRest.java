@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.order.OrderCommentBiz;
-import org.dows.order.bo.CreateCommentBo;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.form.OrderCommentForm;
 import org.dows.order.form.OrderCommentQueryForm;
+import org.dows.order.form.OrderOutCommentForm;
 import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentResponseVo;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +42,20 @@ public class OrderCommentRest {
     @PostMapping("/createOrderComment")
     @ApiOperation("创建订单评价")
     public Response<Boolean> createOrderComment(@Valid @RequestBody OrderCommentForm commentForm){
-        CreateCommentBo commentBo = BeanUtil.copyProperties(commentForm, CreateCommentBo.class);
         //TODO 登录时调
-        commentBo.setAccountId(null);
-        return Response.ok(orderCommentBiz.createComment(commentBo));
+        commentForm.setAccountId("1610967398052057089");
+        return Response.ok(orderCommentBiz.createComment(commentForm));
+    }
+
+    /**
+     * 创建商家订单评价
+     * @param commentForm
+     * @return
+     */
+    @PostMapping("/outCreateComment")
+    @ApiOperation("创建商家订单评价")
+    public Response<Boolean> createOrderComment(@Valid @RequestBody OrderOutCommentForm commentForm){
+        return Response.ok(orderCommentBiz.outCreateComment(commentForm));
     }
 
     /**

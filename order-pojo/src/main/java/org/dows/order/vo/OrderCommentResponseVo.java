@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -24,6 +25,12 @@ public class OrderCommentResponseVo implements Serializable {
     private Integer score;
     @ApiModelProperty(value = "内容")
     private String content;
+
+    @ApiModelProperty(value = "商家回复内容")
+    private String outContent;
+    @ApiModelProperty(value = "商家回复时间")
+    private Date outTime;
+
 
 
 }

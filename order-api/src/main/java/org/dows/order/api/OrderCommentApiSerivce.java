@@ -1,7 +1,8 @@
 package org.dows.order.api;
 
-import org.dows.order.bo.CreateCommentBo;
 import org.dows.order.bo.OrderCommentQueryBo;
+import org.dows.order.form.OrderCommentForm;
+import org.dows.order.form.OrderOutCommentForm;
 import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentResponseVo;
 
@@ -9,11 +10,18 @@ import java.util.List;
 
 public interface OrderCommentApiSerivce {
     /**
-     * 创建订单评价
-     * @param commentBo
+     * 创建客户订单评价
+     * @param orderCommentForm
      * @return
      */
-    boolean createComment(CreateCommentBo commentBo);
+    boolean createComment(OrderCommentForm orderCommentForm);
+
+    /**
+     * 商家评价
+     * @param outCommentForm
+     * @return
+     */
+    boolean outCreateComment(OrderOutCommentForm outCommentForm);
 
     /**
      * 查询订单评价信息

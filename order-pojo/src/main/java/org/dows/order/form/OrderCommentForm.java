@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 public class OrderCommentForm implements Serializable{
 
     @ApiModelProperty("订单号")
-    private String orderId;
+    private String orderNo;
     @ApiModelProperty("图片列表")
     private List<String> pics;
     @ApiModelProperty("内容")
@@ -32,8 +33,9 @@ public class OrderCommentForm implements Serializable{
     @ApiModelProperty("店铺ID")
     private String storeId;
     @ApiModelProperty("评论分数 1:2:3:4:5")
-    private Long score;
-    @ApiModelProperty("是否是商家回评 0:不是 1:是")
-    private Integer fromMerchant;
+    private Integer score;
+
+    @JsonIgnore
+    private String accountId;
 
 }

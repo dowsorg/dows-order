@@ -8,10 +8,10 @@
                c.count3 diffCount,
                d.count4 picCount,
                e.count5 againCount
-        from (select count(1) count1 from order_comment where store_id = #{storeId}) a
-                 join (select count(1) count2 from order_comment where store_id = #{storeId} and score > 2) b
-                 join (select count(1) count3 from order_comment where store_id = #{storeId} and score &lt;= 2) c
-                 join (select count(1) count4 from order_comment where store_id = #{storeId} and pics is not null) d
+        from (select count(1) count1 from order_comment where store_id = #{storeId} and from_merchant = 0) a
+                 join (select count(1) count2 from order_comment where store_id = #{storeId} and from_merchant = 0 and score > 2) b
+                 join (select count(1) count3 from order_comment where store_id = #{storeId} and from_merchant = 0 and score &lt;= 2) c
+                 join (select count(1) count4 from order_comment where store_id = #{storeId} and from_merchant = 0 and pics is not null) d
                  join (SELECT count(1) count5 from (select from_account_id from order_comment where store_id = #{storeId} GROUP BY from_account_id) a ) e
     </select>
 </mapper>
