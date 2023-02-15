@@ -578,7 +578,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 taTableInfo.setMenuNum(3);//TODO
                 taTableInfo.setPeople(orderInstance.getPeoples());
                 taTableInfo.setPayChannel(orderInstance.getPayChannel());
-                taTableInfo.setPeopleAug(orderInstance.getAmount().divide(new BigDecimal(orderInstance.getPeoples()),3, RoundingMode.HALF_UP));
+                taTableInfo.setPeopleAug(orderInstance.getAmount().divide(new BigDecimal(orderInstance.getPeoples()),2, RoundingMode.HALF_UP));
                 taTableInfo.setAmountTotal(orderInstance.getAmount());
                 orderTableList.add(taTableInfo);
             }
