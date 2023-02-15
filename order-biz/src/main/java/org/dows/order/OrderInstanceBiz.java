@@ -14,6 +14,9 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dows.account.api.AccountInstanceApi;
+import org.dows.account.api.AccountUserApi;
+import org.dows.account.vo.AccountVo;
 import org.dows.goods.api.GoodsApi;
 import org.dows.goods.form.GoodsForm;
 import org.dows.goods.form.GoodsSpuForm;
@@ -39,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,7 +64,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceMapper orderInstanceMapper;
 
-    //private final AccountInstanceApi accountBiz;
+    private final AccountUserApi accountUserApi;
 
     private final GoodsApi goodsApi;
 
@@ -217,13 +221,14 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
      * @return
      */
     private UserInfoVo getUserInfo(String accountId){
+        AccountVo accountVo = accountUserApi.getInfoByAccountId(accountId);
         UserInfoVo userInfo = new UserInfoVo();
-        userInfo.setHeadUrl("https://c-ssl.duitang.com/uploads/blog/202103/31/20210331160001_9a852.jpg");
-        userInfo.setName("李四");
-        userInfo.setSex("男");
-        userInfo.setBirthday("1992.09.09");
-        userInfo.setPhone("12345786789696");
-        userInfo.setCreateDate(DateUtil.date());
+        userInfo.setHeadUrl(accountVo.getAvatar());
+        userInfo.setName(accountVo.getAccountName());
+        userInfo.setSex(Integer.valueOf(1).equals(accountVo.getSex())?"男":"女");
+        userInfo.setBirthday(accountVo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        userInfo.setPhone(accountVo.getPhone());
+        userInfo.setCreateDate(accountVo.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         userInfo.setOrderNum(23423);
         userInfo.setAmount(new BigDecimal("343.567"));
         userInfo.setDateOf("今天");
@@ -312,6 +317,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
         IPage<OrderInstanceTenantVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
+            List<AccountVo> accountVo = accountUserApi.getInfoByAccountIds(null);
             for (OrderInstanceTenantVo record : adminVoIPage.getRecords()) {
                 record.setUserName("张三");
                 record.setTypeStr("堂食");
@@ -360,9 +366,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         detailPcVo.setType(orderInstance.getType());
         detailPcVo.setPeoples(orderInstance.getPeoples());
         detailPcVo.setTableNo(orderInstance.getTableNo());
-        detailPcVo.setPhone("13554700856");
-        detailPcVo.setAccountName("张三");
-        detailPcVo.setAddress("上海徐家汇");
+        AccountVo accountVo = accountUserApi.getInfoByAccountId(orderInstance.getAccountId());
+        detailPcVo.setPhone(accountVo.getPhone());
+        detailPcVo.setAccountName(accountVo.getAccountName());
+        detailPcVo.setAddress(StrUtil.concat(true,accountVo.getProvince(),accountVo.getCity(),accountVo.getDistrict()));
         detailPcVo.setOrderSource(orderInstance.getOrderSource());
         detailPcVo.setRemark(orderInstance.getRemark());
         if(orderGoodSpuInfoMap.containsKey(orderInstance.getId())){
@@ -408,9 +415,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             detailVo.setRefundStatus(2);
             detailVo.setRefundReason(instance.getRefundRemark());
         }
-        detailVo.setAccountName("张三");
-        detailVo.setAccountPhone("1355479909");
-        detailVo.setAccountAddress("上海");
+        AccountVo accountVo = accountUserApi.getInfoByAccountId(instance.getAccountId());
+        detailVo.setAccountName(accountVo.getAccountName());
+        detailVo.setAccountPhone(accountVo.getPhone());
+        detailVo.setAccountAddress(StrUtil.concat(true,accountVo.getProvince(),accountVo.getCity(),accountVo.getDistrict()));
         detailVo.setStoreName("海底捞");
         detailVo.setStoreAddress("徐家汇");
         detailVo.setStorePhone("7277745");

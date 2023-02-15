@@ -21,7 +21,7 @@ public class UserInfoVo {
     @ApiModelProperty(value = "手机号")
     private String phone;
     @ApiModelProperty(value = "注册时间")
-    private Date createDate;
+    private String createDate;
     @ApiModelProperty(value = "总订单量")
     private Integer orderNum;
     @ApiModelProperty(value = "消费总额")
