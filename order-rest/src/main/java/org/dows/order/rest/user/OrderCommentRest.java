@@ -47,16 +47,16 @@ public class OrderCommentRest {
         return Response.ok(orderCommentBiz.createComment(commentForm));
     }
 
-    /**
-     * 创建商家订单评价
-     * @param commentForm
-     * @return
-     */
-    @PostMapping("/outCreateComment")
-    @ApiOperation("创建商家订单评价")
-    public Response<Boolean> createOrderComment(@Valid @RequestBody OrderOutCommentForm commentForm){
-        return Response.ok(orderCommentBiz.outCreateComment(commentForm));
-    }
+//    /**
+//     * 创建商家订单评价
+//     * @param commentForm
+//     * @return
+//     */
+//    @PostMapping("/outCreateComment")
+//    @ApiOperation("创建商家订单评价")
+//    public Response<Boolean> createOrderComment(@Valid @RequestBody OrderOutCommentForm commentForm){
+//        return Response.ok(orderCommentBiz.outCreateComment(commentForm));
+//    }
 
     /**
      * 查询订单评价

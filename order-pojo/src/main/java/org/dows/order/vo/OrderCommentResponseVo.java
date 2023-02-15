@@ -26,10 +26,10 @@ public class OrderCommentResponseVo implements Serializable {
     @ApiModelProperty(value = "内容")
     private String content;
 
-    @ApiModelProperty(value = "商家回复内容")
-    private String outContent;
-    @ApiModelProperty(value = "商家回复时间")
-    private Date outTime;
+//    @ApiModelProperty(value = "商家回复内容")
+//    private String outContent;
+//    @ApiModelProperty(value = "商家回复时间")
+//    private Date outTime;
 
 
 
