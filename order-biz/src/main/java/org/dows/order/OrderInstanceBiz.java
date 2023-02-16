@@ -167,9 +167,10 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 instanceInfoVo.setApplyImageUrl(StrUtil.split(orderInstance.getApplyImageUrl(),","));
                 instanceInfoVo.setApplyRefundRemark(orderInstance.getApplyRefundRemark());
                 if(Integer.valueOf(1).equals(orderInstance.getType())){ //自营外面才有 手机号和姓名
-                    instanceInfoVo.setPhone("13554700856");
-                    instanceInfoVo.setAccountName("张三");
-                    instanceInfoVo.setAddress("上海市");
+                    AccountVo accountVo = accountUserApi.getInfoByAccountId(orderInstance.getAccountId());
+                    instanceInfoVo.setPhone(accountVo.getPhone());
+                    instanceInfoVo.setAccountName(accountVo.getAccountName());
+                    instanceInfoVo.setAddress(StrUtil.concat(true,accountVo.getProvince(),accountVo.getCity(),accountVo.getDistrict()));
                     instanceInfoVo.setAccountOrderNum(92);
                 }
                 if(Integer.valueOf(0).equals(orderInstance.getType())){ //堂食
@@ -582,7 +583,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .eq(OrderInstance::getType, 0)
                 .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
                 .orderByDesc(OrderInstance::getId)
-                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).last("limit 10").list();
         for (OrderInstance orderInstance : instanceList) {
             OrderTaTableVo taTableVo = new OrderTaTableVo();
             taTableVo.setOrderId(orderInstance.getId());
@@ -606,7 +607,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .eq(OrderInstance::getType, 2)
                 .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
                 .orderByDesc(OrderInstance::getId)
-                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).last("limit 10").list();
         for (OrderInstance orderInstance : instanceList) {
             OrderTaPackVo packVo = new OrderTaPackVo();
             packVo.setOrderId(orderInstance.getId());
@@ -627,7 +628,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .eq(OrderInstance::getType, 1)
                 .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
                 .orderByDesc(OrderInstance::getId)
-                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).last("limit 10").list();
         for (OrderInstance orderInstance : instanceList) {
             OrderTaTakeOutVo takeOutVo = new OrderTaTakeOutVo();
             takeOutVo.setOrderId(orderInstance.getId());
