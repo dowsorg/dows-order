@@ -100,6 +100,17 @@ public class OrderInstanceRest {
 
 
 
+    /**
+     * TA订单
+     * @param typeForm
+     * @return
+     */
+    @PostMapping("/getTaOrder")
+    @ApiOperation("TA订单(B端)")
+    public Response<OrderTaAllVo> getTaOrder(@Valid @RequestBody OrderTaPageForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrder(typeForm));
+    }
+
 
     /**
      * TA堂食订单

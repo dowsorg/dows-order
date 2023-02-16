@@ -576,6 +576,21 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
+    public OrderTaAllVo getTaOrder(OrderTaPageForm pageForm) {
+        OrderTaAllVo allVo = new OrderTaAllVo();
+        if(Integer.valueOf(0).equals(pageForm.getType())){
+            allVo.setTableVoList(getTaOrderTablePage(pageForm));
+        }
+        if(Integer.valueOf(2).equals(pageForm.getType())){
+            allVo.setPackVoList(getTaOrderPackPage(pageForm));
+        }
+        if(Integer.valueOf(1).equals(pageForm.getType())){
+            allVo.setTaTakeOutList(getTaOrderTakeOutPage(pageForm));
+        }
+        return allVo;
+    }
+
+    @Override
     public List<OrderTaTableVo> getTaOrderTablePage(OrderTaPageForm pageForm) {
         List<OrderTaTableVo> tableVoList = CollUtil.newArrayList();
         List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
