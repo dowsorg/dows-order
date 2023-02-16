@@ -1,4 +1,5 @@
 package org.dows.order;
+import java.util.Date;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollStreamUtil;
@@ -27,10 +28,7 @@ import org.dows.order.entity.OrderItem;
 import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
 import org.dows.order.enums.OrderTableStatusEnum;
-import org.dows.order.form.OrderInstanceTenantForm;
-import org.dows.order.form.OrderMyForm;
-import org.dows.order.form.OrderRefundForm;
-import org.dows.order.form.OrderTaTypeForm;
+import org.dows.order.form.*;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.service.OrderItemService;
@@ -562,76 +560,86 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public OrderTaOrderInfoVo getTaOrderInfoDetail(OrderTaTypeForm typeForm) {
-        OrderTaOrderInfoVo taOrderInfoVo = new OrderTaOrderInfoVo();
+    public OrderTaVo getTaOrderStat(OrderTaTypeForm typeForm) {
         List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getStoreId, typeForm.getStoreId())
+                .eq(OrderInstance::getType, typeForm.getType())
                 .eq(OrderInstance::getAccountId, typeForm.getAccountId()).list();
-        if(CollUtil.isEmpty(instanceList)){
-            return taOrderInfoVo;
-        }
-        Map<Integer, List<OrderInstance>> orderTypeMap = instanceList.stream().collect(Collectors.groupingBy(OrderInstance::getType));
-        if(orderTypeMap.containsKey(0)){ //堂食
-            List<OrderInstance> tableList = orderTypeMap.get(0);
-            OrderTaTableVo taTableVo = new OrderTaTableVo();
-            taTableVo.setOrderCount(tableList.size());
-            BigDecimal totalAmount = tableList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-            taTableVo.setOrderAmount(totalAmount);
-            taTableVo.setOrderConsumeNum(tableList.size());
-            List<OrderTaTableVo.OrderTaTableInfo> orderTableList = CollUtil.newArrayList();
-            for (OrderInstance orderInstance : tableList) {
-                OrderTaTableVo.OrderTaTableInfo taTableInfo = new OrderTaTableVo.OrderTaTableInfo();
-                taTableInfo.setTableNo(orderInstance.getTableNo());
-                taTableInfo.setDt(orderInstance.getDt());
-                taTableInfo.setMenuNum(3);//TODO
-                taTableInfo.setPeople(orderInstance.getPeoples());
-                taTableInfo.setPayChannel(orderInstance.getPayChannel());
-                taTableInfo.setPeopleAug(orderInstance.getAmount().divide(new BigDecimal(orderInstance.getPeoples()),2, RoundingMode.HALF_UP));
-                taTableInfo.setAmountTotal(orderInstance.getAmount());
-                orderTableList.add(taTableInfo);
-            }
-            taTableVo.setOrderTableList(orderTableList);
-            taOrderInfoVo.setTaTableVo(taTableVo);
-        }
-        if(orderTypeMap.containsKey(1)){ //外卖
-            List<OrderInstance> takeList = orderTypeMap.get(1);
-            OrderTaTakeOutVo takeOutVo = new OrderTaTakeOutVo();
-            takeOutVo.setOrderCount(takeList.size());
-            BigDecimal totalAmount = takeList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-            takeOutVo.setOrderAmount(totalAmount);
-            takeOutVo.setOrderConsumeNum(takeList.size());
-            List<OrderTaTakeOutVo.OrderTaTakeInfo> orderTakeList = CollUtil.newArrayList();
-            for (OrderInstance instance : takeList) {
-                OrderTaTakeOutVo.OrderTaTakeInfo taTakeInfo = new OrderTaTakeOutVo.OrderTaTakeInfo();
-                taTakeInfo.setDt(instance.getDt());
-                taTakeInfo.setMenuNum(3); //TODO
-                taTakeInfo.setTakeOut(instance.getType());
-                taTakeInfo.setPayChannel(instance.getPayChannel());
-                taTakeInfo.setAmountTotal(instance.getAmount());
-                orderTakeList.add(taTakeInfo);
-            }
-            takeOutVo.setOrderTakeList(orderTakeList);
-            taOrderInfoVo.setTaTakeOutVo(takeOutVo);
-        }
-        if(orderTypeMap.containsKey(2)){ //打包
-            List<OrderInstance> packList = orderTypeMap.get(2);
-            OrderTaPackVo packVo = new OrderTaPackVo();
-            packVo.setOrderCount(packList.size());
-            BigDecimal totalAmount = packList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-            packVo.setOrderAmount(totalAmount);
-            packVo.setOrderConsumeNum(packList.size());
-            List<OrderTaPackVo.OrderTaPackInfo> orderPackList = CollUtil.newArrayList();
-            for (OrderInstance instance : packList) {
-                OrderTaPackVo.OrderTaPackInfo packInfo = new OrderTaPackVo.OrderTaPackInfo();
-                packInfo.setDt(instance.getDt());
-                packInfo.setMenuNum(3);
-                packInfo.setPayChannel(instance.getPayChannel());
-                packInfo.setAmountTotal(instance.getAmount());
-                orderPackList.add(packInfo);
-            }
-            packVo.setOrderPackList(orderPackList);
-            taOrderInfoVo.setTaPackVo(packVo);
-        }
-        return taOrderInfoVo;
+        OrderTaVo orderTaVo = new OrderTaVo();
+        int size = instanceList.size();
+        orderTaVo.setOrderCount(size);
+        BigDecimal totalAmount = instanceList.stream().map(OrderInstance::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        orderTaVo.setOrderAmount(totalAmount);
+        orderTaVo.setOrderConsumeNum(size);
+        return orderTaVo;
     }
+
+    @Override
+    public List<OrderTaTableVo> getTaOrderTablePage(OrderTaPageForm pageForm) {
+        List<OrderTaTableVo> tableVoList = CollUtil.newArrayList();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getStoreId, pageForm.getStoreId())
+                .eq(OrderInstance::getType, 0)
+                .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
+                .orderByDesc(OrderInstance::getId)
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+        for (OrderInstance orderInstance : instanceList) {
+            OrderTaTableVo taTableVo = new OrderTaTableVo();
+            taTableVo.setOrderId(orderInstance.getId());
+            taTableVo.setTableNo(orderInstance.getTableNo());
+            taTableVo.setDt(orderInstance.getDt());
+            taTableVo.setMenuNum(3);
+            taTableVo.setPeople(orderInstance.getPeoples());
+            taTableVo.setPayChannel(orderInstance.getPayChannel());
+            taTableVo.setPeopleAug(orderInstance.getAmount().divide(new BigDecimal(orderInstance.getPeoples()),2, RoundingMode.HALF_UP));
+            taTableVo.setAmountTotal(orderInstance.getAmount());
+            tableVoList.add(taTableVo);
+        }
+        return tableVoList;
+    }
+
+    @Override
+    public List<OrderTaPackVo> getTaOrderPackPage(OrderTaPageForm pageForm) {
+        List<OrderTaPackVo> packVoList = CollUtil.newArrayList();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getStoreId, pageForm.getStoreId())
+                .eq(OrderInstance::getType, 2)
+                .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
+                .orderByDesc(OrderInstance::getId)
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+        for (OrderInstance orderInstance : instanceList) {
+            OrderTaPackVo packVo = new OrderTaPackVo();
+            packVo.setOrderId(orderInstance.getId());
+            packVo.setDt(orderInstance.getDt());
+            packVo.setMenuNum(4);
+            packVo.setPayChannel(orderInstance.getPayChannel());
+            packVo.setAmountTotal(orderInstance.getAmount());
+            packVoList.add(packVo);
+        }
+        return packVoList;
+    }
+
+    @Override
+    public List<OrderTaTakeOutVo> getTaOrderTakeOutPage(OrderTaPageForm pageForm) {
+        List<OrderTaTakeOutVo> taTakeOutList = CollUtil.newArrayList();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .eq(OrderInstance::getStoreId, pageForm.getStoreId())
+                .eq(OrderInstance::getType, 1)
+                .lt(pageForm.getOrderId() != null,OrderInstance::getId, pageForm.getOrderId())
+                .orderByDesc(OrderInstance::getId)
+                .eq(OrderInstance::getAccountId, pageForm.getAccountId()).list();
+        for (OrderInstance orderInstance : instanceList) {
+            OrderTaTakeOutVo takeOutVo = new OrderTaTakeOutVo();
+            takeOutVo.setOrderId(orderInstance.getId());
+            takeOutVo.setDt(orderInstance.getDt());
+            takeOutVo.setMenuNum(3);
+            takeOutVo.setTakeOut(1);
+            takeOutVo.setPayChannel(orderInstance.getPayChannel());
+            takeOutVo.setAmountTotal(orderInstance.getAmount());
+            taTakeOutList.add(takeOutVo);
+        }
+        return taTakeOutList;
+    }
+
+
 }

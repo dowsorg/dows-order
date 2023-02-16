@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dows.framework.api.Response;
 import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.OrderInstancePaymentBo;
-import org.dows.order.form.OrderInstanceCreateForm;
-import org.dows.order.form.OrderMyForm;
-import org.dows.order.form.OrderRefundForm;
-import org.dows.order.form.OrderTaTypeForm;
+import org.dows.order.form.*;
 import org.dows.order.vo.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,14 +88,51 @@ public class OrderInstanceRest {
 
 
     /**
-     * TA订单
+     * TA订单统计
      * @param typeForm
      * @return
      */
-    @PostMapping("/getTaOrderInfoDetail")
-    @ApiOperation("TA订单(B端)")
-    public Response<OrderTaOrderInfoVo> getTaOrderInfoDetail(@Valid @RequestBody OrderTaTypeForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrderInfoDetail(typeForm));
+    @PostMapping("/getTaOrderStat")
+    @ApiOperation("TA订单统计(B端)")
+    public Response<OrderTaVo> getTaOrderInfoDetail(@Valid @RequestBody OrderTaTypeForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrderStat(typeForm));
+    }
+
+
+
+
+    /**
+     * TA堂食订单
+     * @param typeForm
+     * @return
+     */
+    @PostMapping("/getTaTableOrderDetail")
+    @ApiOperation("TA堂食订单(B端)")
+    public Response<List<OrderTaTableVo>> getTaTableOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrderTablePage(typeForm));
+    }
+
+
+    /**
+     * TA打包订单
+     * @param typeForm
+     * @return
+     */
+    @PostMapping("/getTaPackOrderDetail")
+    @ApiOperation("TA打包订单(B端)")
+    public Response<List<OrderTaPackVo>> getTaPackOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrderPackPage(typeForm));
+    }
+
+    /**
+     * TA外卖订单
+     * @param typeForm
+     * @return
+     */
+    @PostMapping("/getTaTakeOutOrderDetail")
+    @ApiOperation("TA外卖订单(B端)")
+    public Response<List<OrderTaTakeOutVo>> getTaTakeOutOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
+        return Response.ok(orderInstanceBiz.getTaOrderTakeOutPage(typeForm));
     }
 
 

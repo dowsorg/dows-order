@@ -6,39 +6,32 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @ApiModel(value = "Ta堂食订单", description ="Ta堂食订单")
-public class OrderTaTableVo extends OrderTaVo{
+public class OrderTaTableVo{
 
-    @ApiModelProperty(value = "订单列表")
-    private List<OrderTaTableInfo> orderTableList;
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
 
-    @Data
-    public static class OrderTaTableInfo {
+    @ApiModelProperty(value = "桌号")
+    private String tableNo;
 
-        @ApiModelProperty(value = "桌号")
-        private String tableNo;
+    @ApiModelProperty(value = "创建时间")
+    private Date dt;
 
-        @ApiModelProperty(value = "创建时间")
-        private Date dt;
+    @ApiModelProperty(value = "菜品数量")
+    private Integer menuNum;
 
-        @ApiModelProperty(value = "菜品数量")
-        private Integer menuNum;
+    @ApiModelProperty(value = "人数")
+    private Integer people;
 
-        @ApiModelProperty(value = "人数")
-        private Integer people;
+    @ApiModelProperty(value = "支付渠道 1:微信 2:支付宝 3:储蓄卡 4:现金")
+    private Integer payChannel;
 
-        @ApiModelProperty(value = "支付渠道 1:微信 2:支付宝 3:储蓄卡 4:现金")
-        private Integer payChannel;
+    @ApiModelProperty(value = "人均")
+    private BigDecimal peopleAug;
 
-        @ApiModelProperty(value = "人均")
-        private BigDecimal peopleAug;
-
-        @ApiModelProperty(value = "金额")
-        private BigDecimal amountTotal;
-
-
-    }
+    @ApiModelProperty(value = "金额")
+    private BigDecimal amountTotal;
 }

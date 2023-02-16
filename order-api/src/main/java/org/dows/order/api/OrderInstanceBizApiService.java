@@ -2,10 +2,7 @@ package org.dows.order.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dows.order.bo.*;
-import org.dows.order.form.OrderInstanceTenantForm;
-import org.dows.order.form.OrderMyForm;
-import org.dows.order.form.OrderRefundForm;
-import org.dows.order.form.OrderTaTypeForm;
+import org.dows.order.form.*;
 import org.dows.order.vo.*;
 
 import java.util.Arrays;
@@ -137,11 +134,29 @@ public interface OrderInstanceBizApiService {
     List<OrderMyInstanceInfoVo> getMyOrderInstance(OrderMyForm myForm);
 
     /**
-     * 获取Ta的订单 信息
+     * 获取Ta的订单统计信息
      * @param typeForm
      * @return
      */
-    OrderTaOrderInfoVo getTaOrderInfoDetail(OrderTaTypeForm typeForm);
+    OrderTaVo getTaOrderStat(OrderTaTypeForm typeForm);
+
+    /**
+     * Ta订单 堂食列表
+     * @return
+     */
+    List<OrderTaTableVo> getTaOrderTablePage(OrderTaPageForm pageForm);
+
+    /**
+     * Ta订单 打包列表
+     * @return
+     */
+    List<OrderTaPackVo> getTaOrderPackPage(OrderTaPageForm pageForm);
+
+    /**
+     * Ta订单 外卖列表
+     * @return
+     */
+    List<OrderTaTakeOutVo> getTaOrderTakeOutPage(OrderTaPageForm pageForm);
 
 
 }
