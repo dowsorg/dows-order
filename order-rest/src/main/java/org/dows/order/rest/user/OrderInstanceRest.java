@@ -108,7 +108,7 @@ public class OrderInstanceRest {
     @PostMapping("/getTaTableOrderDetail")
     @ApiOperation("TA堂食订单(B端)")
     public Response<List<OrderTaTableVo>> getTaTableOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrderAll(typeForm),"");
+        return Response.ok(orderInstanceBiz.getTaOrderAll(typeForm));
     }
 
 
