@@ -83,7 +83,7 @@ public class TenantOrderCartRest {
     public Response<Boolean> cleanUpOrderCart(@Valid @RequestBody OrderCartQueryForm cartQueryForm){
         OrderCartQueryBo queryBo = BeanUtil.copyProperties(cartQueryForm, OrderCartQueryBo.class);
         if(StrUtil.isBlank(queryBo.getTableNo())){ //个人
-            //TODO
+            //TODO df
             queryBo.setAccountId(null);
         }
         return Response.ok(orderCatBiz.cleanUpOrderCart(queryBo));
