@@ -141,7 +141,9 @@ public interface OrderInstanceBizApiService {
     OrderTaVo getTaOrderStat(OrderTaTypeForm typeForm);
 
 
-    OrderTaAllVo getTaOrder(OrderTaPageForm pageForm);
+
+
+    <T> List<T> getTaOrderAll(OrderTaPageForm pageForm);
     /**
      * Ta订单 堂食列表
      * @return

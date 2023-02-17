@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.dows.account.api.AccountInstanceApi;
 import org.dows.account.api.AccountUserApi;
 import org.dows.account.vo.AccountVo;
@@ -575,19 +576,20 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         return orderTaVo;
     }
 
+
     @Override
-    public OrderTaAllVo getTaOrder(OrderTaPageForm pageForm) {
-        OrderTaAllVo allVo = new OrderTaAllVo();
+    public List<Object> getTaOrderAll(OrderTaPageForm pageForm) {
+        List list = new ArrayList();
         if(Integer.valueOf(0).equals(pageForm.getType())){
-            allVo.setTableVoList(getTaOrderTablePage(pageForm));
+            list = getTaOrderTablePage(pageForm);
         }
         if(Integer.valueOf(2).equals(pageForm.getType())){
-            allVo.setPackVoList(getTaOrderPackPage(pageForm));
+            list = getTaOrderPackPage(pageForm);
         }
         if(Integer.valueOf(1).equals(pageForm.getType())){
-            allVo.setTaTakeOutList(getTaOrderTakeOutPage(pageForm));
+            list = getTaOrderTakeOutPage(pageForm);
         }
-        return allVo;
+        return list;
     }
 
     @Override

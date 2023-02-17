@@ -94,22 +94,10 @@ public class OrderInstanceRest {
      */
     @PostMapping("/getTaOrderStat")
     @ApiOperation("TA订单统计(B端)")
-    public Response<OrderTaVo> getTaOrderInfoDetail(@Valid @RequestBody OrderTaTypeForm typeForm){
+    public Response<OrderTaVo> getTaOrderStat(@Valid @RequestBody OrderTaTypeForm typeForm){
         return Response.ok(orderInstanceBiz.getTaOrderStat(typeForm));
     }
 
-
-
-    /**
-     * TA订单
-     * @param typeForm
-     * @return
-     */
-    @PostMapping("/getTaOrder")
-    @ApiOperation("TA订单(B端)")
-    public Response<OrderTaAllVo> getTaOrder(@Valid @RequestBody OrderTaPageForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrder(typeForm));
-    }
 
 
     /**
@@ -120,7 +108,7 @@ public class OrderInstanceRest {
     @PostMapping("/getTaTableOrderDetail")
     @ApiOperation("TA堂食订单(B端)")
     public Response<List<OrderTaTableVo>> getTaTableOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrderTablePage(typeForm));
+        return Response.ok(orderInstanceBiz.getTaOrderAll(typeForm),"");
     }
 
 
@@ -132,7 +120,7 @@ public class OrderInstanceRest {
     @PostMapping("/getTaPackOrderDetail")
     @ApiOperation("TA打包订单(B端)")
     public Response<List<OrderTaPackVo>> getTaPackOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrderPackPage(typeForm));
+        return Response.ok(orderInstanceBiz.getTaOrderAll(typeForm));
     }
 
     /**
@@ -143,7 +131,7 @@ public class OrderInstanceRest {
     @PostMapping("/getTaTakeOutOrderDetail")
     @ApiOperation("TA外卖订单(B端)")
     public Response<List<OrderTaTakeOutVo>> getTaTakeOutOrderDetail(@Valid @RequestBody OrderTaPageForm typeForm){
-        return Response.ok(orderInstanceBiz.getTaOrderTakeOutPage(typeForm));
+        return Response.ok(orderInstanceBiz.getTaOrderAll(typeForm));
     }
 
 
