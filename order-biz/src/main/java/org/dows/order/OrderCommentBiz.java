@@ -25,6 +25,8 @@ import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentPcVo;
 import org.dows.order.vo.OrderCommentResponseVo;
 import org.dows.order.vo.OrderMyCommentVo;
+import org.dows.store.api.StoreInstanceApi;
+import org.dows.store.api.response.StoreResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +46,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
 
     private final OrderCommentMapper commentMapper;
 
-    //private final StoreInstanceApi storeInstanceApi;
+    private final StoreInstanceApi storeInstanceApi;
 
     @Override
     public boolean createComment(OrderCommentForm commentForm) {
@@ -182,14 +184,19 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
                 .orderByDesc(OrderComment::getId).list();
         if(!CollUtil.isEmpty(comments)){
             List<String> accountIds = comments.stream().map(OrderComment::getFromAccountId).collect(Collectors.toList());
+            List<String> storeIds = comments.stream().map(OrderComment::getStoreId).collect(Collectors.toList());
             List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
             Map<String, String> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, OrderComment::getContent);
-
+            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+            Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
             for (OrderComment comment : comments) {
                 OrderMyCommentVo commentVo = new OrderMyCommentVo();
-                commentVo.setProfile("http://df");
-                commentVo.setStoreName("五月天店");
-                commentVo.setStoreAddress("徐家汇");
+                if(storeMap.containsKey(comment.getStoreId())){
+                    StoreResponse storeResponse =   storeMap.get(comment.getStoreId());
+                    commentVo.setProfile(storeResponse.getProfile());
+                    commentVo.setStoreName(storeResponse.getName());
+                    commentVo.setStoreAddress(storeResponse.getAddress());
+                }
                 commentVo.setScore(comment.getScore());
                 commentVo.setContent(comment.getContent());
                 commentVo.setReturnContent(outCommentMap.get(comment.getFromAccountId()));
