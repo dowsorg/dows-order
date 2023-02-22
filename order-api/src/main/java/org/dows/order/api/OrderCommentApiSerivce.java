@@ -1,10 +1,14 @@
 package org.dows.order.api;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.form.OrderCommentForm;
+import org.dows.order.form.OrderCommentPcForm;
 import org.dows.order.form.OrderOutCommentForm;
 import org.dows.order.vo.OrderCommentCountVo;
+import org.dows.order.vo.OrderCommentPcVo;
 import org.dows.order.vo.OrderCommentResponseVo;
+import org.dows.order.vo.OrderInstanceTenantOpVo;
 
 import java.util.List;
 
@@ -35,4 +39,11 @@ public interface OrderCommentApiSerivce {
      * @return
      */
     OrderCommentCountVo getCommentCount(String storeId);
+
+    /**
+     * pc 评价中心
+     * @param commentPcForm
+     * @return
+     */
+    IPage<OrderCommentPcVo> getCommentListPage(OrderCommentPcForm commentPcForm);
 }

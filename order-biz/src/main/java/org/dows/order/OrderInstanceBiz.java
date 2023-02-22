@@ -222,17 +222,20 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
      */
     private UserInfoVo getUserInfo(String accountId){
         AccountVo accountVo = accountUserApi.getInfoByAccountId(accountId);
-        UserInfoVo userInfo = new UserInfoVo();
-        userInfo.setHeadUrl(accountVo.getAvatar());
-        userInfo.setName(accountVo.getAccountName());
-        userInfo.setSex(Integer.valueOf(1).equals(accountVo.getSex())?"男":"女");
-        userInfo.setBirthday(accountVo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        userInfo.setPhone(accountVo.getPhone());
-        userInfo.setCreateDate(accountVo.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        userInfo.setOrderNum(23423);
-        userInfo.setAmount(new BigDecimal("343.567"));
-        userInfo.setDateOf("今天");
-        return userInfo;
+        if(!Objects.isNull(accountVo)){
+            UserInfoVo userInfo = new UserInfoVo();
+            userInfo.setHeadUrl(accountVo.getAvatar());
+            userInfo.setName(accountVo.getAccountName());
+            userInfo.setSex(Integer.valueOf(1).equals(accountVo.getSex())?"男":"女");
+            userInfo.setBirthday(accountVo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            userInfo.setPhone(accountVo.getPhone());
+            userInfo.setCreateDate(accountVo.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            userInfo.setOrderNum(23423);
+            userInfo.setAmount(new BigDecimal("343.567"));
+            userInfo.setDateOf("今天");
+            return userInfo;
+        }
+        return null;
     }
 
     @Override

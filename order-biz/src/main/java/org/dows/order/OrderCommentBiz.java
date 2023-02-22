@@ -6,6 +6,10 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -15,10 +19,13 @@ import org.dows.order.api.OrderCommentApiSerivce;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.entity.OrderComment;
 import org.dows.order.form.OrderCommentForm;
+import org.dows.order.form.OrderCommentPcForm;
+import org.dows.order.form.OrderInstanceTenantForm;
 import org.dows.order.form.OrderOutCommentForm;
 import org.dows.order.mapper.OrderCommentMapper;
 import org.dows.order.service.OrderCommentService;
 import org.dows.order.vo.OrderCommentCountVo;
+import org.dows.order.vo.OrderCommentPcVo;
 import org.dows.order.vo.OrderCommentResponseVo;
 import org.springframework.stereotype.Service;
 
@@ -119,5 +126,48 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
     @Override
     public OrderCommentCountVo getCommentCount(String storeId) {
         return commentMapper.getCommentCount(storeId);
+    }
+
+    @Override
+    public IPage<OrderCommentPcVo> getCommentListPage(OrderCommentPcForm commentPcForm) {
+        String accountId = null;
+        if(StrUtil.isBlank(commentPcForm.getAccountName())){
+        }
+        if(StrUtil.isBlank(commentPcForm.getAccountNo())){
+
+        }
+        LambdaQueryWrapper<OrderComment> queryWrapper = Wrappers.lambdaQuery(OrderComment.class)
+                .eq(!StrUtil.isBlank(accountId), OrderComment::getFromAccountId, accountId)
+                .eq(!StrUtil.isBlank(commentPcForm.getStoreId()), OrderComment::getStoreId, commentPcForm.getStoreId())
+                .apply(commentPcForm.getStartDate() != null, "date_format(create_time,'%Y-%m-%d') >= {0}", DateUtil.formatDate(commentPcForm.getStartDate()))
+                .apply(commentPcForm.getEndDate() != null, "date_format(create_time,'%Y-%m-%d') <= {0}", DateUtil.formatDate(commentPcForm.getEndDate()));
+        IPage<OrderComment> paging = new Page(commentPcForm.getCurrent(),commentPcForm.getSize());
+        IPage<OrderComment> commentIPage = orderCommentService.page(paging, queryWrapper);
+        List<OrderCommentPcVo> commentPcVos = CollUtil.newArrayList();
+        if(!CollUtil.isEmpty(commentIPage.getRecords())){
+            List<String> accountIds = commentIPage.getRecords().stream().map(OrderComment::getFromAccountId).collect(Collectors.toList());
+            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds.toArray(new String[accountIds.size()]));
+            Map<String, AccountVo> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, Function.identity());
+            List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
+            Map<String, String> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, OrderComment::getContent);
+            for (OrderComment record : commentIPage.getRecords()) {
+                OrderCommentPcVo pcVo = new OrderCommentPcVo();
+                if(accountVoMap.containsKey(record.getFromAccountId())){
+                    AccountVo accountVo =  accountVoMap.get(record.getFromAccountId());
+                    pcVo.setHeadUrl(accountVo.getAvatar());
+                    pcVo.setAccountName(accountVo.getAccountName());
+                }
+                pcVo.setDt(record.getDt());
+                pcVo.setStoreName("五月天");
+                pcVo.setContent(record.getContent());
+                pcVo.setReturnContent(outCommentMap.get(record.getFromAccountId()));
+                commentPcVos.add(pcVo);
+            }
+        }
+        IPage<OrderCommentPcVo> returnComment = new Page<>();
+        returnComment.setRecords(commentPcVos);
+        returnComment.setTotal(commentIPage.getTotal());
+        returnComment.setCurrent(commentIPage.getCurrent());
+        return returnComment;
     }
 }
