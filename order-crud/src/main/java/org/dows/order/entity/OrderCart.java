@@ -60,6 +60,9 @@ public class OrderCart implements CrudEntity {
     @ApiModelProperty("客户账号ID")
     private String accountId;
 
+    @ApiModelProperty("类型 0:堂食|1:自营外卖|2:打包")
+    private Integer type;
+
     @ApiModelProperty("应用ID")
     private String appId;
 

@@ -18,15 +18,13 @@ import org.dows.account.vo.AccountVo;
 import org.dows.order.api.OrderCommentApiSerivce;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.entity.OrderComment;
-import org.dows.order.form.OrderCommentForm;
-import org.dows.order.form.OrderCommentPcForm;
-import org.dows.order.form.OrderInstanceTenantForm;
-import org.dows.order.form.OrderOutCommentForm;
+import org.dows.order.form.*;
 import org.dows.order.mapper.OrderCommentMapper;
 import org.dows.order.service.OrderCommentService;
 import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentPcVo;
 import org.dows.order.vo.OrderCommentResponseVo;
+import org.dows.order.vo.OrderMyCommentVo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,6 +43,8 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
     private final AccountUserApi accountUserApi;
 
     private final OrderCommentMapper commentMapper;
+
+    //private final StoreInstanceApi storeInstanceApi;
 
     @Override
     public boolean createComment(OrderCommentForm commentForm) {
@@ -170,5 +170,33 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
         returnComment.setTotal(commentIPage.getTotal());
         returnComment.setCurrent(commentIPage.getCurrent());
         return returnComment;
+    }
+
+    @Override
+    public List<OrderMyCommentVo> getMyCommentList(OrderMyCommentForm myCommentForm) {
+        List<OrderMyCommentVo> list = CollUtil.newArrayList();
+        List<OrderComment> comments = orderCommentService.lambdaQuery()
+                .eq(OrderComment::getFromAccountId, myCommentForm.getAccountId())
+                .gt(myCommentForm.getOrderCommentId() != null,OrderComment::getId, myCommentForm.getOrderCommentId())
+                .eq(OrderComment::getFromMerchant,false)
+                .orderByDesc(OrderComment::getId).list();
+        if(!CollUtil.isEmpty(comments)){
+            List<String> accountIds = comments.stream().map(OrderComment::getFromAccountId).collect(Collectors.toList());
+            List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
+            Map<String, String> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, OrderComment::getContent);
+
+            for (OrderComment comment : comments) {
+                OrderMyCommentVo commentVo = new OrderMyCommentVo();
+                commentVo.setProfile("http://df");
+                commentVo.setStoreName("五月天店");
+                commentVo.setStoreAddress("徐家汇");
+                commentVo.setScore(comment.getScore());
+                commentVo.setContent(comment.getContent());
+                commentVo.setReturnContent(outCommentMap.get(comment.getFromAccountId()));
+                commentVo.setOrderCommentId(comment.getId());
+                list.add(commentVo);
+            }
+        }
+        return list;
     }
 }

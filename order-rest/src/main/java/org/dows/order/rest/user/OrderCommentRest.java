@@ -10,9 +10,11 @@ import org.dows.order.OrderCommentBiz;
 import org.dows.order.bo.OrderCommentQueryBo;
 import org.dows.order.form.OrderCommentForm;
 import org.dows.order.form.OrderCommentQueryForm;
+import org.dows.order.form.OrderMyCommentForm;
 import org.dows.order.form.OrderOutCommentForm;
 import org.dows.order.vo.OrderCommentCountVo;
 import org.dows.order.vo.OrderCommentResponseVo;
+import org.dows.order.vo.OrderMyCommentVo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -80,6 +82,18 @@ public class OrderCommentRest {
     @ApiOperation("订单评价统计")
     public Response<OrderCommentCountVo> getCount(@PathVariable String storeId){
         return Response.ok(orderCommentBiz.getCommentCount(storeId));
+    }
+
+    /**
+     * 我的订单评价
+     * @param commentForm
+     * @return
+     */
+    @PostMapping("/getMyCommentList")
+    @ApiOperation("我的订单评价")
+    public Response<List<OrderMyCommentVo>> getMyCommentList(@RequestBody OrderMyCommentForm commentForm){
+       // commentForm.setAccountId(null);//TODO
+        return Response.ok(orderCommentBiz.getMyCommentList(commentForm));
     }
 
 

@@ -23,6 +23,10 @@ import java.io.Serializable;
 public class OrderCartAddForm implements Serializable {
     private static final long serialVersionUID = -5325470651808508305L;
 
+    @NotNull(message = "类型不能为空!")
+    @ApiModelProperty(value = "类型 0:堂食|1:自营外卖|2:打包")
+    private Integer type;
+
     @NotBlank(message = "商品id不能为空!")
     @ApiModelProperty(value = "商品id")
     private String goodsSpuId;

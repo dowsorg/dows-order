@@ -55,6 +55,7 @@ public class OrderCatBiz implements OrderCartApiService {
             orderCart.setTableNo(orderCartAddBo.getTableNo());
             orderCart.setStoreId(orderCartAddBo.getStoreId());
             orderCart.setAccountId(orderCartAddBo.getAccountId());
+            orderCart.setType(orderCartAddBo.getType());
             orderCart.setQuantity(1);
             orderCart.setPrice(goodsSpu.getNormalPrice());
             orderCart.setState(0);
@@ -76,10 +77,12 @@ public class OrderCatBiz implements OrderCartApiService {
         if(StrUtil.isBlank(queryBo.getAccountId())){ //公共购物车
             orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getTableNo, queryBo.getTableNo())
+                    .eq(OrderCart::getType, queryBo.getType())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();
         }else{
             orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getAccountId, queryBo.getAccountId())
+                    .eq(OrderCart::getType, queryBo.getType())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();
         }
         List<Long> ids = orderCarts.stream().map(OrderCart::getId).collect(Collectors.toList());
@@ -97,6 +100,7 @@ public class OrderCatBiz implements OrderCartApiService {
                     .eq(orderCartAddBo.getAccountId() != null,OrderCart::getAccountId, orderCartAddBo.getAccountId())
                     .eq(StrUtil.isBlank(orderCartAddBo.getTableNo()),OrderCart::getTableNo,orderCartAddBo.getTableNo())
                     .eq(OrderCart::getStoreId, orderCartAddBo.getStoreId())
+                    .eq(OrderCart::getType, orderCartAddBo.getType())
                     .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId()).update();
         }
     }
@@ -109,14 +113,15 @@ public class OrderCatBiz implements OrderCartApiService {
             cart = orderCartService.lambdaQuery()
                     .eq(OrderCart::getStoreId, orderCartAddBo.getStoreId())
                     .eq(OrderCart::getTableNo,orderCartAddBo.getTableNo())
-                    .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId())
-                    .last("limit 1").one();
+                    .eq(OrderCart::getType,orderCartAddBo.getType())
+                    .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId()).one();
         }else{
             //个人点菜
             cart = orderCartService.lambdaQuery()
                     .eq(OrderCart::getAccountId, orderCartAddBo.getAccountId())
                     .eq(OrderCart::getStoreId,orderCartAddBo.getStoreId())
-                    .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId()).last("limit 1").one();
+                    .eq(OrderCart::getType,orderCartAddBo.getType())
+                    .eq(OrderCart::getGoodsSpuId, orderCartAddBo.getGoodsSpuId()).one();
         }
         return cart;
     }
@@ -129,10 +134,12 @@ public class OrderCatBiz implements OrderCartApiService {
         if(StrUtil.isBlank(queryBo.getAccountId())){ //公共购物车
              orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getTableNo, queryBo.getTableNo())
+                    .eq(OrderCart::getType, queryBo.getType())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();
         }else{
              orderCarts = orderCartService.lambdaQuery()
                     .eq(OrderCart::getAccountId, queryBo.getAccountId())
+                    .eq(OrderCart::getType, queryBo.getType())
                     .eq(OrderCart::getStoreId, queryBo.getStoreId()).list();
         }
         BigDecimal bigDecimal = new BigDecimal("0");

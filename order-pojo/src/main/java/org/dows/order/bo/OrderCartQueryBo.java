@@ -19,5 +19,8 @@ public class OrderCartQueryBo implements Serializable {
     @ApiModelProperty(value = "账号id")
     private String accountId;
 
+    @ApiModelProperty(value = "类型 0:堂食|1:自营外卖|2:打包")
+    private Integer type;
+
 
 }

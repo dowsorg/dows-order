@@ -23,6 +23,6 @@ public class OrderCommentPcForm extends QueryParam{
     @ApiModelProperty(value = "评价开始时间")
     private Date startDate;
 
-    @ApiModelProperty(value = "评价开始结束时间")
+    @ApiModelProperty(value = "评价结束时间")
     private Date endDate;
 }

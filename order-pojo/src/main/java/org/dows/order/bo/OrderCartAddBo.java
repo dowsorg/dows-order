@@ -12,6 +12,9 @@ import java.io.Serializable;
 public class OrderCartAddBo implements Serializable {
     private static final long serialVersionUID = -5325470651808508305L;
 
+    @ApiModelProperty("类型 0:堂食|1:自营外卖|2:打包")
+    private Integer type;
+
     @ApiModelProperty(value = "商品id")
     private String goodsSpuId;
 

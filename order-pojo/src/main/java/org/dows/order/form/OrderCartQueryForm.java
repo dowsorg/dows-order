@@ -18,6 +18,10 @@ public class OrderCartQueryForm implements Serializable {
     @ApiModelProperty(value = "桌号id")
     private String tableNo;
 
+    @NotNull(message = "类型不能为空!")
+    @ApiModelProperty(value = "类型 0:堂食|1:自营外卖|2:打包")
+    private Integer type;
+
 
 
 }

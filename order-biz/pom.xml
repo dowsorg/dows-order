@@ -42,6 +42,17 @@
             <artifactId>order-api</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.dows.saas</groupId>
+            <artifactId>store-boot</artifactId>
+            <version>20220701-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.dows.saas</groupId>
+                    <artifactId>store-biz</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
 
