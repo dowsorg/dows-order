@@ -34,14 +34,14 @@ public class TenantOrderCommentRest {
 
 
     /**
-     * pc 订单评价中心
-     * @param commentPcForm
+     * pc 查询PC订单评价
+     * @param orderCommentPcForm
      * @return
      */
     @PostMapping("/getCommentListPage")
-    @ApiOperation("查询订单评价")
-    public Response<IPage<OrderCommentPcVo>> getCommentListPage(@Valid @RequestBody OrderCommentPcForm commentPcForm){
-        return Response.ok(orderCommentBiz.getCommentListPage(commentPcForm));
+    @ApiOperation("查询PC订单评价")
+    public Response<IPage<OrderCommentPcVo>> getCommentListPage(@Valid @RequestBody OrderCommentPcForm orderCommentPcForm){
+        return Response.ok(orderCommentBiz.getCommentListPage(orderCommentPcForm));
     }
 
 
