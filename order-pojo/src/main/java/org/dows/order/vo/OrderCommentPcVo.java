@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class OrderCommentPcVo {
@@ -23,6 +24,9 @@ public class OrderCommentPcVo {
 
     @ApiModelProperty(value = "评价内容")
     private String content;
+
+    @ApiModelProperty(value = "图片/视频")
+    private List<String> pics;
 
     @ApiModelProperty(value = "商家回复评价内容")
     private String returnContent;

@@ -157,6 +157,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
                     pcVo.setHeadUrl(accountVo.getAvatar());
                     pcVo.setAccountName(accountVo.getAccountName());
                 }
+                pcVo.setPics(StrUtil.split(record.getPics(),","));
                 pcVo.setDt(record.getDt());
                 pcVo.setStoreName("五月天");
                 pcVo.setContent(record.getContent());
