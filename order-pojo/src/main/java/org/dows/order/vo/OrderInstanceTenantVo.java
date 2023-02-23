@@ -21,12 +21,14 @@ public class OrderInstanceTenantVo implements Serializable {
     private Integer type;
     @ApiModelProperty(value = "订单类型 0:堂食|1:自营外卖|2:打包")
     private String typeStr;
+    @ApiModelProperty(value = "店铺id")
+    private String storeId;
     @ApiModelProperty(value = "所属品牌")
-    private String brand;
+    private Integer brand;
     @ApiModelProperty(value = "门店区域")
-    private String storeRegion;
-    @ApiModelProperty(value = "门店模式")
-    private Integer storeType;
+    private String storeDistrict;
+    @ApiModelProperty(value = "门店模式 1直营 2加盟")
+    private Integer storePattern;
     @ApiModelProperty(value = "就餐门店")
     private String storeName;
     @ApiModelProperty(value = "桌号")

@@ -1,5 +1,4 @@
 package org.dows.order;
-import java.util.Date;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollStreamUtil;
@@ -15,8 +14,6 @@ import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
-import org.dows.account.api.AccountInstanceApi;
 import org.dows.account.api.AccountUserApi;
 import org.dows.account.vo.AccountVo;
 import org.dows.goods.api.GoodsApi;
@@ -36,6 +33,11 @@ import org.dows.order.service.OrderItemService;
 import org.dows.order.vo.*;
 import org.dows.sequence.api.IdGenerator;
 import org.dows.sequence.api.IdKey;
+import org.dows.store.api.StoreInstanceApi;
+import org.dows.store.api.response.StoreResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceService orderInstanceService;
@@ -63,9 +66,13 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final OrderInstanceMapper orderInstanceMapper;
 
-    private final AccountUserApi accountUserApi;
+    @Lazy
+    @Autowired
+    private AccountUserApi accountUserApi;
 
     private final GoodsApi goodsApi;
+
+    private final StoreInstanceApi storeInstanceApi;
 
     @Override
     public String createOrderInstance(OrderInstancePaymentBo paymentBo) {
@@ -320,14 +327,20 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
         IPage<OrderInstanceTenantVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
+            List<String> storeIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getStoreId).collect(Collectors.toList());
             List<AccountVo> accountVo = accountUserApi.getInfoByAccountIds(null);
+            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+            Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
             for (OrderInstanceTenantVo record : adminVoIPage.getRecords()) {
                 record.setUserName("张三");
                 record.setTypeStr("堂食");
-                record.setBrand("海底捞");
-                record.setStoreRegion("徐家汇");
-                record.setStoreType(1);
-                record.setStoreName("普通面馆");
+                if(storeMap.containsKey(record.getStoreId())){
+                    StoreResponse storeResponse = storeMap.get(record.getStoreId());
+                    record.setBrand(storeResponse.getStoreBrand());
+                    record.setStoreDistrict(storeResponse.getDistrict());
+                    record.setStorePattern(storeResponse.getStorePattern());
+                    record.setStoreName(storeResponse.getName());
+                }
                 record.setFoodNum(2);
             }
         }
@@ -349,9 +362,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     record.setOperator(moreBo.getUserName());
                 }
                 record.setTypeStr("堂食");
-                record.setBrand("海底捞");
-                record.setStoreRegion("徐家汇");
-                record.setStoreType(1);
+                record.setBrand(1);
+                record.setStoreDistrict("徐家汇");
+                record.setStorePattern(1);
                 record.setStoreName("普通面馆");
                 record.setFoodNum(2);
             }

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.dows.account.api.AccountUserApi;
+import org.dows.account.biz.AccountBiz;
 import org.dows.account.vo.AccountVo;
 import org.dows.order.api.OrderCommentApiSerivce;
 import org.dows.order.bo.OrderCommentQueryBo;
@@ -27,6 +28,8 @@ import org.dows.order.vo.OrderCommentResponseVo;
 import org.dows.order.vo.OrderMyCommentVo;
 import org.dows.store.api.StoreInstanceApi;
 import org.dows.store.api.response.StoreResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +45,9 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
 
     private final OrderCommentService orderCommentService;
 
-    private final AccountUserApi accountUserApi;
+    @Lazy
+    @Autowired
+    private  AccountUserApi accountUserApi;
 
     private final OrderCommentMapper commentMapper;
 
@@ -148,10 +153,13 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
         List<OrderCommentPcVo> commentPcVos = CollUtil.newArrayList();
         if(!CollUtil.isEmpty(commentIPage.getRecords())){
             List<String> accountIds = commentIPage.getRecords().stream().map(OrderComment::getFromAccountId).collect(Collectors.toList());
+            List<String> storeIds = commentIPage.getRecords().stream().map(OrderComment::getStoreId).collect(Collectors.toList());
             List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds.toArray(new String[accountIds.size()]));
             Map<String, AccountVo> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, Function.identity());
             List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
             Map<String, String> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, OrderComment::getContent);
+            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+            Map<String, String> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, StoreResponse::getName);
             for (OrderComment record : commentIPage.getRecords()) {
                 OrderCommentPcVo pcVo = new OrderCommentPcVo();
                 if(accountVoMap.containsKey(record.getFromAccountId())){
@@ -161,7 +169,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
                 }
                 pcVo.setPics(StrUtil.split(record.getPics(),","));
                 pcVo.setDt(record.getDt());
-                pcVo.setStoreName("五月天");
+                pcVo.setStoreName(storeMap.get(record.getStoreId()));
                 pcVo.setContent(record.getContent());
                 pcVo.setReturnContent(outCommentMap.get(record.getFromAccountId()));
                 commentPcVos.add(pcVo);
@@ -192,7 +200,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
             for (OrderComment comment : comments) {
                 OrderMyCommentVo commentVo = new OrderMyCommentVo();
                 if(storeMap.containsKey(comment.getStoreId())){
-                    StoreResponse storeResponse =   storeMap.get(comment.getStoreId());
+                    StoreResponse storeResponse = storeMap.get(comment.getStoreId());
                     commentVo.setProfile(storeResponse.getProfile());
                     commentVo.setStoreName(storeResponse.getName());
                     commentVo.setStoreAddress(storeResponse.getAddress());
