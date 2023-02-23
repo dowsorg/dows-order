@@ -18,6 +18,8 @@ import org.dows.order.service.OrderCartService;
 import org.dows.order.vo.OrderCartInfoVo;
 import org.dows.order.vo.OrderCartTotalVo;
 import org.dows.utils.AssertUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +39,9 @@ public class OrderCatBiz implements OrderCartApiService {
 
     private final OrderCartService orderCartService;
 
-    private final GoodsApi goodsApi;
+    @Lazy
+    @Autowired
+    private  GoodsApi goodsApi;
     @Override
     public void addOrderCart(OrderCartAddBo orderCartAddBo) {
         List<GoodsForm> goodsFormList = goodsApi.getGoodsInfoByIds(Lists.newArrayList(Long.valueOf(orderCartAddBo.getGoodsSpuId())));

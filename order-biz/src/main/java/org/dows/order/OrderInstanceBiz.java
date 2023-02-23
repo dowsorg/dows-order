@@ -75,7 +75,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
     private final GoodsApi goodsApi;
 
-    private final StoreInstanceApi storeInstanceApi;
+    @Lazy
+    @Autowired
+    private StoreInstanceApi storeInstanceApi;
 
     @Override
     public String createOrderInstance(OrderInstancePaymentBo paymentBo) {

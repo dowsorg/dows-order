@@ -45,13 +45,16 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
 
     private final OrderCommentService orderCommentService;
 
+
     @Lazy
     @Autowired
     private  AccountUserApi accountUserApi;
 
     private final OrderCommentMapper commentMapper;
 
-    private final StoreInstanceApi storeInstanceApi;
+    @Lazy
+    @Autowired
+    private StoreInstanceApi storeInstanceApi;
 
     @Override
     public boolean createComment(OrderCommentForm commentForm) {

@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>org.dows.saas</groupId>
-            <artifactId>store-biz</artifactId>
+            <artifactId>store-boot</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
     </dependencies>
