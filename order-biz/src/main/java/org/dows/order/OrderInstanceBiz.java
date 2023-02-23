@@ -6,6 +6,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.BetweenFormatter;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.EnumUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -26,6 +28,7 @@ import org.dows.order.entity.OrderItem;
 import org.dows.order.enums.OrderInstanceTypeEnum;
 import org.dows.order.enums.OrderItemFlagEnum;
 import org.dows.order.enums.OrderTableStatusEnum;
+import org.dows.order.enums.OrderTypeEnum;
 import org.dows.order.form.*;
 import org.dows.order.mapper.OrderInstanceMapper;
 import org.dows.order.service.OrderInstanceService;
@@ -328,12 +331,14 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         IPage<OrderInstanceTenantVo> adminVoIPage = orderInstanceMapper.selectOrderInstancePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
             List<String> storeIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getStoreId).collect(Collectors.toList());
-            List<AccountVo> accountVo = accountUserApi.getInfoByAccountIds(null);
+            List<String> accountIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getAccountId).collect(Collectors.toList());
+            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds);
+            Map<String, String> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, AccountVo::getAccountName);
             List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
             Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
             for (OrderInstanceTenantVo record : adminVoIPage.getRecords()) {
-                record.setUserName("张三");
-                record.setTypeStr("堂食");
+                record.setUserName(accountVoMap.get(record.getAccountId()));
+                record.setTypeStr(EnumUtil.likeValueOf(OrderTypeEnum.class,record.getType()).getName());
                 if(storeMap.containsKey(record.getStoreId())){
                     StoreResponse storeResponse = storeMap.get(record.getStoreId());
                     record.setBrand(storeResponse.getStoreBrand());
@@ -352,6 +357,12 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         Page<OrderInstanceTenantForm> paging = new Page(adminForm.getCurrent(),adminForm.getSize());
         IPage<OrderInstanceTenantOpVo> adminVoIPage = orderInstanceMapper.selectOrderInstanceRePage(paging, adminForm);
         if(!CollUtil.isEmpty(adminVoIPage.getRecords())){
+//            List<String> accountIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getAccountId).collect(Collectors.toList());
+//            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds);
+//            Map<String, String> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, AccountVo::getAccountName);
+            List<String> storeIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getStoreId).collect(Collectors.toList());
+            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+            Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
             for (OrderInstanceTenantOpVo record : adminVoIPage.getRecords()) {
                 OrderItemMoreBo moreBo = BeanUtil.toBean(record.getMore(),OrderItemMoreBo.class);
                 if(moreBo != null){
@@ -361,11 +372,14 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                     record.setDateTime(moreBo.getOpt());
                     record.setOperator(moreBo.getUserName());
                 }
-                record.setTypeStr("堂食");
-                record.setBrand(1);
-                record.setStoreDistrict("徐家汇");
-                record.setStorePattern(1);
-                record.setStoreName("普通面馆");
+                record.setTypeStr(EnumUtil.likeValueOf(OrderTypeEnum.class,record.getType()).getName());
+                if(storeMap.containsKey(record.getStoreId())){
+                    StoreResponse storeResponse = storeMap.get(record.getStoreId());
+                    record.setBrand(storeResponse.getStoreBrand());
+                    record.setStoreDistrict(storeResponse.getDistrict());
+                    record.setStorePattern(storeResponse.getStorePattern());
+                    record.setStoreName(storeResponse.getName());
+                }
                 record.setFoodNum(2);
             }
         }
@@ -435,9 +449,12 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         detailVo.setAccountName(accountVo.getAccountName());
         detailVo.setAccountPhone(accountVo.getPhone());
         detailVo.setAccountAddress(StrUtil.concat(true,accountVo.getProvince(),accountVo.getCity(),accountVo.getDistrict()));
-        detailVo.setStoreName("海底捞");
-        detailVo.setStoreAddress("徐家汇");
-        detailVo.setStorePhone("7277745");
+        StoreResponse storeResponse = storeInstanceApi.getStoreById(instance.getStoreId());
+       if(storeResponse != null){
+           detailVo.setStoreName(storeResponse.getName());
+           detailVo.setStoreAddress(storeResponse.getAddress());
+           detailVo.setStorePhone(storeResponse.getContactPhone());
+       }
         List<OrderInstanceDetailVo.GoodInfo> list = Lists.newArrayList();
         List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
         List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
@@ -545,16 +562,22 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         List<OrderMyInstanceInfoVo> infoVoList = Lists.newArrayList();
         List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getAccountId, myForm.getAccountId())
+                .gt(!ObjectUtil.isNull(myForm.getOrderId()),OrderInstance::getId, myForm.getOrderId())
                 .eq(myForm.getType() != null,OrderInstance::getType,myForm.getType())
+                .orderByDesc(OrderInstance::getId)
                 .list();
         if(!CollUtil.isEmpty(instanceList)){
             List<Long> orderIds = instanceList.stream().map(OrderInstance::getId).collect(Collectors.toList());
             List<OrderItem> orderItems = orderItemService.lambdaQuery().in(OrderItem::getOrderId, orderIds).list();
             Map<Long, List<OrderItem>> orderedItemMap = CollStreamUtil.groupByKey(orderItems, OrderItem::getOrderId, false);
+
+            List<String> storeIds = instanceList.stream().map(OrderInstance::getStoreId).collect(Collectors.toList());
+            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+            Map<String, String> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, StoreResponse::getName);
             for (OrderInstance orderInst : instanceList) {
                 OrderMyInstanceInfoVo instanceInfoVo = new OrderMyInstanceInfoVo();
                 instanceInfoVo.setOrderId(orderInst.getId());
-                instanceInfoVo.setStoreName("海底捞");
+                instanceInfoVo.setStoreName(storeMap.get(orderInst.getStoreId()));
                 instanceInfoVo.setTableNo(orderInst.getTableNo());
                 instanceInfoVo.setOrderStatus(1);
                 if(orderedItemMap.containsKey(orderInst.getId())){

@@ -55,8 +55,8 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
 
     @Override
     public boolean createComment(OrderCommentForm commentForm) {
-        OrderComment comment = new OrderComment();
         AccountVo accountVo = accountUserApi.getInfoByAccountId(commentForm.getAccountId());
+        OrderComment comment = new OrderComment();
         comment.setOrderNo(commentForm.getOrderNo());
         comment.setFromAccountId(accountVo.getAccountId());
         comment.setFromAccountName(accountVo.getAccountName());
@@ -103,7 +103,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
                 .list();
         if(!CollUtil.isEmpty(orderCommentsList)){
             List<String> accountIds = CollStreamUtil.toList(orderCommentsList, OrderComment::getFromAccountId);
-            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds.toArray(new String[accountIds.size()]));
+            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds);
             Map<String, AccountVo> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, Function.identity());
             List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
             Map<String, OrderComment> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, Function.identity());
@@ -154,7 +154,7 @@ public class OrderCommentBiz implements OrderCommentApiSerivce {
         if(!CollUtil.isEmpty(commentIPage.getRecords())){
             List<String> accountIds = commentIPage.getRecords().stream().map(OrderComment::getFromAccountId).collect(Collectors.toList());
             List<String> storeIds = commentIPage.getRecords().stream().map(OrderComment::getStoreId).collect(Collectors.toList());
-            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds.toArray(new String[accountIds.size()]));
+            List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds);
             Map<String, AccountVo> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, Function.identity());
             List<OrderComment> outCommentList = orderCommentService.lambdaQuery().in(OrderComment::getFromAccountId, accountIds).eq(OrderComment::getFromMerchant, true).list();
             Map<String, String> outCommentMap = CollStreamUtil.toMap(outCommentList, OrderComment::getFromAccountId, OrderComment::getContent);

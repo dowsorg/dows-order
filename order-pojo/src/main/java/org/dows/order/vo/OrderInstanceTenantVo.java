@@ -1,5 +1,6 @@
 package org.dows.order.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -13,6 +14,9 @@ public class OrderInstanceTenantVo implements Serializable {
 
     @ApiModelProperty(value = "订单号")
     private String orderNo;
+    @JsonIgnore
+    @ApiModelProperty(value = "客户账号id",hidden = true)
+    private String accountId;
     @ApiModelProperty(value = "客户编号")
     private String accountNo;
     @ApiModelProperty(value = "客户姓名")
