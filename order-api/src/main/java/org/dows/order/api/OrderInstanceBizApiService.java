@@ -1,5 +1,6 @@
 package org.dows.order.api;
 
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.dows.order.bo.*;
 import org.dows.order.form.*;
@@ -7,6 +8,7 @@ import org.dows.order.vo.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderInstanceBizApiService {
 
@@ -50,12 +52,12 @@ public interface OrderInstanceBizApiService {
 
 
     /**
-     * 返回桌台的订单信息 催万乐用
+     * 返回桌台的订单信息 吴笑笑用
      * @param storeId
      * @param tableNos
      * @return
      */
-    List<OrderTableInfoBo> getOrderTableInfo(Long storeId,List<String> tableNos);
+    List<OrderTableInfoBo> getOrderTableInfo(String storeId,List<String> tableNos);
 
     /**
      * websocket 推送到桌台通知 已超时超时 其他状态
@@ -63,9 +65,12 @@ public interface OrderInstanceBizApiService {
      * @param tableNo
      * @return
      */
-    default OrderTableInfoBo getOrderTableInfoOne(Long storeId,String tableNo) {
+    default OrderTableInfoBo getOrderTableInfoOne(String storeId,String tableNo) {
         List<OrderTableInfoBo> orderTableInfoList = getOrderTableInfo(storeId, Arrays.asList(tableNo));
-        return orderTableInfoList.isEmpty()?null:orderTableInfoList.get(0);
+        return Optional.ofNullable(orderTableInfoList)
+                .filter(CollUtil::isNotEmpty)
+                .map(CollUtil::getFirst)
+                .orElse(null);
     }
 
     /**

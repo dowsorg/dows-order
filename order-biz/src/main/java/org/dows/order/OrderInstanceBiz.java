@@ -261,7 +261,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
 
 
     @Override
-    public List<OrderTableInfoBo> getOrderTableInfo(Long storeId, List<String> tableNos) {
+    public List<OrderTableInfoBo> getOrderTableInfo(String storeId, List<String> tableNos) {
         List<OrderTableInfoBo> tableInfoBoList = Lists.newArrayList();
         List<OrderInstance> list = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getStoreId, storeId)
