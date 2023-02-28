@@ -27,11 +27,7 @@
             <artifactId>goods-biz</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.dows.cloud</groupId>
-            <artifactId>account-biz</artifactId>
-            <version>20220701-SNAPSHOT</version>
-        </dependency>
+
         <dependency>
             <groupId>org.dows.saas</groupId>
             <artifactId>order-crud</artifactId>
@@ -42,16 +38,17 @@
             <artifactId>order-api</artifactId>
             <version>20220701-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.dows.saas</groupId>
-            <artifactId>store-boot</artifactId>
-            <version>20220701-SNAPSHOT</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.dows.saas</groupId>
             <artifactId>log-boot</artifactId>
             <version>20220701-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dows.cloud</groupId>
+            <artifactId>account-api</artifactId>
         </dependency>
     </dependencies>
 
