@@ -13,6 +13,7 @@ import org.dows.order.api.OrderInstanceBizApiService;
 import org.dows.order.bo.OrderApplyRefundBo;
 import org.dows.order.bo.OrderInstanceCreateBo;
 import org.dows.order.bo.OrderInstanceQueryBo;
+import org.dows.order.bo.OrderTableInfoBo;
 import org.dows.order.form.*;
 import org.dows.order.service.OrderInstanceService;
 import org.dows.order.vo.*;
@@ -147,6 +148,18 @@ public class TenantOrderInstanceRest {
     @ApiOperation("桌台订单信息")
     public Response<OrderTableTotalVo> getOrderInstanceTableInfo(@PathVariable(value = "storeId") String storeId, @PathVariable(value = "tableNo") String tableNo){
         return Response.ok(orderInstanceBiz.getOrderInstanceTableInfo(storeId,tableNo));
+    }
+
+
+    /**
+     * 桌台信息
+     * @param tableForm
+     * @return
+     */
+    @PostMapping("/getOrderTableInfo")
+    @ApiOperation("桌台信息")
+    public Response<List<OrderTableInfoBo>> getOrderTableInfo(@RequestBody OrderTableForm tableForm){
+        return Response.ok(orderInstanceBiz.getOrderTableInfo(tableForm.getSoreId(),tableForm.getTableNos()));
     }
 
 

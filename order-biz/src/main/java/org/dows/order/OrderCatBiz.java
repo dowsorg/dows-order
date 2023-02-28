@@ -5,19 +5,17 @@ import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dows.framework.api.Response;
-import org.dows.framework.api.exceptions.BaseException;
 import org.dows.goods.api.GoodsApi;
 import org.dows.goods.form.GoodsForm;
 import org.dows.goods.form.GoodsSpuForm;
 import org.dows.order.api.OrderCartApiService;
+import org.dows.order.api.func.ThrowException;
 import org.dows.order.bo.OrderCartAddBo;
 import org.dows.order.bo.OrderCartQueryBo;
 import org.dows.order.entity.OrderCart;
 import org.dows.order.service.OrderCartService;
 import org.dows.order.vo.OrderCartInfoVo;
 import org.dows.order.vo.OrderCartTotalVo;
-import org.dows.utils.AssertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
@@ -113,7 +111,7 @@ public class OrderCatBiz implements OrderCartApiService {
         OrderCart cart;
         if(orderCartAddBo.getAccountId() == null){
             //收银台点菜 或者 大店扫桌号点菜
-            AssertUtil.isTrue(StrUtil.isBlank(orderCartAddBo.getTableNo()),new BaseException("收银台点菜桌号不能为空!"));
+            ThrowException.isTrue(StrUtil.isBlank(orderCartAddBo.getTableNo())).throwMessage("收银台点菜桌号不能为空");
             cart = orderCartService.lambdaQuery()
                     .eq(OrderCart::getStoreId, orderCartAddBo.getStoreId())
                     .eq(OrderCart::getTableNo,orderCartAddBo.getTableNo())

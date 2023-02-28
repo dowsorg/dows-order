@@ -41,7 +41,10 @@ public interface OrderInstanceBizApiService {
      */
     default OrderInstanceInfoVo queryOrderInfoOne(OrderInstanceQueryBo queryBo){
         List<OrderInstanceInfoVo> infoVoList = queryOrderInfo(queryBo);
-        return infoVoList.isEmpty()?null:infoVoList.get(0);
+        return Optional.ofNullable(infoVoList)
+                .filter(CollUtil::isNotEmpty)
+                .map(CollUtil::getFirst)
+                .orElse(null);
     }
 
     /**

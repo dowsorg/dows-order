@@ -30,4 +30,7 @@ public class OrderTableInfoBo implements Serializable {
 
     @ApiModelProperty(value = "桌台状态 1:上菜中 2:菜上齐 3:已超时 4:已结账")
     private Integer tableStatus;
+
+    @ApiModelProperty(value = "今日翻台次数")
+    private Integer todayNum;
 }

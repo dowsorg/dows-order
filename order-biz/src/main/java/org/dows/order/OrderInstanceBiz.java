@@ -265,12 +265,22 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         List<OrderTableInfoBo> tableInfoBoList = Lists.newArrayList();
         List<OrderInstance> list = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getStoreId, storeId)
-                .in(OrderInstance::getTableNo, tableNos).list();
+                .in(OrderInstance::getTableNo, tableNos)
+                .list();
+        Map<String, OrderInstance> orderInstanceMap = list.stream().collect(Collectors.groupingBy(OrderInstance::getTableNo,
+                Collectors.collectingAndThen(Collectors.toList(),
+                        a -> a.stream().sorted(Comparator.comparing(OrderInstance::getId).reversed()).findFirst().orElse(null))));
         if(!CollUtil.isEmpty(list)){
             List<Long> orderIds = list.stream().map(OrderInstance::getId).collect(Collectors.toList());
             Map<Long, List<OrderItem>> orderItemMap = orderItemService.lambdaQuery()
                     .in(OrderItem::getOrderId, orderIds).list().stream().collect(Collectors.groupingBy(OrderItem::getOrderId));
-            for (OrderInstance order : list) {
+            List<OrderInstance> orderInstanceList = orderInstanceService.lambdaQuery()
+                    .in(OrderInstance::getTableNo, tableNos)
+                    .eq(OrderInstance::getStoreId, storeId)
+                    .apply("date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(DateUtil.date()))
+                    .list();
+            Map<String, Integer> orderTableNoMap = CollStreamUtil.groupBy(orderInstanceList, OrderInstance::getTableNo, Collectors.collectingAndThen(Collectors.toList(), e -> e.size()));
+            orderInstanceMap.forEach((k,order)->{
                 OrderTableInfoBo infoBo = new OrderTableInfoBo();
                 infoBo.setTableNo(order.getTableNo());
                 infoBo.setPeoples(order.getPeoples());
@@ -292,8 +302,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
                     infoBo.setTableStatus(OrderTableStatusEnum.closed.getCode());
                 }
+                infoBo.setTodayNum(orderTableNoMap.getOrDefault(k,0));
                 tableInfoBoList.add(infoBo);
-            }
+            });
         }
         return tableInfoBoList;
     }

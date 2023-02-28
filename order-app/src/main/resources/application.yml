@@ -17,3 +17,12 @@ spring:
     include: mysql,mybatis,mvc,redis,alipay
     active: sit
 #debug: true
+log:
+  binlog:
+    hosts:
+      - name: dxz
+        host: sh-cdb-1qjrazc8.sql.tencentcdb.com
+        port: 63915
+        username: admin
+        password: dxzsaas@!
+        timeOffset: 1000

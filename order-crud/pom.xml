@@ -25,6 +25,12 @@
             <groupId>org.dows.framework</groupId>
             <artifactId>crud-mybatis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dows.saas</groupId>
+            <artifactId>log-api</artifactId>
+            <version>20220701-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 
