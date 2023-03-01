@@ -25,4 +25,7 @@ public class OrderItemMoreBo implements Serializable {
 
     @ApiModelProperty(value = "操作人")
     private String userName;
+
+    @ApiModelProperty(value = "操作人id")
+    private String userId;
 }
