@@ -46,6 +46,11 @@
             <version>20220701-SNAPSHOT</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.dows.saas</groupId>
+            <artifactId>log-api</artifactId>
+            <version>20220701-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.dows.cloud</groupId>
