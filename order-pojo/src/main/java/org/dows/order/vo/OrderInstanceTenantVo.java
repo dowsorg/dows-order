@@ -1,6 +1,8 @@
 package org.dows.order.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 

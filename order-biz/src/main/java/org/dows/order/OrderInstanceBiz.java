@@ -296,12 +296,16 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                         infoBo.setTableStatus(OrderTableStatusEnum.finish_menu.getCode());
                     }
                 }
-                if(true){ // TODO 已超时
+                if(false){ // TODO 已超时
                     infoBo.setTableStatus(OrderTableStatusEnum.time_out.getCode());
-                }
-                if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
+                }else if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
                     infoBo.setTableStatus(OrderTableStatusEnum.closed.getCode());
+                }else if(OrderInstanceTypeEnum.make.getCode().equals(order.getStatus())){
+                    infoBo.setTableStatus(OrderTableStatusEnum.menu_in.getCode());
+                }else if(OrderInstanceTypeEnum.make_finish.getCode().equals(order.getStatus())){
+                    infoBo.setTableStatus(OrderTableStatusEnum.finish_menu.getCode());
                 }
+
                 infoBo.setTodayNum(orderTableNoMap.getOrDefault(k,0));
                 tableInfoBoList.add(infoBo);
             });
@@ -347,18 +351,18 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             List<String> accountIds = adminVoIPage.getRecords().stream().map(OrderInstanceTenantVo::getAccountId).collect(Collectors.toList());
             List<AccountVo> accountVoList = accountUserApi.getInfoByAccountIds(accountIds);
             Map<String, String> accountVoMap = CollStreamUtil.toMap(accountVoList, AccountVo::getAccountId, AccountVo::getAccountName);
-            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
-            Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
+//            List<StoreResponse> storeList = storeInstanceApi.getStoresByIds(storeIds);
+//            Map<String, StoreResponse> storeMap = CollStreamUtil.toMap(storeList, StoreResponse::getStoreId, Function.identity());
             for (OrderInstanceTenantVo record : adminVoIPage.getRecords()) {
                 record.setUserName(accountVoMap.get(record.getAccountId()));
                 record.setTypeStr(EnumUtil.likeValueOf(OrderTypeEnum.class,record.getType()).getName());
-                if(storeMap.containsKey(record.getStoreId())){
-                    StoreResponse storeResponse = storeMap.get(record.getStoreId());
-                    record.setBrand(storeResponse.getStoreBrand());
-                    record.setStoreDistrict(storeResponse.getDistrict());
-                    record.setStorePattern(storeResponse.getStorePattern());
-                    record.setStoreName(storeResponse.getName());
-                }
+//                if(storeMap.containsKey(record.getStoreId())){
+//                    StoreResponse storeResponse = storeMap.get(record.getStoreId());
+//                    record.setBrand(storeResponse.getStoreBrand());
+//                    record.setStoreDistrict(storeResponse.getDistrict());
+//                    record.setStorePattern(storeResponse.getStorePattern());
+//                    record.setStoreName(storeResponse.getName());
+//                }
                 record.setFoodNum(2);
             }
         }

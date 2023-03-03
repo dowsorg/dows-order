@@ -8,6 +8,7 @@
         SELECT
             o.order_no,
             o.account_id,
+            o.type,
             o.`status`,
             o.store_id,
             o.table_no,
