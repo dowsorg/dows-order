@@ -296,16 +296,17 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                         infoBo.setTableStatus(OrderTableStatusEnum.finish_menu.getCode());
                     }
                 }
-                if(false){ // TODO 已超时
-                    infoBo.setTableStatus(OrderTableStatusEnum.time_out.getCode());
-                }else if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
+               if(OrderInstanceTypeEnum.over.getCode().equals(order.getStatus())){
                     infoBo.setTableStatus(OrderTableStatusEnum.closed.getCode());
                 }else if(OrderInstanceTypeEnum.make.getCode().equals(order.getStatus())){
                     infoBo.setTableStatus(OrderTableStatusEnum.menu_in.getCode());
+                   long between = DateUtil.between(order.getDt(), DateUtil.date(), DateUnit.MINUTE);
+                   if(between > 20){ //
+                        infoBo.setTableStatus(OrderTableStatusEnum.time_out.getCode());
+                    }
                 }else if(OrderInstanceTypeEnum.make_finish.getCode().equals(order.getStatus())){
                     infoBo.setTableStatus(OrderTableStatusEnum.finish_menu.getCode());
                 }
-
                 infoBo.setTodayNum(orderTableNoMap.getOrDefault(k,0));
                 tableInfoBoList.add(infoBo);
             });
