@@ -1,11 +1,13 @@
 package org.dows.order.form;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@ApiModel(value = "操作日志查询对象", description = "操作日志查询对象")
 public class OperateLogQueryForm extends QueryParam{
 
     @ApiModelProperty(value = "类型 1:开台 2：划菜 3：退菜 4:加菜 5：赠送 6：报损 7：账单合并 8：结账 9：退单 10：发券 11：商品 ")
