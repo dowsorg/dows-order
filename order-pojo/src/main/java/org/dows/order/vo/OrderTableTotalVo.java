@@ -4,6 +4,7 @@ package org.dows.order.vo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -23,6 +24,9 @@ public class OrderTableTotalVo {
 
     @ApiModelProperty(value = "状态 1:上菜中 2:菜上齐 3:已超时 4:已结账")
     private Integer status;
+
+    @ApiModelProperty(value = "应支付金额/已支付金额")
+    private BigDecimal amount;
 
     @ApiModelProperty(value = "订单详情")
     private List<OrderTableInfoVo> tableInfoList;

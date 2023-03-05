@@ -18,7 +18,7 @@ public class GoodSpuInfoVo {
     @ApiModelProperty(value = "数量")
     private Integer quantity;
 
-    @ApiModelProperty(value = "价格")
+    @ApiModelProperty(value = "单价")
     private BigDecimal price;
 
     @ApiModelProperty(value = "是否化菜(0:正常 1:划菜 2:退菜 3:赠送 4:报损)")
@@ -29,4 +29,7 @@ public class GoodSpuInfoVo {
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value = "价格")
+    private BigDecimal amount;
 }

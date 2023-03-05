@@ -170,5 +170,23 @@ public interface OrderInstanceBizApiService {
      */
     List<OrderTaTakeOutVo> getTaOrderTakeOutPage(OrderTaPageForm pageForm);
 
+    /**
+     * 换台
+     * @return
+     */
+    boolean updateTableNo(OrderChangeTableNoForm tableNoForm);
+
+    /**
+     * 合并账单
+     * @return
+     */
+    OrderMergeTableNoVo mergeTableNo(OrderMergeTableNoForm mergeTableNoForm);
+
+    /**
+     * 结账
+     * @return
+     */
+    OrderTableInfoVo orderSettleAccounts(String orderNo);
+
 
 }

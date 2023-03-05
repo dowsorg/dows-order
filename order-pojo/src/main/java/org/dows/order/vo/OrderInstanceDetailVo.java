@@ -24,7 +24,7 @@ public class OrderInstanceDetailVo implements Serializable {
     @ApiModelProperty(value = "支付状态 0:未支付 1:已支付")
     private Integer payStatus;
 
-    @ApiModelProperty(value = "订单状态 1:商家已接单 2:待配送员接单 3:配送中 4:已完成")
+    @ApiModelProperty(value = "订单状态 1:商家已接单 2:待配送员接单 3:配送中 4:已完成 5:已取消")
     private Integer orderStatus;
 
     @ApiModelProperty(value = "退款状态 1:退款中 2:商家拒绝退款 3:退款成功")

@@ -24,6 +24,9 @@ public class OrderMyInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "桌号/编号")
     private String tableNo;
 
+    @ApiModelProperty(value = "类型 0:堂食 1:外卖 2:打包 3:扫码支付")
+    private Integer type;
+
     @ApiModelProperty(value = "订单状态 1:待支付 2:已支付 3:已送达 4:已退款 5:已取消 6:已完成")
     private Integer orderStatus;
 
