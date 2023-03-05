@@ -176,6 +176,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             for (OrderInstance orderInstance : orderList) {
                 OrderInstanceInfoVo instanceInfoVo = new OrderInstanceInfoVo();
                 instanceInfoVo.setOrderId(orderInstance.getId());
+                instanceInfoVo.setStoreId(orderInstance.getStoreId());
                 instanceInfoVo.setOrderNo(orderInstance.getOrderNo());
                 instanceInfoVo.setRefund(orderInstance.getRefund());
                 instanceInfoVo.setApplyImageUrl(StrUtil.split(orderInstance.getApplyImageUrl(),","));
