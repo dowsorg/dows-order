@@ -519,7 +519,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         List<OrderInstance> orderInstanceList = orderInstanceService.lambdaQuery()
                 .eq(OrderInstance::getTableNo, tableNo)
                 .eq(OrderInstance::getStoreId, storeId)
-                .apply("date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(DateUtil.date()))
+                //.apply("date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(DateUtil.date()))
                 .orderByDesc(OrderInstance::getDt)
                 .list();
         if(CollUtil.isEmpty(orderInstanceList)){
@@ -735,23 +735,29 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
     }
 
     @Override
-    public OrderMergeTableNoVo mergeTableNo(OrderMergeTableNoForm mergeTableNoForm) {
-        OrderMergeTableNoVo tableNoVo = new OrderMergeTableNoVo();
-        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
-                .in(OrderInstance::getOrderNo, mergeTableNoForm.getOrderNoList())
-                .list();
-        List<OrderMergeTableNoVo.TableNoAmount> list = CollUtil.newArrayList();
-        BigDecimal bigDecimal = new BigDecimal("0");
-        for (OrderInstance orderInstance : instanceList) {
-            OrderMergeTableNoVo.TableNoAmount tableNoAmount = new OrderMergeTableNoVo.TableNoAmount();
-            tableNoAmount.setTableNo(orderInstance.getTableNo());
-            tableNoAmount.setTotalAmount(orderInstance.getAmount());
-            bigDecimal = bigDecimal.add(orderInstance.getAmount());
-            list.add(tableNoAmount);
+    public List<OrderTableTotalVo> mergeTableNo(OrderMergeTableNoForm mergeTableNoForm) {
+        List<OrderTableTotalVo> list = CollUtil.newArrayList();
+        for (String tableNo : mergeTableNoForm.getTableNoList()) {
+            list.add(getOrderInstanceTableInfo(mergeTableNoForm.getStoreId(),tableNo));
         }
-        tableNoVo.setTableNoAmountList(list);
-        tableNoVo.setAmount(bigDecimal);
-        return tableNoVo;
+
+
+//        OrderMergeTableNoVo tableNoVo = new OrderMergeTableNoVo();
+//        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+//                .in(OrderInstance::getOrderNo, mergeTableNoForm.getOrderNoList())
+//                .list();
+//        List<OrderMergeTableNoVo.TableNoAmount> list = CollUtil.newArrayList();
+//        BigDecimal bigDecimal = new BigDecimal("0");
+//        for (OrderInstance orderInstance : instanceList) {
+//            OrderMergeTableNoVo.TableNoAmount tableNoAmount = new OrderMergeTableNoVo.TableNoAmount();
+//            tableNoAmount.setTableNo(orderInstance.getTableNo());
+//            tableNoAmount.setTotalAmount(orderInstance.getAmount());
+//            bigDecimal = bigDecimal.add(orderInstance.getAmount());
+//            list.add(tableNoAmount);
+//        }
+//        tableNoVo.setTableNoAmountList(list);
+//        tableNoVo.setAmount(bigDecimal);
+        return list;
     }
 
     @Override

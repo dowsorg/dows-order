@@ -30,7 +30,6 @@ public class OrderTableInfoVo implements Serializable {
     @ApiModelProperty(value = "订单备注")
     private String remark;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "下单日期")
     private Date dt;
 

@@ -180,7 +180,7 @@ public interface OrderInstanceBizApiService {
      * 合并账单
      * @return
      */
-    OrderMergeTableNoVo mergeTableNo(OrderMergeTableNoForm mergeTableNoForm);
+    List<OrderTableTotalVo> mergeTableNo(OrderMergeTableNoForm mergeTableNoForm);
 
     /**
      * 结账
