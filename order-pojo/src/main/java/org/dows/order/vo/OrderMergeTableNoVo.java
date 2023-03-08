@@ -20,6 +20,12 @@ public class OrderMergeTableNoVo {
     @Data
    public static class TableNoAmount{
 
+        @ApiModelProperty(value = "订单id")
+        private String orderId;
+
+        @ApiModelProperty(value = "订单号")
+        private String orderNo;
+
         @ApiModelProperty(value = "桌台")
         private String tableNo;
 

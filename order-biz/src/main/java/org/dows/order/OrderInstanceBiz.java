@@ -541,64 +541,61 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         List<OrderItem> orderItemsNotAdd = orderItemMap.get(true);
         List<OrderItem> orderItemsAdd = orderItemMap.get(false);
         OrderTableInfoVo tableInfo = new OrderTableInfoVo();
-        tableInfo.setSpuCategory(1);
-        tableInfo.setSpuCount(2);
+        tableInfo.setSpuCategory(orderItemsNotAdd.size());
         tableInfo.setRemark(instanceFirstOrder.getRemark());
         tableInfo.setDt(instanceFirstOrder.getDt());
-        List<Long> spuIds = CollUtil.addAll(orderItemsNotAdd, orderItemsAdd).stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
-        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
-        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
         if(!CollUtil.isEmpty(orderItemsNotAdd)){
             List<GoodSpuInfoVo> list = Lists.newArrayList();
+            int count = 0;
             for (OrderItem item : orderItemsNotAdd) {
                 GoodSpuInfoVo goodInfo = new GoodSpuInfoVo();
                 goodInfo.setOrderItemId(item.getId());
                 goodInfo.setQuantity(item.getQuantity());
-                if (spuFormMap.containsKey(item.getSpuId())) {
-                    GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
-                    goodInfo.setGoodName(spuForm.getSpuName());
-                    goodInfo.setPrice(item.getPrice());
-                    if (Integer.valueOf(2).equals(item.getFlag())) {
-                        OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(), OrderItemMoreBo.class);
-                        goodInfo.setRefundNum(moreBo == null ? moreBo.getFoodNum() : 0);
-                    }
+                goodInfo.setGoodName(item.getSpuName());
+                goodInfo.setPrice(item.getPrice());
+                if(Integer.valueOf(2).equals(item.getFlag())){
+                    OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(),OrderItemMoreBo.class);
+                    goodInfo.setRefundNum(moreBo.getFoodNum());
                 }
+                count+=goodInfo.getQuantity();
+                goodInfo.setRemark(item.getRemark());
                 goodInfo.setFlag(item.getFlag());
                 goodInfo.setRemark(item.getRemark());
+                goodInfo.setAmount(new BigDecimal(item.getQuantity()).multiply(goodInfo.getPrice()));
                 list.add(goodInfo);
             }
+            tableInfo.setSpuCount(count);
             tableInfo.setGoodSpuInfoList(list);
         }
         tableTotalVo.setTableInfo(tableInfo);
 
         OrderTableInfoVo tableInfoAdd = new OrderTableInfoVo();
-        tableInfoAdd.setSpuCategory(1);
-        tableInfoAdd.setSpuCount(2);
+        tableInfoAdd.setSpuCategory(orderItemsAdd.size());
         tableInfoAdd.setRemark(instanceFirstOrder.getRemark());
         tableInfoAdd.setDt(instanceFirstOrder.getDt());
         if(!CollUtil.isEmpty(orderItemsAdd)){
             List<GoodSpuInfoVo> list = Lists.newArrayList();
+            int count = 0;
             for (OrderItem item : orderItemsAdd) {
                 GoodSpuInfoVo goodInfo = new GoodSpuInfoVo();
                 goodInfo.setOrderItemId(item.getId());
                 goodInfo.setQuantity(item.getQuantity());
-                if (spuFormMap.containsKey(item.getSpuId())) {
-                    GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
-                    goodInfo.setGoodName(spuForm.getSpuName());
-                    goodInfo.setPrice(item.getPrice());
-                    if (Integer.valueOf(2).equals(item.getFlag())) {
-                        OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(), OrderItemMoreBo.class);
-                        goodInfo.setRefundNum(moreBo == null ? moreBo.getFoodNum() : 0);
-                    }
+                if(Integer.valueOf(2).equals(item.getFlag())){
+                    OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(),OrderItemMoreBo.class);
+                    goodInfo.setRefundNum(moreBo.getFoodNum());
                 }
+                count+=goodInfo.getQuantity();
+                goodInfo.setGoodName(item.getSpuName());
+                goodInfo.setPrice(item.getPrice());
                 goodInfo.setFlag(item.getFlag());
+                goodInfo.setRemark(item.getRemark());
+                goodInfo.setAmount(new BigDecimal(item.getQuantity()).multiply(goodInfo.getPrice()));
                 goodInfo.setRemark(item.getRemark());
                 list.add(goodInfo);
             }
+            tableInfoAdd.setSpuCount(count);
             tableInfoAdd.setGoodSpuInfoList(list);
         }
-
         tableTotalVo.setTableInfoAdd(tableInfoAdd);
         if(Integer.valueOf(4).equals(tableTotalVo.getStatus())){
             tableTotalVo.setAmount(amount);
@@ -764,61 +761,38 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
         for (String tableNo : mergeTableNoForm.getTableNoList()) {
             list.add(getOrderInstanceTableInfo(mergeTableNoForm.getStoreId(),tableNo));
         }
-
-
-//        OrderMergeTableNoVo tableNoVo = new OrderMergeTableNoVo();
-//        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
-//                .in(OrderInstance::getOrderNo, mergeTableNoForm.getOrderNoList())
-//                .list();
-//        List<OrderMergeTableNoVo.TableNoAmount> list = CollUtil.newArrayList();
-//        BigDecimal bigDecimal = new BigDecimal("0");
-//        for (OrderInstance orderInstance : instanceList) {
-//            OrderMergeTableNoVo.TableNoAmount tableNoAmount = new OrderMergeTableNoVo.TableNoAmount();
-//            tableNoAmount.setTableNo(orderInstance.getTableNo());
-//            tableNoAmount.setTotalAmount(orderInstance.getAmount());
-//            bigDecimal = bigDecimal.add(orderInstance.getAmount());
-//            list.add(tableNoAmount);
-//        }
-//        tableNoVo.setTableNoAmountList(list);
-//        tableNoVo.setAmount(bigDecimal);
         return list;
     }
 
     @Override
-    public OrderTableInfoVo orderSettleAccounts(String orderNo) {
+    public OrderMergeTableNoVo orderSettleAccounts(List<String> orderNo) {
+        OrderMergeTableNoVo tableNoVo = new OrderMergeTableNoVo();
+        List<OrderInstance> instanceList = orderInstanceService.lambdaQuery()
+                .in(OrderInstance::getOrderNo, orderNo)
+                .list();
+        List<OrderMergeTableNoVo.TableNoAmount> list = CollUtil.newArrayList();
+        BigDecimal bigDecimal = new BigDecimal("0");
+        for (OrderInstance orderInstance : instanceList) {
+            OrderMergeTableNoVo.TableNoAmount tableNoAmount = new OrderMergeTableNoVo.TableNoAmount();
+            tableNoAmount.setTableNo(orderInstance.getTableNo());
+            tableNoAmount.setTotalAmount(orderInstance.getAmount());
+            bigDecimal = bigDecimal.add(orderInstance.getAmount());
+            list.add(tableNoAmount);
+        }
+        tableNoVo.setTableNoAmountList(list);
+        tableNoVo.setAmount(bigDecimal);
+        return tableNoVo;
+    }
+
+    @Override
+    public OrderTableNoVo orderSettleAccounts(String orderNo) {
         OrderInstance instance = orderInstanceService.lambdaQuery().eq(OrderInstance::getOrderNo, orderNo).one();
-        OrderTableInfoVo tableInfoVo = new OrderTableInfoVo();
-//        tableInfoVo.setOrderId(instance.getId());
-//        tableInfoVo.setOrderNo(instance.getOrderNo());
-//        tableInfoVo.setDt(instance.getDt());
-//        tableInfoVo.setSubtotal(instance.getAmount());
-//        List<OrderItem> orderItems = orderItemService.lambdaQuery()
-//                .eq(OrderItem::getOrderId,instance.getId()).list();
-//        List<Long> spuIds = orderItems.stream().map(OrderItem::getSpuId).collect(Collectors.toList());
-//        List<GoodsForm> data = goodsApi.getGoodsInfoByIds(spuIds);
-//        List<GoodsSpuForm> spuInfoList = Optional.ofNullable(data).orElseGet(ArrayList::new).stream().map(GoodsForm::getGoodsSpu).collect(Collectors.toList());
-//        Map<Long, GoodsSpuForm> spuFormMap = CollStreamUtil.toMap(spuInfoList, GoodsSpuForm::getId, Function.identity());
-//        List<GoodSpuInfoVo> list = Lists.newArrayList();
-//        for (OrderItem item : orderItems) {
-//            GoodSpuInfoVo goodInfo = new GoodSpuInfoVo();
-//            goodInfo.setOrderItemId(item.getId());
-//            goodInfo.setQuantity(item.getQuantity());
-//            goodInfo.setPrice(item.getPrice());
-//            if (spuFormMap.containsKey(item.getSpuId())) {
-//                GoodsSpuForm spuForm = spuFormMap.get(item.getSpuId());
-//                goodInfo.setGoodName(spuForm.getSpuName());
-//                if (Integer.valueOf(2).equals(item.getFlag())) {
-//                    OrderItemMoreBo moreBo = JSONUtil.toBean(item.getMore(), OrderItemMoreBo.class);
-//                    goodInfo.setRefundNum(moreBo == null ? moreBo.getFoodNum() : 0);
-//                }
-//            }
-//            goodInfo.setFlag(item.getFlag());
-//            goodInfo.setRemark(item.getRemark());
-//            goodInfo.setAmount(goodInfo.getPrice().multiply(new BigDecimal(goodInfo.getQuantity())));
-//            list.add(goodInfo);
-//        }
-//        tableInfoVo.setGoodSpuInfoList(list);
-        return tableInfoVo;
+        OrderTableNoVo tableNoVo = new OrderTableNoVo();
+        tableNoVo.setOrderNo(orderNo);
+        tableNoVo.setAmount(instance.getAmount());
+        Map<Long, List<GoodSpuInfoVo>> orderGoodSpuInfoMap = getGoodSpuInfoVo(Lists.newArrayList(instance.getId()));
+        tableNoVo.setGoodSpuInfoVoList(orderGoodSpuInfoMap.get(instance.getId()));
+        return tableNoVo;
     }
 
 

@@ -183,10 +183,16 @@ public interface OrderInstanceBizApiService {
     List<OrderTableTotalVo> mergeTableNo(OrderMergeTableNoForm mergeTableNoForm);
 
     /**
-     * 结账
+     * 结账 (合并的结账)
      * @return
      */
-    OrderTableInfoVo orderSettleAccounts(String orderNo);
+    OrderMergeTableNoVo orderSettleAccounts(List<String> orderNo);
+
+    /**
+     * 单个桌台结账
+     * @return
+     */
+    OrderTableNoVo orderSettleAccounts(String orderNo);
 
 
 }

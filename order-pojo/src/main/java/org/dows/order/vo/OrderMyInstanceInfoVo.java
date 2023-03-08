@@ -1,8 +1,5 @@
 package org.dows.order.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -39,7 +36,6 @@ public class OrderMyInstanceInfoVo implements Serializable {
     @ApiModelProperty(value = "共计")
     private BigDecimal total;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "订单时间")
     private Date dt;
 }
