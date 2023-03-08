@@ -10,6 +10,12 @@ import java.util.List;
 @Data
 public class OrderTableTotalVo {
 
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
+
+    @ApiModelProperty(value = "订单号")
+    private String orderNo;
+
     @ApiModelProperty(value = "桌号/编号")
     private String tableNo;
 
@@ -29,5 +35,8 @@ public class OrderTableTotalVo {
     private BigDecimal amount;
 
     @ApiModelProperty(value = "订单详情")
-    private List<OrderTableInfoVo> tableInfoList;
+    private OrderTableInfoVo tableInfo;
+
+    @ApiModelProperty(value = "订单加菜详情")
+    private OrderTableInfoVo tableInfoAdd;
 }
