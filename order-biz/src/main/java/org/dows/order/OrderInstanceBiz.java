@@ -241,9 +241,9 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
             userInfo.setHeadUrl(accountVo.getAvatar());
             userInfo.setName(accountVo.getAccountName());
             userInfo.setSex(Integer.valueOf(1).equals(accountVo.getSex())?"男":"女");
-            userInfo.setBirthday(accountVo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            userInfo.setBirthday(DateUtil.formatDate(accountVo.getBirthday()));
             userInfo.setPhone(accountVo.getPhone());
-            userInfo.setCreateDate(accountVo.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            userInfo.setCreateDate(DateUtil.formatDateTime(accountVo.getCreateTime()));
             userInfo.setOrderNum(23423);
             userInfo.setAmount(new BigDecimal("343.567"));
             userInfo.setDateOf("今天");
