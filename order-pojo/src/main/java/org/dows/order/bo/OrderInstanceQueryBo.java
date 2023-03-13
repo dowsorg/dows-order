@@ -17,11 +17,8 @@ public class OrderInstanceQueryBo implements Serializable {
     @ApiModelProperty(value = "用户id")
     private String accountId;
 
-    @ApiModelProperty(value = "用户名")
-    private String accountName;
-
-    @ApiModelProperty(value = "手机号")
-    private String phone;
+    @ApiModelProperty(value = "电话/下单用户")
+    private String searchVal;
 
     @ApiModelProperty(value = "日期")
     private Date date;

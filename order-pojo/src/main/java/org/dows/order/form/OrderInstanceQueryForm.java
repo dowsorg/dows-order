@@ -24,12 +24,9 @@ public class OrderInstanceQueryForm implements Serializable {
     @ApiModelProperty(value = "桌号")
     private String tableNo;
 
-    @ApiModelProperty(value = "用户名")
-    private String accountName;
+    @ApiModelProperty(value = "电话/下单用户")
+    private String searchVal;
 
-    @ApiModelProperty(value = "手机号")
-    private String phone;
-
-    @ApiModelProperty(value = "时间 示例 10:15号")
+    @ApiModelProperty(value = "时间")
     private Date date;
 }

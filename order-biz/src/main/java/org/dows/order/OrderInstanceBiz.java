@@ -169,6 +169,7 @@ public class OrderInstanceBiz implements OrderInstanceBizApiService {
                 .eq(!StrUtil.isBlank(queryBo.getStoreId()),OrderInstance::getStoreId,queryBo.getStoreId())
                 .eq(!StrUtil.isBlank(queryBo.getTableNo()),OrderInstance::getTableNo,queryBo.getTableNo())
                 .eq(!StrUtil.isBlank(queryBo.getOrderNo()),OrderInstance::getOrderNo,queryBo.getOrderNo())
+                .apply(queryBo.getDate() != null,"date_format(dt,'%Y-%m-%d') = {0}", DateUtil.formatDate(queryBo.getDate()))
                 .list();
         if(!CollUtil.isEmpty(orderList)){
             List<Long> orderIds = orderList.stream().map(OrderInstance::getId).collect(Collectors.toList());
